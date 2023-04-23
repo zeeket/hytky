@@ -28,6 +28,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs"
-  ],
+, "src/env.mjs"  ],
   "exclude": ["node_modules"]
 }

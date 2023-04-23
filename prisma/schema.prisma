@@ -1,23 +1,49 @@
-// This is your Prisma schema file,
+// This is the Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
     provider = "prisma-client-js"
+    binaryTargets = ["native"]
 }
 
 datasource db {
-    provider = "sqlite"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Post {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   String
+  thread     Thread     @relation(fields: [threadId], references: [id])
+  threadId   Int
+  content    String     @db.Text
+}
+
+model Thread {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.Text
+  createdAt  DateTime   @default(now())
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   String
+  category   Category   @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  content    String     @db.Text
+  posts      Post[]
+}
+
+model Category {
+  id               Int        @id @default(autoincrement())
+  name             String
+  threads          Thread[]
+  parentCategoryId Int?
+  parentCategory   Category?  @relation("CategoryToCategory", fields: [parentCategoryId], references: [id])
+  childCategories  Category[] @relation("CategoryToCategory")
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  createdById      String?
+  createdBy        User?       @relation(fields: [createdById], references: [id])
 }
 
 // Necessary for Next auth
@@ -27,15 +53,14 @@ model Account {
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String?  @db.Text
+    access_token      String?  @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String?  @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+    user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     @@unique([provider, providerAccountId])
 }
 
@@ -55,6 +80,9 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    posts         Post[]
+    categories    Category[]
+    threads       Thread[]
 }
 
 model VerificationToken {

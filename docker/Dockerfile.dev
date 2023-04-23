@@ -1,0 +1,24 @@
+##### DEVELOPMENT DOCKER IMAGE
+##### DEPENDENCIES
+FROM --platform=linux/amd64 node:16-alpine3.16
+RUN apk add --no-cache libc6-compat openssl1.1-compat --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
+WORKDIR /app
+RUN yarn global add pnpm
+
+##### ENV_VARS
+ARG DATABASE_URL=${DATABASE_URL}
+ENV DATABASE_URL=${DATABASE_URL}
+ENV NODE_ENV=development
+ENV NEXTAUTH_URL=${NEXTAUTH_URL:-http://127.0.0.1}
+ENV PORT=80
+ENV NEXT_TELEMETRY_DISABLED=1
+
+##### FILES
+COPY ../prisma ./
+COPY ../package.json ./
+COPY ../pnpm-lock.yaml ./
+RUN pnpm install
+
+EXPOSE 80
+
+CMD ["./start.dev.sh"]

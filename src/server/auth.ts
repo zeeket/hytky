@@ -5,9 +5,16 @@ import {
   type DefaultSession,
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { objectToAuthDataMap, AuthDataValidator, TelegramUserData } from "@telegram-auth/server";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
+import logger from "../utils/logger";
+import { UserRole, botServiceResponse } from "./api/types";
+import { checkUserRole } from "../utils/checkUserRole";
+import { log } from "console";
+import { Session } from "inspector";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -15,19 +22,23 @@ import { prisma } from "~/server/db";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+declare module "next-auth/jwt" {
+  interface JWT{
+    userId: number;
+    role: UserRole;
   }
+}
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+declare module "next-auth" {
+  interface User {
+    id: number;
+    name: string;
+    image: string;
+    role: UserRole;
+  }
+  interface Session extends DefaultSession{
+    user: User
+  } 
 }
 
 /**
@@ -37,29 +48,71 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+    jwt: ({ token, user }) => {
+      //console.log(`user.id: ${user?.id}`);
+      if (user) {
+        //console.log(`user keys: ${Object.keys(user)}`)
+        token.userId = user.id as number;
+        token.role = user.role as UserRole;
       }
-      return session;
+      return token;
     },
+    session: async ({session, token}) => {
+      session.user.id = token.userId as number;
+      session.user.role = token.role as UserRole;
+      return session; 
+    }
+  },
+  pages: {
+    signIn: "/auth/signin",
+  },
+  session: {
+    strategy: "jwt",
+  },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   adapter: PrismaAdapter(prisma),
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    CredentialsProvider({
+      id: "telegram-login",
+      name: "Telegram Login",
+      credentials: {},
+      async authorize(credentials, req) {
+        const validator = new AuthDataValidator({
+          botToken: `${env.TG_BOT_TOKEN}`,
+        });
+        const data = objectToAuthDataMap(req.query || {});
+        const user:TelegramUserData = await validator.validate(data);
+        if (user.id && user.first_name) {
+          const role:UserRole = await checkUserRole(user.id);
+          logger.info(`role: ${role}`);
+          logger.info(`userId: ${user.id.toString()}`);
+          if(role === "nakki") {
+            logger.info("user is nakki, not allowed to login");
+            return null;
+          }
+           await prisma.user.upsert({
+            where: { id: user.id.toString() },
+            update: {
+              name: [user.first_name, user.last_name || ""].join(" "),
+            },
+            create: {
+              id: user.id.toString(),
+              name: [user.first_name, user.last_name || ""].join(" "),
+            },
+          }); 
+          return {
+            id: user.id,
+            name: [user.first_name, user.last_name || ""].join(" "),
+            image: user.photo_url||"",
+            role: role,
+          };
+        }
+        //return null if Telegram login validation fails
+        return null;
+      },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
 };
 
