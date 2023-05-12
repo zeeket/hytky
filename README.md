@@ -26,8 +26,6 @@ Pushing a new image to GHCR will trigger deployment.
 To push a new image, tag a commit on the main branch with a semantic version number.
 
 ## TODO
-- make migrate creates migrations
-- `docker-compose -f docker-compose.yml up -d --build --env NODE_ENV=production` applies database migrations in prod
 - Allow image submissions to posts and store them in minio (S3)
 - use Watchtower to deploy production Docker image
 - certbot container automatically fetches https cert for nginx container
