@@ -1,0 +1,26 @@
+---
+- name: Copy files to production server
+  hosts: "{{ ansible_host }}"
+  become: yes
+  vars:
+    target: "{{ target }}"
+  tasks:
+    - name: Copy package.json
+      copy:
+        src: package.json
+        dest: /home/root/hytky/package.json
+
+    - name: Copy pnpm-lock.yml
+      copy:
+        src: pnpm-lock.yml
+        dest: /home/root/hytky/pnpm-lock.yml
+
+    - name: Copy prisma directory
+      copy:
+        src: prisma/
+        dest: /home/root/hytky/prisma/
+
+    - name: Copy docker directory
+      copy:
+        src: docker/
+        dest: /home/root/hytky/docker/

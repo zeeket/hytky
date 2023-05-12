@@ -1,9 +1,7 @@
-import { Session } from "inspector";
 import { z } from "zod";
 
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
 
@@ -51,8 +49,6 @@ export const categoryRouter = createTRPCRouter({
   createCategory: protectedProcedure
     .input(z.object({ name: z.string(), parentCategoryId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      console.log(`ctx session user while creating category: ${Object.keys(ctx.session.user)}`)
-      console.log(`ctx session user id while creating category: ${ctx.session?.user.id?.toString()}`);
     const newCategory = await ctx.prisma.category.create({
       data: {
         name: input.name,

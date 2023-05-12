@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
 
@@ -38,14 +37,14 @@ export const threadRouter = createTRPCRouter({
     return ctx.prisma.thread.create({
       data: {
         name: input.name,
-        authorId: ctx.session.user.id,
+        authorId: ctx.session.user.id.toString(),
         categoryId: input.categoryId,
       },
     }).then((thread: { id: number; }) => {
       return ctx.prisma.post.create({
         data: {
           content: input.firstPostContent,
-            authorId: ctx.session.user.id,
+            authorId: ctx.session.user.id.toString(),
             threadId: thread.id,
             },
             });

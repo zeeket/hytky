@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { env } from "~/env.mjs";
 
 import {
   createTRPCRouter,
@@ -8,10 +8,9 @@ import {
 
 export const exampleRouter = createTRPCRouter({
   hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
+    .query(() => {
       return {
-        greeting: `Hello ${input.text}`,
+        greeting: `Beta versio. Ilmoita bugit ja ideat nettisivu-vastaavalle`,
       };
     }),
 
@@ -19,7 +18,7 @@ export const exampleRouter = createTRPCRouter({
     return ctx.prisma.example.findMany();
   }), */
 
-  getSecretMessage: protectedProcedure.query(async ({ctx}) => {
-    return `you can now see this secret message! {${ctx.session?.user.id}}`;
+  getSecretMessage: protectedProcedure.query(({ctx}) => {
+    return `(nro ${ctx.session?.user.id}) Sinulla on pääsy foorumille osoitteessa ${env.NEXTAUTH_URL}/forum`;
   }),
 });

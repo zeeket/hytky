@@ -1,0 +1,6 @@
+---
+- hosts: "{{ inventory_hostname }}"
+  become: true
+  tasks:
+    - name: Start docker-compose in production mode
+      command: docker-compose -f /home/root/hytky/docker/docker-compose.prod.yml up --force-recreate -d

@@ -17,6 +17,7 @@ module.exports = {
   },
   plugins: ["@typescript-eslint"],
   extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  ignorePatterns: ["/src/middleware.js"],
   rules: {
     "@typescript-eslint/consistent-type-imports": [
       "warn",

@@ -2,41 +2,46 @@ import { api } from "~/utils/api";
 import { useState } from "react";
 
 
-interface createCategoryModalProps {
-    showCreateCategoryModal: boolean;
-    setShowCreateCategoryModal: (showCreateCategoryModal: boolean) => void;
+interface createThreadModalProps {
+    showCreateThreadModal: boolean;
+    setShowCreateThreadModal: (valueToSet: boolean) => void;
     parentCategory: number;
 }
 
-const CreateCategoryModal = ({ showCreateCategoryModal, setShowCreateCategoryModal, parentCategory }: createCategoryModalProps) => {
-    const [categoryName, setCategoryName] = useState("");
+const CreateThreadModal = ({ showCreateThreadModal, setShowCreateThreadModal, parentCategory }: createThreadModalProps) => {
+    const [threadName, setThreadName] = useState("");
+    const [firstPostContent, setFirstPostContent] = useState("");
     const apiContext = api.useContext();
-    const mutation = api.category.createCategory.useMutation({
+    const mutation = api.thread.createThread.useMutation({
         onSuccess: () => {
             console.log("Category created successfully!");
-            apiContext.category.invalidate().catch((err) => console.log(err));
+            apiContext.thread.invalidate().catch((err) => console.log(err));
         },
     });
 
-    const handleCreateCategory = (categoryName: string, parentCategory: number) => {
-        console.log(categoryName, parentCategory);
-        mutation.mutate({ name: categoryName, parentCategoryId: parentCategory, });
-        setShowCreateCategoryModal(false);
+    const handleCreateThread = ( threadName: string, parentCategory: number, firstPostContent:string ) => {
+        console.log(threadName, parentCategory);
+        mutation.mutate({ name: threadName, categoryId: parentCategory, firstPostContent: firstPostContent });
+        setShowCreateThreadModal(false);
     };
 
-    const handleCategoryNameChange = (newName:string) => {
-        setCategoryName(newName);
+    const handleThreadNameChange = (newName:string) => {
+        setThreadName(newName);
+    }
+
+    const handleFirstPostContentChange = (newContent:string) => {
+        setFirstPostContent(newContent);
     }
         
 
     return (
         <>
-            {showCreateCategoryModal ? (
+            {showCreateThreadModal ? (
                 <>
                     <div className="fixed inset-0 z-10 overflow-y-auto">
                         <div
                             className="fixed inset-0 w-full h-full bg-black opacity-40"
-                            onClick={() => setShowCreateCategoryModal(false)}
+                            onClick={() => setShowCreateThreadModal(false)}
                         ></div>
                         <div className="flex items-center min-h-screen px-4 py-8">
                             <div className="relative w-full max-w-lg p-4 mx-auto bg-white rounded-md shadow-lg">
@@ -57,7 +62,7 @@ const CreateCategoryModal = ({ showCreateCategoryModal, setShowCreateCategoryMod
                                     </div>
                                     <div className="mt-2 text-center sm:ml-4 sm:text-left">
                                         <h4 className="text-lg font-medium text-gray-800">
-                                            Luo uusi kategoria
+                                            Luo uusi lanka
                                         </h4>
                                         <form>
                                             <div className="mt-4">
@@ -73,16 +78,33 @@ const CreateCategoryModal = ({ showCreateCategoryModal, setShowCreateCategoryMod
                                                         name="name"
                                                         id="name"
                                                         className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                                        onChange={(e) => {e.preventDefault();handleCategoryNameChange(e.target.value)}}
+                                                        onChange={(e) => handleThreadNameChange(e.target.value)}
                                                     />
                                                 </div>
+                                                <div className="mt-4">
+                                                <label
+                                                    htmlFor="name"
+                                                    className="block text-sm font-medium text-gray-700"
+                                                >
+                                                    Sisältö
+                                                </label>
+                                                <div className="mt-1">
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        id="name"
+                                                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                        onChange={(e) => handleFirstPostContentChange(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
                                             </div>
                                             <div className="items-center gap-2 mt-3 sm:flex">
                                             <button
                                                 className="w-full mt-2 p-2.5 flex-1 text-white bg-red-600 rounded-md outline-none ring-offset-2 ring-red-600 focus:ring-2"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    handleCreateCategory(categoryName, parentCategory)
+                                                    handleCreateThread(threadName, parentCategory, firstPostContent)
                                                 }}
                                             >
                                                 Luo
@@ -90,7 +112,7 @@ const CreateCategoryModal = ({ showCreateCategoryModal, setShowCreateCategoryMod
                                             <button
                                                 className="w-full mt-2 p-2.5 flex-1 text-gray-800 rounded-md outline-none border ring-offset-2 ring-indigo-600 focus:ring-2"
                                                 onClick={() => {
-                                                    setShowCreateCategoryModal(false)
+                                                    setShowCreateThreadModal(false)
                                                 }}
                                             >
                                                 Cancel
@@ -108,4 +130,4 @@ const CreateCategoryModal = ({ showCreateCategoryModal, setShowCreateCategoryMod
     );
 }
 
-export default CreateCategoryModal;
+export default CreateThreadModal;

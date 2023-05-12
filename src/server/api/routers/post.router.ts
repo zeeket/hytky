@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
 
@@ -32,15 +31,17 @@ export const postRouter = createTRPCRouter({
       })
     }),
 
-  createPost: protectedProcedure
+    createPost: protectedProcedure
     .input(z.object({ content: z.string(), threadId: z.number() }))
-    .mutation(({ input, ctx }) => {
-    return ctx.prisma.thread.create({
+    .mutation(async ({ input, ctx }) => {
+    const newPost = await ctx.prisma.post.create({
       data: {
-        authorId: ctx.session.user.id,
-        threadId: input.threadId,
         content: input.content,
+        authorId: ctx.session?.user.id?.toString(),
+        threadId: input.threadId,
       },
     });
+    return newPost;
   }),
+
 });

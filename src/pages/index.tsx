@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import HytkyLogo from "../../public/hytkylogo.svg";
@@ -8,11 +9,13 @@ import FacebookLogo from "../../public/facebook.svg";
 import InstagramLogo from "../../public/instagram.svg";
 import SoundcloudLogo from "../../public/soundcloud.svg";
 import MailIcon from "../../public/mail.svg";
+import Miukumauku from "../../public/miukumauku2.svg";
+import happotesti from "public/event/06-05-2023-happotesti.jpg";
 
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const hello = api.example.hello.useQuery();
 
   return (
     <>
@@ -53,34 +56,56 @@ const Home: NextPage = () => {
             </div>
 
           </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
+          <span className="inline-block text-white"> <MailIcon width={20} height={20} className="inline-block"/>
+            <span className="pl-2 tracking-tight text-white">
+              Kysy sähköpostilla: hytky
+              <Miukumauku width={15} height={15} className="inline-block"/>
+              hytky.org
+            </span>
+          </span>
+{/*           <Link
+              className="flex max-w flex-col gap-4 rounded-xl p-4 text-center text-white hover:bg-white/20"
+              href="https://entropy.fi/2023/happotesti"
+            >      
+            <div style={{ width: '100%', display: 'inline-flex' }}>
+              <Image src={happotesti} alt="Event poster for Happotesti event." placeholder="blur" style={{ width: '30%', objectFit:'cover', margin: 'auto' }}/>
               </div>
+              <h3 className="text-2xl font-bold">Happotesti →</h3>
+              <div className="text-lg">Tuleva tapahtuma 06.05.23 feat. HYTKY:n oma Tuomas G</div>
+            </Link> */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:gap-10">
+          <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
+              href="/mailingList"
+            >
+              <h3 className="text-2xl font-bold">Sähköpostilista →</h3>
+              <div className="text-lg">Näin liityt ja poistut sähköpostilistalta.</div>
             </Link>
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
+              href="/eventArchive"
             >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
+              <h3 className="text-2xl font-bold">Tapahtuma-arkisto →</h3>
+              <div className="text-lg">Menneet tapahtumat.</div>
+            </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
+              href="/about"
+            >
+              <h3 className="text-2xl font-bold italic">HYTKY? →</h3>
+              <div className="text-lg">Mikä ihmeen HYTKY?</div>
+            </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
+              href="/rental"
+            >
+              <h3 className="text-2xl font-bold">Vuokraus →</h3>
+              <div className="text-lg">Tietoa laitevuokrauksesta.</div>
             </Link>
           </div>
           <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-white">
-              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+              {hello.data ? hello.data.greeting : "Ladataan..."}
             </p>
             <AuthShowcase />
           </div>
@@ -103,14 +128,14 @@ const AuthShowcase: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">
-        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+        {sessionData && <span>Kirjautunut käyttäjänä {sessionData.user?.name}</span>}
         {secretMessage && <span> - {secretMessage}</span>}
       </p>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
         onClick={sessionData ? () => void signOut() : () => void signIn()}
       >
-        {sessionData ? "Sign out" : "Sign in"}
+        {sessionData ? "Kirjaudu ulos" : "Kirjaudu sisään (jäsenille)"}
       </button>
     </div>
   );

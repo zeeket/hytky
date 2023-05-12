@@ -4,17 +4,14 @@ import {
   type NextAuthOptions,
   type DefaultSession,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { objectToAuthDataMap, AuthDataValidator, TelegramUserData } from "@telegram-auth/server";
+import { objectToAuthDataMap, AuthDataValidator, type TelegramUserData } from "@telegram-auth/server";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import logger from "../utils/logger";
-import { UserRole, botServiceResponse } from "./api/types";
+import { type UserRole } from "./api/types";
 import { checkUserRole } from "../utils/checkUserRole";
-import { log } from "console";
-import { Session } from "inspector";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -53,13 +50,13 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         //console.log(`user keys: ${Object.keys(user)}`)
         token.userId = user.id as number;
-        token.role = user.role as UserRole;
+        token.role = user.role ;
       }
       return token;
     },
-    session: async ({session, token}) => {
-      session.user.id = token.userId as number;
-      session.user.role = token.role as UserRole;
+    session: ({session, token}) => {
+      session.user.id = token.userId ;
+      session.user.role = token.role ;
       return session; 
     }
   },

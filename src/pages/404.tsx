@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NextPage } from "next/types";
+import { type NextPage } from "next/types";
 
 const FourOhFour: NextPage = () => {
     return (

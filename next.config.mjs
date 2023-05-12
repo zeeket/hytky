@@ -34,10 +34,14 @@ const config = {
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i
 
+    config.externals.push({
+      sharp: 'commonjs sharp'
+    });
+
     return config
   },
   reactStrictMode: true,
-
+  output: "standalone",
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
    * must comment the below `i18n` config out.
