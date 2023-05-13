@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Exit if not on main branch
-        if: endsWith(github.ref, 'main') == false
+        if: endsWith(github.event.base_ref, 'main') == false
         run: exit -1
 
       - name: Log in to the Container registry
