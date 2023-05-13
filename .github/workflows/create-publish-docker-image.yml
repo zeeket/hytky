@@ -1,11 +1,10 @@
 name: Create and publish a Docker image
 on:
-  push:
-    tags:
-      branches:
-        only:
-          - main
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+  tags:
+    branches:
+      only:
+        - main
+    - 'v[0-9]+.[0-9]+.[0-9]+'
 
 env:
   REGISTRY: ghcr.io
