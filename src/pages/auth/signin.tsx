@@ -13,7 +13,7 @@ const SignInPage: NextPage = () => {
           Jäsenten sisäänkirjautuminen
         </h1>
         <h2 className="text-2xl text-white pb-8">Vain jäsenille.</h2>
-        <p className="list-disc text-white pb-8">Kirjautuaksesi sinun on oltava HYTKY:n hallituksen tai aktiivien Telegram-ryhmässä.</p>
+        <p className="list-disc text-white pb-8">Kirjautuaksesi, sinun on oltava HYTKY:n hallituksen tai aktiivien Telegram-ryhmässä.</p>
         <LoginButton
           botUsername={env.NEXT_PUBLIC_TG_BOT_NAME}
 				  onAuthCallback={(data) => {

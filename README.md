@@ -1,6 +1,7 @@
 # HYTKY
 
 Site and forum for a student organization centered around electronic music culture. This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+The forum login is designed to be exclusive to members of certain Telegram groups. A Telegram user's membership status in the groups is checked with [HYTKYbot](https://github.com/zeeket/HYTKYbot).
 
 ## Running
 
@@ -14,6 +15,7 @@ Site and forum for a student organization centered around electronic music cultu
 - `cp .env.example .env` and put your secret values in the `.env` file.
 - `cp .hytkybot.env.example .hytkybot.env` and put your secret values in the `.hytkybot.env` file.
 - `make dev` for hot reloading **or** `make prod` for a production-like environment.
+    - Production environments should be seeded manually with `make seed`
 
 ### Making changes to the database
 In a development environment, use the `make migrate` command to generate and apply migrations.
@@ -23,8 +25,8 @@ Commit the following to source control:
 
 ## Deployment
   
- ### Requirements:
-  - Ansible (also on the x86_64 Linux production server)
+### Requirements:
+  - [Ansible](https://github.com/ansible/ansible) & access to a x86_64 Linux production server
 
 ### Instructions (initial deployment)
 Replace 123.123.123.123 with your server's IP. Makefile asssumes you authenticate with `~/.ssh/id_rsa`.
@@ -37,6 +39,8 @@ To push a new image, `git tag` a commit on the main branch with a semantic versi
 Latest image should get picked up by [Watchtower](https://containrrr.dev/watchtower/).
 
 ## TODO
-- Allow image submissions to posts and store them in minio (S3)
-- use Watchtower to deploy production Docker image
-- certbot container automatically fetches https cert for nginx container
+- Allow image submissions to posts and store them in minio (S3).
+- use Watchtower to deploy production Docker image.
+- certbot container automatically fetches https cert for nginx container.
+- English language option for all pages.
+- Seed db from JSON if `prisma/eventArchive.json` or `prisma/forumArchive.json` exist.

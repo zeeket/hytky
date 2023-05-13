@@ -7,7 +7,6 @@ ARG DATABASE_URL=${DATABASE_URL}
 ENV DATABASE_URL=${DATABASE_URL}
 ENV NODE_ENV=development
 
-RUN yarn global add pnpm
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
