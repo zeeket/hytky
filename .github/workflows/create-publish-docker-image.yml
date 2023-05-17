@@ -43,3 +43,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/Dockerfile.prod
+          secrets: | # pass insensitive buildtime variables to docker
+            "NEXT_PUBLIC_TG_BOT_NAME=${{ vars.NEXT_PUBLIC_TG_BOT_NAME }}"

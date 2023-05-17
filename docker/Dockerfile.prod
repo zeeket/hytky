@@ -33,7 +33,12 @@ COPY . .
 RUN pnpx prisma generate
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN \
+# Pass the name of the Telegram bot from GitHub variables to the build process if it exists.
+# This is required because the bot name is statically rendered for the Telegram login button.
+RUN --mount=type=secret,id=NEXT_PUBLIC_TG_BOT_NAME \
+ if [ -f "/run/secrets/NEXT_PUBLIC_TG_BOT_NAME" ]; then \
+  export NEXT_PUBLIC_TG_BOT_NAME=$(cat /run/secrets/NEXT_PUBLIC_TG_BOT_NAME); \
+ fi && \
  if [ -f pnpm-lock.yaml ]; \
  then \
    SKIP_ENV_VALIDATION=1 pnpm run build; \ 
