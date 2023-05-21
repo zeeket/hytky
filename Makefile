@@ -17,6 +17,10 @@ rmi:
 prod:
 	docker-compose -f docker/docker-compose.prod.yml up --force-recreate
 
+# Start production environment locally using images from the container registry. Usage: 'make regprod'.
+regprod:
+	docker-compose -f docker/docker-compose.prod.from-registry.yml up 
+
 # Remove local production-like images and volumes. Usage: 'make rmip'.
 rmip:
 	docker-compose -f docker/docker-compose.prod.yml down --rmi=local
@@ -46,14 +50,38 @@ seed:
 testconnect:
 	ansible -i $(IP), -u root --private-key=$(SSH_KEY) all -m ping
 
-# Prepare production environment at the address given. Usage: 'make prepareprod IP=123.123.123.123'.
+# Prepare production environment at the address given. Usage: 'make prepareprod IP=123.123.123.123 DOMAIN=example.com CERTBOT_EMAIL=ex@mpl.ee'.
 prepareprod:
-	ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/install-docker-compose.yml -e @ansible/vars.yml
-	ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/copy-files-to-production.yml
+ifndef IP
+ifndef DOMAIN
+	$(error DOMAIN is not defined. Usage: make prepareprod DOMAIN=yourdomain.com CERTBOT_EMAIL=youremail@example.com)
+endif 
+ifndef CERTBOT_EMAIL
+	$(error CERTBOT_EMAIL is not defined. Usage: make prepareprod DOMAIN=yourdomain.com CERTBOT_EMAIL=youremail@example.com)
+endif
+endif
+ifdef IP
+ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/install-docker-compose.yml -e @ansible/vars.yml	
+ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/copy-files-to-production.yml
+endif
+ifdef DOMAIN
+ifdef CERTBOT_EMAIL
+	ansible-playbook -i $(DOMAIN), --user=root --private-key=$(SSH_KEY) ansible/install-docker-compose.yml -e @ansible/vars.yml
+	ansible-playbook -i $(DOMAIN), --user=root --private-key=$(SSH_KEY) ansible/copy-files-to-production.yml -e "domain=$(DOMAIN) certbot_email=$(CERTBOT_EMAIL)"
+endif
+endif
 
 # Start production environment at the address given. Usage: 'make startprod IP=123.123.123.123'.
 startprod:
-	ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/start-production.yml
+ifndef IP
+ifndef DOMAIN
+    $(error DOMAIN is not defined. Usage: make prepareprod DOMAIN=yourdomain.com or make startprod IP=)
+endif
+	ansible-playbook -i $(DOMAIN), --user=root --private-key=$(SSH_KEY) ansible/start-production-https.yml
+endif
+ifdef IP
+	ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/start-production-http.yml
+endif
 
 # Show this help. Usage: 'make help'.
 help:

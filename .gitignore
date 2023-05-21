@@ -48,3 +48,8 @@ docker/hytky-postgres-data
 # logs
 combined.log
 error.log
+
+# app backups
+prisma/eventArchive.json 
+prisma/forumArchive.json
+prisma/forumBackup.json

@@ -1,0 +1,67 @@
+version: "3.9"
+name: hytky-prod
+services:
+  nginx:
+    image: jonasal/nginx-certbot:4.2.1-nginx1.23.4-alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+    volumes:
+      - nginx-secrets:/etc/letsencrypt
+      - ./nginx-conf/user_conf.d:/etc/nginx/user_conf.d
+    depends_on:
+      - hytky
+
+  hytky:
+    image: "ghcr.io/zeeket/hytky/hytky:latest"
+    container_name: hytky
+    env_file:
+      - ../.env
+    working_dir: /app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      dbsync:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  postgres:
+    image: "postgres:15.1-alpine"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    env_file:
+      - ../.env
+    volumes:
+      - ./hytky-postgres-data:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  dbsync:
+    platform: "linux/amd64"
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.dbsync
+    env_file:
+      - ../.env
+    depends_on:
+      - postgres
+    restart: no
+
+  hytkybot:
+    platform: "linux/amd64"
+    image: "ghcr.io/zeeket/hytkybot/hytkybot:latest"
+    env_file:
+      - ../.hytkybot.env
+    restart: always
+
+volumes:
+  nginx-secrets:

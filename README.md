@@ -5,16 +5,17 @@ The forum login is designed to be exclusive to members of certain Telegram group
 
 ## Running
 
-### Requirements:
+### Requirements
 - Docker Compose
 - Make
 
 ### Instructions
-- `git clone <this repo>`
-- `cd hytky`
-- `cp .env.example .env` and put your secret values in the `.env` file.
-- `cp .hytkybot.env.example .hytkybot.env` and put your secret values in the `.hytkybot.env` file.
-- `make dev` for hot reloading **or** `make prod` for a production-like environment.
+
+1. `git clone <this repo>`
+2. `cd hytky`
+3. `cp .env.example .env` and put your secret values in the `.env` file.
+4. `cp .hytkybot.env.example .hytkybot.env` and put your secret values in the `.hytkybot.env` file.
+5. `make dev` for hot reloading **or** `make prod` for a production-like environment.
     - Production environments should be seeded manually with `make seed`
 
 ### Making changes to the database
@@ -24,23 +25,33 @@ Commit the following to source control:
 - The schema.prisma file
 
 ## Deployment
-  
-### Requirements:
-  - [Ansible](https://github.com/ansible/ansible) & access to a x86_64 Linux production server
 
-### Instructions (initial deployment)
+The username of the Telegram bot that is used for the Telegram login button on the login page is stored as a variable on this GitHub repo. This is because we want to serve the login page with SSG from the container.
+To change the value to point to your own [HYTKYbot](https://github.com/zeeket/HYTKYbot):
+1. Fork this repo.  
+2. Add the NEXT_PUBLIC_TG_BOT_NAME variable containing your bot's username to your forked repository.  
+3. Edit [docker/docker-compose.prod.from-registry.yml](docker/docker-compose.prod.from-registry.yml) to point to your GHCR.
+
+You should then be able to fetch the latest working image from your GHCR and simulate a deployment locally with `make regprod`
+
+### Deployment requirements
+  - [Ansible](https://github.com/ansible/ansible) & access to a x86_64 `apt` based Linux production server
+
+### Initial deployment instructions
 Replace 123.123.123.123 with your server's IP. Makefile asssumes you authenticate with `~/.ssh/id_rsa`.
-  - `make testconnect IP=123.123.123.123` should succeed
-  - `make prepareprod IP=123.123.123.123`
-  - `make startprod IP=123.123.123.123`
+  1. `make testconnect IP=123.123.123.123` should succeed
+  2. `make prepareprod IP=123.123.123.123`
+  3. `make startprod IP=123.123.123.123`
   
-### Instructions (continuous delivery)
+### Continuous delivery
 To push a new image, `git tag` a commit on the main branch with a semantic version number (for example `v1.0.0`).
 Latest image should get picked up by [Watchtower](https://containrrr.dev/watchtower/).
 
 ## TODO
 - Allow image submissions to posts and store them in minio (S3).
 - use Watchtower to deploy production Docker image.
-- certbot container automatically fetches https cert for nginx container.
 - English language option for all pages.
-- Seed db from JSON if `prisma/eventArchive.json` or `prisma/forumArchive.json` exist.
+- Seed db from JSON if `prisma/eventArchive.json` or `prisma/forumArchive.json` exist.  
+- Remotely back up a deployment's database to `prisma/forumBackup.json` with a command.
+- Use src/server/utis/validators
+- Use toasts

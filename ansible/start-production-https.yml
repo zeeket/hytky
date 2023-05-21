@@ -1,0 +1,10 @@
+---
+- name: Start the application on production server based on domain
+  hosts: all
+  become: true
+  tasks:
+    - name: Start docker-compose on some domain
+      command: docker compose -f /home/root/hytky/docker/docker-compose.prod.tls-registry.yml up -d
+      register: out
+
+    - debug: var=out.stdout_lines

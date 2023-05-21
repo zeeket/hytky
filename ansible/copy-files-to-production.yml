@@ -1,26 +1,76 @@
 ---
 - name: Copy files to production server
-  hosts: "{{ ansible_host }}"
+  hosts: all
   become: yes
   vars:
-    target: "{{ target }}"
+    domain: "{{ domain }}"
+    certbot_email: "{{ certbot_email }}"
   tasks:
+    - name: Create directory /home/root/hytky
+      file:
+        path: /home/root/hytky
+        state: directory
+        mode: '0755'
+
     - name: Copy package.json
       copy:
-        src: package.json
+        src: ../package.json
         dest: /home/root/hytky/package.json
 
-    - name: Copy pnpm-lock.yml
+    - name: Copy pnpm-lock.yaml
       copy:
-        src: pnpm-lock.yml
-        dest: /home/root/hytky/pnpm-lock.yml
+        src: ../pnpm-lock.yaml
+        dest: /home/root/hytky/pnpm-lock.yaml
 
     - name: Copy prisma directory
       copy:
-        src: prisma/
+        src: ../prisma/
         dest: /home/root/hytky/prisma/
 
-    - name: Copy docker directory
+    - name: Synchronize docker directory (excluding hytky-postgres-data)
+      synchronize:
+       src: ../docker/
+       dest: /home/root/hytky/docker/
+       rsync_opts:
+       - "--exclude=hytky-postgres-data/"
+
+    - name: Copy .env file
       copy:
-        src: docker/
-        dest: /home/root/hytky/docker/
+        src: ../.env
+        dest: /home/root/hytky/.env
+      
+    - name: Update NEXTAUTH_URL in .env file
+      lineinfile:
+        path: /home/root/hytky/.env # Path to the file
+        regexp: '^NEXTAUTH_URL='  # Match the line starting with NEXTAUTH_URL
+        line: 'NEXTAUTH_URL=http://{{ ansible_host }}'  # Update the line with the IP
+    
+    - name: Copy .hytkybot.env file
+      copy:
+        src: ../.hytkybot.env
+        dest: /home/root/hytky/.hytkybot.env
+
+    - name: Update server_name line
+      replace:
+        path: /home/root/hytky/docker/nginx-conf/user_conf.d/tls.conf
+        regexp: '(?s)server {.*?\n}'
+        replace: |
+          server {
+              listen              443 ssl;
+              server_name         {{ domain }};
+              ssl_certificate         /etc/letsencrypt/live/hytky-cert/fullchain.pem;
+              ssl_certificate_key     /etc/letsencrypt/live/hytky-cert/privkey.pem;
+              ssl_trusted_certificate /etc/letsencrypt/live/hytky-cert/chain.pem;
+
+              location / {
+                  proxy_pass http://hytky:3000;
+              }
+          }
+      when: domain is defined
+
+    - name: Replace CERTBOT_EMAIL in docker-compose.prod.tls-registry.yml
+      replace:
+        path: /home/root/hytky/docker/docker-compose.prod.tls-registry.yml
+        regexp: '^(\s+- CERTBOT_EMAIL=).*'
+        replace: '\1{{ certbot_email }}'
+      when: certbot_email is defined

@@ -1,0 +1,10 @@
+---
+- name: Start the application on production server based on IP
+  hosts: all
+  become: true
+  tasks:
+    - name: Start docker-compose on some IP
+      command: docker compose -f /home/root/hytky/docker/docker-compose.prod.from-registry.yml up -d
+      register: out
+
+    - debug: var=out.stdout_lines

@@ -1,0 +1,9 @@
+- name: Stop the application on production server based on IP
+  hosts: all
+  become: true
+  tasks:
+    - name: Stop docker-compose running on some IP
+      command: docker compose -f /home/root/hytky/docker/docker-compose.prod.tls-registry.yml down
+      register: out
+
+    - debug: var=out.stdout_lines
