@@ -52,6 +52,7 @@ testconnect:
 
 # Prepare production environment at the address given. Usage: 'make prepareprod IP=123.123.123.123 DOMAIN=example.com CERTBOT_EMAIL=ex@mpl.ee'.
 prepareprod:
+ifeq ($(MAKECMDGOALS),prepareprod)
 ifndef IP
 ifndef DOMAIN
 	$(error DOMAIN is not defined. Usage: make prepareprod DOMAIN=yourdomain.com CERTBOT_EMAIL=youremail@example.com)
@@ -70,9 +71,11 @@ ifdef CERTBOT_EMAIL
 	ansible-playbook -i $(DOMAIN), --user=root --private-key=$(SSH_KEY) ansible/copy-files-to-production.yml -e "domain=$(DOMAIN) certbot_email=$(CERTBOT_EMAIL)"
 endif
 endif
+endif
 
 # Start production environment at the address given. Usage: 'make startprod IP=123.123.123.123'.
 startprod:
+ifeq ($(MAKECMDGOALS),startprod)
 ifndef IP
 ifndef DOMAIN
     $(error DOMAIN is not defined. Usage: make prepareprod DOMAIN=yourdomain.com or make startprod IP=)
@@ -81,6 +84,7 @@ endif
 endif
 ifdef IP
 	ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/start-production-http.yml
+endif
 endif
 
 # Show this help. Usage: 'make help'.

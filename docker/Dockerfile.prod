@@ -75,4 +75,7 @@ USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 
+#Applying database migrations after the container is updated by Watchtower
+LABEL com.centurylinklabs.watchtower.lifecycle.post-update="docker compose up dbsync"
+
 CMD ["./start.prod.sh"]
