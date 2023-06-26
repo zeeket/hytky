@@ -63,5 +63,14 @@ services:
       - ../.hytkybot.env
     restart: always
 
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+       - WATCHTOWER_CLEANUP=true
+       - WATCHTOWER_DEBUG=true
+
 volumes:
   nginx-secrets:

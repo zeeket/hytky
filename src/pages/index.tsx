@@ -25,13 +25,13 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+        <div className="container flex flex-col items-center justify-center space-y-6">
 
          <HytkyLogo/>
 
           <div className="justify-center border-2 border-dotted border-orange-600 text-center">
             <h2 className="text-xs tracking-tight text-white">Seuraa meitä</h2>
-            <div className="flex flex-row gap-4 pr-1">
+            <div className="flex flex-row gap-4">
               <a
                 href="https://www.facebook.com/hytky/"
                 target="_blank"
@@ -126,10 +126,10 @@ const AuthShowcase: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
+    <div className="flex flex-col items-center justify-center pt-2">
       <p className="text-center text-2xl text-white">
         {sessionData && <span>Kirjautunut käyttäjänä {sessionData.user?.name}</span>}
-        {secretMessage && <span> - {secretMessage}</span>}
+        {secretMessage && <span className="text-center"> - {secretMessage}</span>}
       </p>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"

@@ -10,7 +10,7 @@ const RentalInfo: NextPage = () => {
         </h1>
         <p className="text-2xl text-white p-4">Tiedustele sähköpostilla.</p>
         <p className="text-2xl text-white p-2">Laitteistoa:</p>
-        <ul className="list-disc text-white">
+        <ul className="list-disc text-white px-5">
           <li>Iso äänentoisto (4 yläpäätä, 4-10 subwooferia, vahvistimet)</li>
           <li>Pieni äänentoisto (2 aktiiviyläpäätä, 2 aktiivisubwooferia)</li>
           <li>Monitorikaiuttimet (2 pientä aktiiviyläpäätä)</li>
