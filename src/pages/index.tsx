@@ -25,11 +25,11 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center space-y-8 py-4">
+        <div className="container flex flex-col items-center justify-center space-y-8">
         <HytkyLogo className="scale-90"/>
           <div className="justify-center border-2 border-dotted border-orange-600 text-center">
             <h2 className="text-xs tracking-tight text-white">Seuraa meitä</h2>
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row gap-4 px-2">
               <a
                 href="https://www.facebook.com/hytky/"
                 target="_blank"
