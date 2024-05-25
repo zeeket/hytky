@@ -59,16 +59,16 @@ resource "digitalocean_domain" "hytky" {
 }
 
 resource "digitalocean_record" "www" {
-  domain = digitalocean_domain.hytky.id
+  domain = digitalocean_domain.hytky.name
   type   = "A"
   name   = "www"
-  value  = digitalocean_droplet.webserver.ipv4_address
+  value = format("%s.", digitalocean_droplet.webserver.ipv4_address)
 }
 
 resource "digitalocean_record" "mx" {
-  domain   = digitalocean_domain.hytky.id
+  domain   = digitalocean_domain.hytky.name
   type     = "MX"
   name     = "@"
   priority = 1
-  value    = "SMTP.GOOGLE.COM"
+  value    = "SMTP.GOOGLE.COM."
 }
