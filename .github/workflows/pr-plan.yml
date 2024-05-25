@@ -1,0 +1,106 @@
+name: pr-plan
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'infrastructure'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Tofu
+      uses: opentofu/setup-opentofu@v1
+      with:
+        tofu_version: '1.7.0'
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: Init
+      id: init
+      run: tofu init
+      env:
+        TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+
+    - name: Format
+      id: fmt
+      run: tofu fmt -check
+
+    - name: Validate
+      id: validate
+      run: tofu validate
+
+    - name: Plan
+      env:
+        TF_VAR_GITHUB_SERVER_URL: ${{ github.server_url }}
+        TF_VAR_GITHUB_REPOSITORY: ${{ github.repository }}
+        TF_VAR_do_token: ${{ secrets.DO_PAT }}
+        TF_VAR_pub_key: ${{ secrets.PUB_KEY }}
+        TF_VAR_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        TF_VAR_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        TF_VAR_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        TF_VAR_NEXT_PUBLIC_TG_BOT_NAME: ${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}
+        TF_VAR_TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+        TF_VAR_FORUM_ROOT_NAME: ${{ secrets.FORUM_ROOT_NAME }}
+        TF_VAR_TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
+        TF_VAR_TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
+        TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+      id: plan
+      run: tofu plan -no-color -input=false -out plan
+
+    - name: Plan output
+      id: plan-output
+      run: |
+        PLAN=$(tofu show -no-color plan)
+
+        delimiter="$(openssl rand -hex 8)"
+        echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
+        echo "$PLAN" >> $GITHUB_OUTPUT
+        echo "${delimiter}" >> $GITHUB_OUTPUT
+
+    - name: Comment PR
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ github.token }}
+        script: |
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          })
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && comment.body.includes('Infrastructure Change Summary')
+          )
+
+          const output = `## Infrastructure Change Summary\n
+          #### Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #### Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #### Validation ✔️\`${{ steps.validate.outcome }}\`
+          #### Plan 📖\`${{ steps.plan.outcome }}\`
+          <details>
+
+          \`\`\`terraform
+          ${{ steps.plan-output.outputs.plan }}
+          \`\`\`
+
+          </details>
+          `;
+          if (botComment) {
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: output
+            })
+          } else {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+          }

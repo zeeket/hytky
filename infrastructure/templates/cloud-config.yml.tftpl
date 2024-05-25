@@ -1,0 +1,13 @@
+hostname: hytkyservu
+users:
+  - name: dettmann
+    groups: sudo
+    ssh-authorized-keys:
+      - ${pub_key}
+write_files:
+  - path: /opt/secrets/.env
+    content: |
+      ${indent(6, dotenv)}
+  - path: /opt/secrets/.hytkybot.env
+    content: |
+      ${indent(6, hytkybot_dotenv)}
