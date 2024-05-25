@@ -62,7 +62,7 @@ resource "digitalocean_record" "www" {
   domain = digitalocean_domain.hytky.name
   type   = "A"
   name   = "www"
-  value = format("%s.", digitalocean_droplet.webserver.ipv4_address)
+  value  = format("%s.", digitalocean_droplet.webserver.ipv4_address)
 }
 
 resource "digitalocean_record" "mx" {
