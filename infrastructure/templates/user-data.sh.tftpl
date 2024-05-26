@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apt update
-apt install -y ca-certificates curl git
+apt install -y ca-certificates curl git make
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 chmod a+r /etc/apt/keyrings/docker.asc
