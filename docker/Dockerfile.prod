@@ -8,14 +8,14 @@ WORKDIR /app
 
 COPY ./prisma ./
 
-# Install dependencies based on the preferred package manager
+# Install dependencies if lockfile exists
 
 COPY package.json pnpm-lock.yaml ./
 
 RUN \
  if [ -f pnpm-lock.yaml ]; \
  then \
-  yarn global add pnpm && pnpm add prisma && pnpm i; \
+  yarn global add pnpm && pnpm add prisma@4.16.2 && pnpm i; \
  else \
   echo "Lockfile not found." && exit 1; \
  fi
@@ -30,7 +30,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN pnpx prisma generate
+RUN pnpm dlx prisma@4.16.2 generate
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Pass the name of the Telegram bot from GitHub variables to the build process if it exists.

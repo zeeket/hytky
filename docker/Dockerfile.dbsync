@@ -13,7 +13,7 @@ COPY prisma ./prisma
 RUN \
  if [ -f pnpm-lock.yaml ]; \
  then \
-  pnpm add prisma && pnpm i; \
+  pnpm add prisma@4.16.2 && pnpm i; \
  else \
   echo "Lockfile not found." && exit 1; \
  fi
