@@ -1,8 +1,8 @@
-hostname: hytkyservu
 users:
   - name: dettmann
+    shell: /bin/bash
     groups: sudo
-    ssh-authorized-keys:
+    ssh_authorized_keys:
       - ${pub_key}
 write_files:
   - path: /opt/secrets/.env
