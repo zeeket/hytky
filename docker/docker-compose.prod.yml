@@ -1,4 +1,3 @@
-version: "3.9"
 name: hytky-prod
 services:
   nginx:
@@ -29,7 +28,7 @@ services:
     restart: always
 
   postgres:
-    image: "postgres:15.1-alpine"
+    image: "postgres:alpine"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
