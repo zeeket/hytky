@@ -72,3 +72,10 @@ resource "digitalocean_record" "mx" {
   priority = 1
   value    = "SMTP.GOOGLE.COM."
 }
+
+resource "digitalocean_record" "googleverification" {
+  domain = digitalocean_domain.hytky.name
+  type   = "TXT"
+  name   = "@"
+  value  = var.GOOGLEVERIFICATION
+}

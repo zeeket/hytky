@@ -48,6 +48,7 @@ jobs:
         TF_VAR_FORUM_ROOT_NAME: ${{ secrets.FORUM_ROOT_NAME }}
         TF_VAR_TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
         TF_VAR_TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
+        TF_VAR_GOOGLEVERIFICATION: ${{ secrets.GOOGLEVERIFICATION }}
         TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
       id: plan
       run: tofu plan -no-color -input=false -out plan
