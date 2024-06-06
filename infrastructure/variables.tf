@@ -68,5 +68,5 @@ variable "TG_ADMIN_GROUP_IDS" {
 variable "GOOGLEVERIFICATION" {
   description = "TXT record for Google Workspace verification"
   type        = string
-  sensitive = true
+  sensitive   = true
 }
