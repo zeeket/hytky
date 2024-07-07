@@ -29,8 +29,8 @@ data "cloudinit_config" "config" {
     content_type = "text/x-shellscript"
     content = templatefile("${path.module}/templates/user-data.sh.tftpl",
       {
-        REPO_URL = local.REPO_URL
-        DOMAIN = var.DOMAIN
+        REPO_URL      = local.REPO_URL
+        DOMAIN        = var.DOMAIN
         CERTBOT_EMAIL = var.CERTBOT_EMAIL
     })
   }
