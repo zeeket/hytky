@@ -18,7 +18,13 @@ git clone ${REPO_URL} /opt/webapp
 mv /opt/secrets/.* /opt/webapp/
 rmdir /opt/secrets
 
+%{ if DOMAIN != "" }
+echo "NEXTAUTH_URL=https://${DOMAIN}" | tee -a /opt/webapp/.env
+sed -i '' 's/sub.yourdomain.org/${DOMAIN}/g' /opt/webapp/docker/nginx-conf/user_conf.d/tls.conf
+export CERTBOT_EMAIL=${CERTBOT_EMAIL}
+docker compose -f /opt/webapp/docker/docker-compose.prod.tls-registry.yml up -d 
+%{ else }
 IP=$(ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1 | awk -F. '$1>=1 && $1<=126 || $1>=128 && $1<=191' | head -n 1)
 echo "NEXTAUTH_URL=http://$IP" | tee -a /opt/webapp/.env
-
 docker compose -f /opt/webapp/docker/docker-compose.prod.from-registry.yml up -d 
+%{ endif }

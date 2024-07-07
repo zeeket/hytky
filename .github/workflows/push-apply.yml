@@ -61,4 +61,6 @@ jobs:
             TF_VAR_TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
             TF_VAR_GOOGLEVERIFICATION: ${{ secrets.GOOGLEVERIFICATION }}
             TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+            TF_VAR_DOMAIN: ${{ secrets.DOMAIN }}
+            TF_VAR_CERTBOT_EMAIL: ${{ secrets.CERTBOT_EMAIL }}
         run: tofu apply -input=false -auto-approve

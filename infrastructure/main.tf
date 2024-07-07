@@ -30,6 +30,8 @@ data "cloudinit_config" "config" {
     content = templatefile("${path.module}/templates/user-data.sh.tftpl",
       {
         REPO_URL = local.REPO_URL
+        DOMAIN = var.DOMAIN
+        CERTBOT_EMAIL = var.CERTBOT_EMAIL
     })
   }
 
@@ -56,6 +58,13 @@ resource "digitalocean_droplet" "webserver" {
 
 resource "digitalocean_domain" "hytky" {
   name = "hytky.org"
+}
+
+resource "digitalocean_record" "root" {
+  domain = digitalocean_domain.hytky.name
+  type   = "A"
+  name   = "@"
+  value  = digitalocean_droplet.webserver.ipv4_address
 }
 
 resource "digitalocean_record" "www" {

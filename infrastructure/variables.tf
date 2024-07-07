@@ -1,3 +1,16 @@
+variable "DOMAIN" {
+  description = "Domain Name"
+  type        = string
+  default     = ""
+}
+
+variable "CERTBOT_EMAIL" {
+  description = "The email address to use for Let's Encrypt"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
 variable "do_token" {
   description = "Digital Ocean Token"
   type        = string
