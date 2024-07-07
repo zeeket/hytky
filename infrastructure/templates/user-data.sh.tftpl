@@ -15,12 +15,16 @@ apt update
 apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 git clone ${REPO_URL} /opt/webapp
-mv /opt/secrets/.* /opt/webapp/
+
+# Move hidden files from /opt/secrets to /opt/webapp
+shopt -s dotglob
+mv /opt/secrets/* /opt/webapp/
+shopt -u dotglob
 rmdir /opt/secrets
 
 %{ if DOMAIN != "" }
 echo "NEXTAUTH_URL=https://${DOMAIN}" | tee -a /opt/webapp/.env
-sed -i '' 's/sub.yourdomain.org/${DOMAIN}/g' /opt/webapp/docker/nginx-conf/user_conf.d/tls.conf
+sed -i 's/sub.yourdomain.org/'"${DOMAIN}"'/g' /opt/webapp/docker/nginx-conf/user_conf.d/tls.conf
 export CERTBOT_EMAIL=${CERTBOT_EMAIL}
 docker compose -f /opt/webapp/docker/docker-compose.prod.tls-registry.yml up -d 
 %{ else }
