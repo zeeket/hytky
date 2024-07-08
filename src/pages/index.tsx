@@ -80,18 +80,17 @@ const Home: NextPage = () => {
               <div className="text-lg">Näin liityt ja poistut sähköpostilistalta.</div>
             </Link>
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20 justify-center"
               href="/eventArchive"
             >
-              <h3 className="text-2xl font-bold">Tapahtuma-arkisto →</h3>
-              <div className="text-lg">Menneet tapahtumat.</div>
+              <h3 className="text-2xl font-bold">Tulevat tapahtumat →</h3>
             </Link>
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
               href="/about"
             >
               <h3 className="text-2xl font-bold italic">HYTKY? →</h3>
-              <div className="text-lg">Mikä ihmeen HYTKY?</div>
+              <div className="text-lg">Mikä on HYTKY?</div>
             </Link>
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
