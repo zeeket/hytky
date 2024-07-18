@@ -53,4 +53,12 @@ error.log
 prisma/eventArchive.json 
 prisma/forumArchive.json
 prisma/forumBackup.json
+
+# app images
 public/hytkylogo.png
+
+# app test results
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

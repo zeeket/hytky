@@ -67,6 +67,9 @@ dependencies:
     version: 3.22.4
 
 devDependencies:
+  '@playwright/test':
+    specifier: ^1.45.2
+    version: 1.45.2
   '@svgr/webpack':
     specifier: ^7.0.0
     version: 7.0.0(typescript@5.3.3)
@@ -1662,6 +1665,14 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@playwright/test@1.45.2:
+    resolution: {integrity: sha512-JxG9eq92ET75EbVi3s+4sYbcG7q72ECeZNbdBlaMkGcNbiDQ4cAi8U2QP5oKkOx+1gpaiL1LDStmzCaEM1Z6fQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      playwright: 1.45.2
+    dev: true
 
   /@prisma/client@4.16.2(prisma@4.16.2):
     resolution: {integrity: sha512-qCoEyxv1ZrQ4bKy39GnylE8Zq31IRmm8bNhNbZx7bF2cU5aiCCnSa93J2imF88MBjn7J9eUQneNxUQVJdl/rPQ==}
@@ -3426,6 +3437,14 @@ packages:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
     dev: true
 
+  /fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -4429,6 +4448,22 @@ packages:
   /pirates@4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
+    dev: true
+
+  /playwright-core@1.45.2:
+    resolution: {integrity: sha512-ha175tAWb0dTK0X4orvBIqi3jGEt701SMxMhyujxNrgd8K0Uy5wMSwwcQHtyB4om7INUkfndx02XnQ2p6dvLDw==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dev: true
+
+  /playwright@1.45.2:
+    resolution: {integrity: sha512-ReywF2t/0teRvNBpfIgh5e4wnrI/8Su8ssdo5XsQKpjxJj+jspm00jSoz9BTg91TT0c9HRjXO7LBNVrgYj9X0g==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      playwright-core: 1.45.2
+    optionalDependencies:
+      fsevents: 2.3.2
     dev: true
 
   /possible-typed-array-names@1.0.0:

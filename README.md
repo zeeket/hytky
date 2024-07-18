@@ -1,5 +1,7 @@
 # HYTKY
 
+![Playwright tests](https://github.com/zeeket/hytky/actions/workflows/playwright.yml/badge.svg)
+
 Site and forum for a student organization centered around electronic music culture. This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 The forum login is designed to be exclusive to members of certain Telegram groups. A Telegram user's membership status in the groups is checked with [HYTKYbot](https://github.com/zeeket/HYTKYbot).
 
