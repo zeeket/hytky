@@ -79,7 +79,7 @@ resource "digitalocean_record" "mx" {
   type     = "MX"
   name     = "@"
   priority = 1
-  value    = "SMTP.GOOGLE.COM."
+  value    = "smtp.google.com."
 }
 
 resource "digitalocean_record" "googleverification" {
