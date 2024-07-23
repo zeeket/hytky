@@ -1,0 +1,11 @@
+{
+    "title": "Mailing list",
+    "joiningTitle": "Joining",
+    "intro": "Anyone can join the list by sending a message",
+    "toRobot": "to the robot at the address",
+    "emailSubject": "The subject of the message can be anything.",
+    "leavingTitle": "Leaving",
+    "leavingIntro": "You can leave the list by sending a message ",
+    "sameAddress": " from the same address that you joined with. ",
+    "backLink": "← Back"
+}

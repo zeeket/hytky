@@ -1,0 +1,11 @@
+{
+    "title": "Sähköpostilista",
+    "joiningTitle": "Liittyminen",
+    "intro": "Listalle voi liittyä kuka tahansa lähettämällä viestin",
+    "toRobot": "robotille osoitteeseen",
+    "emailSubject": "Viestin otsikolla (subject) ei ole väliä.",
+    "leavingTitle": "Poistuminen",
+    "leavingIntro": "Listalta voi poistua lähettämällä viestin ",
+    "sameAddress": " samasta osoitteesta jolla liityit listalle. ",
+    "backLink": "← Takaisin"
+}

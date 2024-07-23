@@ -1,0 +1,14 @@
+{
+    "FollowUs" : "Seuraa meitä",
+    "AskUsingEmail" : "Kysy sähköpostilla",
+    "MailingListTitle" : "Sähköpostilista →",
+    "MailingListText" : "Näin liityt ja poistut sähköpostilistalta.",
+    "UpcomingEvents" : "Tulevat tapahtumat →",
+    "AboutUsText" : "Mikä on HYTKY?",
+    "RentalTitle" : "Vuokraus →",
+    "RentalText" : "Tietoa laitteiden vuokrauksesta.",
+    "SignIn" : "Kirjaudu sisään (jäsenille)",
+    "SignOut" : "Kirjaudu ulos",
+    "LoggedInAs" : "Kirjautuneena käyttäjänä",
+    "Loading" : "Ladataan..."
+}

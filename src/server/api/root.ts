@@ -1,5 +1,5 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { exampleRouter } from "~/server/api/routers/example";
+import { indexRouter } from "~/server/api/routers/index";
 import { categoryRouter } from "~/server/api/routers/category.router";
 import { threadRouter } from "~/server/api/routers/thread.router";
 import { postRouter } from "~/server/api/routers/post.router";
@@ -10,7 +10,7 @@ import { postRouter } from "~/server/api/routers/post.router";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  example: exampleRouter,
+  index: indexRouter,
   category: categoryRouter,
   thread: threadRouter,
   post: postRouter,

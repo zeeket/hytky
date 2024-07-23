@@ -1,0 +1,15 @@
+{
+    "title": "Rental",
+    "inquire": "Enquire by email.",
+    "equipmentTitle": "Equipment:",
+    "equipment": [
+        "Large soundsystem (4 highs, 4-10 subwoofers, amplifiers)",
+        "Small soundsystem (2 active highs, 2 active subs)",
+        "Monitor speakers (2 small active highs)",
+        "Technics record players, Pioneer DJM-750 DJ-mixer",
+        "Pioneer CDJ-900 players",
+        "Disco lights (LED, PAR)",
+        "Smoke machine, fog machine, etc."
+    ],
+    "backLink": "← Back"
+}

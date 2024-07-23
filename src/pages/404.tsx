@@ -11,7 +11,7 @@ const FourOhFour: NextPage = () => {
             <p className="text-white">Miksi teknobileiden sivu sai 404-errorin?</p>
             <p className="text-white">Koska se oli niin UG, että vain muutama tietää sen osoitteen!</p>
             <Link href="/">
-            <p className="pt-6 text-white">← Takaisin</p>
+            <p className="pt-6 text-white" role="button">← Takaisin</p>
             </Link>
         </main>
         </>

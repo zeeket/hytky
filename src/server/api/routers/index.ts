@@ -6,17 +6,13 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 
-export const exampleRouter = createTRPCRouter({
+export const indexRouter = createTRPCRouter({
   hello: publicProcedure
     .query(() => {
       return {
-        greeting: `Beta versio. Ilmoita bugit ja ideat nettisivu-vastaavalle`,
+        greeting: `DIY techno culture since 1996.`,
       };
     }),
-
-/*   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
-  }), */
 
   getSecretMessage: protectedProcedure.query(({ctx}) => {
     return `(nro ${ctx.session?.user.id}) Sinulla on pääsy foorumille osoitteessa ${env.NEXTAUTH_URL}/forum`;
