@@ -31,6 +31,7 @@ jobs:
         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
         echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
         echo "NEXT_PUBLIC_TG_BOT_NAME=${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}" >> .env
+        echo "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}" >> .env
         echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
         echo "FORUM_ROOT_NAME=${{ secrets.FORUM_ROOT_NAME }}" >> .env
 

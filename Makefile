@@ -7,23 +7,23 @@ SSH_KEY = $(HOME)/.ssh/id_rsa
 
 # Start the local development environment with hot-reloading. Usage: 'make dev'.
 dev:
-	docker-compose -f docker/docker-compose.dev.yml up --force-recreate
+	docker compose -f docker/docker-compose.dev.yml up --force-recreate
 
 # Remove local development images and volumes. Usage: 'make rmi'.
 rmi:
-	docker-compose -f docker/docker-compose.dev.yml down --rmi=local
+	docker compose -f docker/docker-compose.dev.yml down --rmi=local
 
 # Start a production-like environment locally. Usage: 'make prod'.
 prod:
-	docker-compose -f docker/docker-compose.prod.yml up --force-recreate
+	docker compose -f docker/docker-compose.prod.yml up --force-recreate
 
 # Start production environment locally using images from the container registry. Usage: 'make regprod'.
 regprod:
-	docker-compose -f docker/docker-compose.prod.from-registry.yml up 
+	docker compose -f docker/docker-compose.prod.from-registry.yml up 
 
 # Remove local production-like images and volumes. Usage: 'make rmip'.
 rmip:
-	docker-compose -f docker/docker-compose.prod.yml down --rmi=local
+	docker compose -f docker/docker-compose.prod.yml down --rmi=local
 
 # Create a databse migration. Use when making changes to the prisma/schema.prisma file. Usage: 'make migrate'.
 migrate:
