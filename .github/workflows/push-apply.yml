@@ -55,7 +55,7 @@ jobs:
             TF_VAR_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
             TF_VAR_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
             TF_VAR_NEXT_PUBLIC_TG_BOT_NAME: ${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}
-            TF_VAR_NEXT_PUBLIC_TG_INFO_CHANNEL_ID: ${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}
+            TF_VAR_NEXT_PUBLIC_TG_INFO_CHANNEL: ${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}
             TF_VAR_TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
             TF_VAR_FORUM_ROOT_NAME: ${{ secrets.FORUM_ROOT_NAME }}
             TF_VAR_TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
