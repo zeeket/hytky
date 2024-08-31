@@ -1,5 +1,4 @@
 import { type NextPage } from "next";
-import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -12,10 +11,18 @@ import MailIcon from "../../public/mail.svg";
 import Miukumauku from "../../public/miukumauku2.svg";
 
 import { api } from "~/utils/api";
+import { env } from "~/env.mjs";
+
+import LocaleSelect from "~/components/LocaleSelect";
+import fiContent from "~/locales/fi/index.json";
+import enContent from "~/locales/en/index.json";
+import InfoChannelButton from "~/components/InfoChannelButton";
+import Layout from "~/components/Layout";
 
 interface IndexContent {
   FollowUs: string;
   AskUsingEmail: string;
+  JoinInfoChannel: string;
   MailingListTitle: string;
   MailingListText: string;
   UpcomingEvents: string;
@@ -28,10 +35,6 @@ interface IndexContent {
   Loading: string;
 }
 
-import { LocaleSelect } from "~/components/LocaleSelect";
-import fiContent from "~/locales/fi/index.json";
-import enContent from "~/locales/en/index.json";
-
 const fiContentTyped = fiContent as IndexContent;
 const enContentTyped = enContent as IndexContent;
 
@@ -42,18 +45,9 @@ const Home: NextPage = () => {
   const hello = api.index.hello.useQuery();
 
   return (
-    <>
-      <Head>
-        <title>HYTKY</title>
-        <meta
-          name="description"
-          content="Helsingin Yliopiston Teknokulttuurin Ystävät"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
-      <LocaleSelect />
+      <Layout>
         <div className="container flex flex-col items-center justify-center space-y-3">
+          <LocaleSelect style="mt-2"/>
           <HytkyLogo className="scale-90" alt="HYTKY" />
           <div className="justify-center border-2 border-dotted border-orange-600 text-center">
             <h2 className="text-xs tracking-tight text-white">{content.FollowUs}</h2>
@@ -90,6 +84,7 @@ const Home: NextPage = () => {
               hytky.org
             </span>
           </span>
+          <InfoChannelButton text={content.JoinInfoChannel} infochannellink={env.NEXT_PUBLIC_TG_INFO_CHANNEL}/>
           <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 md:gap-10">
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
@@ -132,8 +127,7 @@ const Home: NextPage = () => {
             <AuthShowcase />
           </div>
         </div>
-      </main>
-    </>
+      </Layout>
   );
 };
 
@@ -151,7 +145,7 @@ const AuthShowcase: React.FC = () => {
   const content: IndexContent = locale === "fi" ? fiContentTyped : enContentTyped;
 
   return (
-    <div className="flex flex-col items-center justify-center pt-2">
+    <div className="flex flex-col items-center justify-center pt-2 pb-6">
       <p className="text-center text-2xl text-white">
         {sessionData && (
           <span>{content.LoggedInAs} {sessionData.user?.name}</span>

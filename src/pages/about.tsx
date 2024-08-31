@@ -2,6 +2,11 @@ import { type NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import fiContent from "~/locales/fi/about.json";
+import enContent from "~/locales/en/about.json";
+import LocaleSelect from "~/components/LocaleSelect";
+import Layout from "~/components/Layout";
+
 interface AboutContent {
   title: string;
   description: string;
@@ -12,10 +17,6 @@ interface AboutContent {
   backLink: string;
 }
 
-import fiContent from "~/locales/fi/about.json";
-import enContent from "~/locales/en/about.json";
-import { LocaleSelect } from "~/components/LocaleSelect";
-
 const fiContentTyped = fiContent as AboutContent;
 const enContentTyped = enContent as AboutContent;
 
@@ -24,8 +25,7 @@ const About: NextPage = () => {
   const content: AboutContent =
     locale === "fi" ? fiContentTyped : enContentTyped;
   return (
-    <>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
+    <Layout title={content.title}>
         <LocaleSelect />
         <h1 className="text-5xl font-extrabold italic tracking-tight text-oldschool-orange sm:text-[5rem]">
           {content.title}
@@ -39,19 +39,16 @@ const About: NextPage = () => {
         <h3 className="pt-6 font-extrabold text-oldschool-orange sm:text-[3rem]">
           {content.clubRoomTitle}
         </h3>
-        <p className="text-center text-2xl text-white">
+        <p className="text-center text-2xl text-white mx-2">
           {content.address}
         </p>
-        <p className="text-1xl text-center text-white">
+        <p className="text-1xl text-center text-white mx-2">
           {content.doorbell}
         </p>
-        <Link href="/">
-          <p className="pt-8 text-white" role="button">
+        <Link href="/" className="mt-8 text-center p-3 rounded-lg w-40 h-12 bg-white/10 text-white transition ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-newschool-orange duration-300">
             {content.backLink}
-          </p>
         </Link>
-      </main>
-    </>
+      </Layout>
   );
 };
 

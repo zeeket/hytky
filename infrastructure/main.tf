@@ -1,12 +1,13 @@
 locals {
   dotenv = templatefile("${path.module}/templates/.env.tftpl", {
     config = {
-      DATABASE_URL            = var.DATABASE_URL,
-      POSTGRES_PASSWORD       = var.POSTGRES_PASSWORD,
-      NEXTAUTH_SECRET         = var.NEXTAUTH_SECRET,
-      NEXT_PUBLIC_TG_BOT_NAME = var.NEXT_PUBLIC_TG_BOT_NAME,
-      TG_BOT_TOKEN            = var.TG_BOT_TOKEN,
-      FORUM_ROOT_NAME         = var.FORUM_ROOT_NAME
+      DATABASE_URL                = var.DATABASE_URL,
+      POSTGRES_PASSWORD           = var.POSTGRES_PASSWORD,
+      NEXTAUTH_SECRET             = var.NEXTAUTH_SECRET,
+      NEXT_PUBLIC_TG_BOT_NAME     = var.NEXT_PUBLIC_TG_BOT_NAME,
+      NEXT_PUBLIC_TG_INFO_CHANNEL = var.NEXT_PUBLIC_TG_INFO_CHANNEL,
+      TG_BOT_TOKEN                = var.TG_BOT_TOKEN,
+      FORUM_ROOT_NAME             = var.FORUM_ROOT_NAME
     }
   })
   hytkybot_dotenv = templatefile("${path.module}/templates/.env.tftpl", {
@@ -87,4 +88,18 @@ resource "digitalocean_record" "googleverification" {
   type   = "TXT"
   name   = "@"
   value  = var.GOOGLEVERIFICATION
+}
+
+resource "digitalocean_record" "spf" {
+  domain = digitalocean_domain.hytky.name
+  type   = "TXT"
+  name   = "@"
+  value  = "v=spf1 include:_spf.google.com ~all"
+}
+
+resource "digitalocean_record" "dkim" {
+  domain = digitalocean_domain.hytky.name
+  type   = "TXT"
+  name   = "google._domainkey"
+  value  = "v=DKIM1; k=rsa; p=${var.DKIM}"
 }

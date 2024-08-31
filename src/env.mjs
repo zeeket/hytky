@@ -29,6 +29,7 @@ const server = z.object({
  */
 const client = z.object({
   NEXT_PUBLIC_TG_BOT_NAME: z.string(),
+  NEXT_PUBLIC_TG_INFO_CHANNEL: z.string(),
 });
 
 /**
@@ -38,6 +39,7 @@ const client = z.object({
  * @type {Record<keyof z.infer<typeof server> | keyof z.infer<typeof client>, string | undefined>}
  */
 const processEnv = {
+  NEXT_PUBLIC_TG_INFO_CHANNEL: process.env.NEXT_PUBLIC_TG_INFO_CHANNEL,
   NEXT_PUBLIC_TG_BOT_NAME: process.env.NEXT_PUBLIC_TG_BOT_NAME,
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,

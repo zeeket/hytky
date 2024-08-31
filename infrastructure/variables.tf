@@ -55,6 +55,11 @@ variable "NEXT_PUBLIC_TG_BOT_NAME" {
   type        = string
 }
 
+variable "NEXT_PUBLIC_TG_INFO_CHANNEL" {
+  description = "Telegram Info Channel link"
+  type        = string
+}
+
 variable "TG_BOT_TOKEN" {
   description = "Telegram Bot Token"
   type        = string
@@ -80,6 +85,12 @@ variable "TG_ADMIN_GROUP_IDS" {
 
 variable "GOOGLEVERIFICATION" {
   description = "TXT record for Google Workspace verification"
+  type        = string
+  sensitive   = true
+}
+
+variable "DKIM" {
+  description = "TXT record for the DKIM p= part"
   type        = string
   sensitive   = true
 }

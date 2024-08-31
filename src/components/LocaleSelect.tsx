@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { LanguageIcon } from "@heroicons/react/24/solid";
 
-export const LocaleSelect = () => {
+export const LocaleSelect = ({ style = ""}) => {
   const pathname = usePathname();
   const router = useRouter();
   return (
-    <div className="flex flex-row-reverse w-full px-3 pb-5">
+    <div className={"flex flex-row-reverse w-full px-3 pb-3".concat(style.length?` ${style}`:"")}>
       <div className="border-2 border-dotted border-orange-600">
         <div className="flex flex-row gap-2 pr-1 text-white">
           <LanguageIcon className="pl-50 size-6 text-white" />
@@ -29,3 +29,5 @@ export const LocaleSelect = () => {
     </div>
   );
 };
+
+export default LocaleSelect;

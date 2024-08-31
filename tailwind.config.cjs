@@ -5,6 +5,8 @@ module.exports = {
     extend: {
       colors: {
         "oldschool-orange": "#FFA500",
+        "newschool-orange": "#F98404",
+        "telegram-blue": "#54A9EB",
       },
     },
   },

@@ -1,8 +1,14 @@
 import { type NextPage } from "next";
-import Miukumauku from "../../public/miukumauku2.svg";
-import MailIcon from "../../public/mail.svg";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+import Miukumauku from "../../public/miukumauku2.svg";
+
+import Layout from "~/components/Layout";
+import LocaleSelect from "~/components/LocaleSelect";
+
+import fiContent from "~/locales/fi/rental.json";
+import enContent from "~/locales/en/rental.json";
 
 interface RentalContent {
   title: string;
@@ -12,11 +18,6 @@ interface RentalContent {
   backLink: string;
 }
 
-import { LocaleSelect } from "~/components/LocaleSelect";
-
-import fiContent from "~/locales/fi/rental.json";
-import enContent from "~/locales/en/rental.json";
-
 const fiContentTyped = fiContent as RentalContent;
 const enContentTyped = enContent as RentalContent;
 
@@ -25,16 +26,13 @@ const RentalInfo: NextPage = () => {
   const content: RentalContent =
     locale === "fi" ? fiContentTyped : enContentTyped;
   return (
-    <>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
+    <Layout title={"HYTKY ".concat(content.title)}>
         <LocaleSelect />
         <h1 className="text-5xl font-extrabold tracking-tight text-oldschool-orange sm:text-[5rem]">
           {content.title}
         </h1>
         <p className="p-4 text-2xl text-white">{content.inquire}</p>
         <span className="inline-block text-white">
-          {" "}
-          <MailIcon width={20} height={20} className="inline-block" />
           <span className="pl-2 tracking-tight text-white">
             hytky
             <Miukumauku width={15} height={15} className="inline-block" />
@@ -47,13 +45,10 @@ const RentalInfo: NextPage = () => {
             <li key={index}>{item}</li>
           ))}
         </ul>
-        <Link href="/">
-          <p className="pt-8 text-white" role="button">
+        <Link href="/" className="mt-8 text-center p-3 rounded-lg w-40 h-12 bg-white/10 text-white transition ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-newschool-orange duration-300">
             {content.backLink}
-          </p>
         </Link>
-      </main>
-    </>
+      </Layout>
   );
 };
 

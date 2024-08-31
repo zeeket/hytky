@@ -2,7 +2,11 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { LocaleSelect } from "~/components/LocaleSelect";
+import LocaleSelect from "~/components/LocaleSelect";
+import Layout from "~/components/Layout";
+
+import fiContent from "~/locales/fi/mailingList.json";
+import enContent from "~/locales/en/mailingList.json";
 interface MailingListContent {
   title: string;
   joiningTitle: string;
@@ -15,9 +19,6 @@ interface MailingListContent {
   backLink: string;
 }
 
-import fiContent from "~/locales/fi/mailingList.json";
-import enContent from "~/locales/en/mailingList.json";
-
 const fiContentTyped = fiContent as MailingListContent;
 const enContentTyped = enContent as MailingListContent;
 
@@ -26,8 +27,7 @@ const MailingListPage: NextPage = () => {
   const content: MailingListContent =
     locale === "fi" ? fiContentTyped : enContentTyped;
   return (
-    <>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
+    <Layout title={"HYTKY ".concat(content.title)}>
         <LocaleSelect />
         <h1 className="text-5xl font-extrabold text-oldschool-orange pb-2">
           {content.title}
@@ -46,11 +46,10 @@ const MailingListPage: NextPage = () => {
             {content.toRobot} <span className="font-mono px-2">majordomo@helsinki.fi</span> {content.sameAddress}<br></br>
             {content.emailSubject}
         </p>
-        <Link href="/">
-          <p className="pt-8 text-white" role="button">{content.backLink}</p>
+        <Link href="/" className="mt-8 text-center p-3 rounded-lg w-40 h-12 bg-white/10 text-white transition ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-newschool-orange duration-300">
+          {content.backLink}
         </Link>
-      </main>
-    </>
+      </Layout>
   );
 };
 

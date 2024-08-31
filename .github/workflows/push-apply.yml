@@ -8,11 +8,11 @@ on:
 
 jobs:
   fmt:
+    name: Format Check
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: 'infrastructure'
-
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -55,12 +55,14 @@ jobs:
             TF_VAR_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
             TF_VAR_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
             TF_VAR_NEXT_PUBLIC_TG_BOT_NAME: ${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}
+            TF_VAR_NEXT_PUBLIC_TG_INFO_CHANNEL_ID: ${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}
             TF_VAR_TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
             TF_VAR_FORUM_ROOT_NAME: ${{ secrets.FORUM_ROOT_NAME }}
             TF_VAR_TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
             TF_VAR_TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
             TF_VAR_GOOGLEVERIFICATION: ${{ secrets.GOOGLEVERIFICATION }}
-            TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+            TF_VAR_DKIM: ${{ secrets.DKIM }}
             TF_VAR_DOMAIN: ${{ secrets.DOMAIN }}
             TF_VAR_CERTBOT_EMAIL: ${{ secrets.CERTBOT_EMAIL }}
+            TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: tofu apply -input=false -auto-approve
