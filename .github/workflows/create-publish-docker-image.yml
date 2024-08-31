@@ -52,3 +52,4 @@ jobs:
           file: docker/Dockerfile.prod
           secrets: | # pass insensitive buildtime variables to docker
             "NEXT_PUBLIC_TG_BOT_NAME=${{ vars.NEXT_PUBLIC_TG_BOT_NAME }}"
+            "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ vars.NEXT_PUBLIC_TG_INFO_CHANNEL }}"
