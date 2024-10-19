@@ -11,6 +11,7 @@ interface EventsContent {
   title: string;
   openingCarnival: string;
   newcomersNight: string;
+  checkBackSoon: string;
   backLink: string;
 }
 
@@ -27,8 +28,7 @@ const EventsPage: NextPage = () => {
           {content.title}
         </h1>
         <ul className="pt-8 text-white text-sm w-5/6 text-center leading-relaxed">
-          <li>02.09.2024 - HYY {content.openingCarnival}</li>
-          <li>11.10.2024 - {content.newcomersNight}</li>
+          <li>{content.checkBackSoon}</li>
         </ul>
         <Link href="/" className="mt-8 text-center p-3 rounded-lg w-40 h-12 bg-white/10 text-white transition ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-newschool-orange duration-300">
           {content.backLink}

@@ -44,6 +44,12 @@ variable "POSTGRES_PASSWORD" {
   sensitive   = true
 }
 
+variable "ROOT_PASSWORD" {
+  description = "Server root user's Password"
+  type        = string
+  sensitive   = true
+}
+
 variable "NEXTAUTH_SECRET" {
   description = "NextAuth Secret"
   type        = string

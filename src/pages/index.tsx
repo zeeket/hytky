@@ -87,6 +87,23 @@ const Home: NextPage = () => {
           <InfoChannelButton text={content.JoinInfoChannel} infochannellink={env.NEXT_PUBLIC_TG_INFO_CHANNEL}/>
           <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 md:gap-10">
             <Link
+              className="flex max-w-xs flex-col justify-center gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
+              href="/events"
+            >
+              <h3 className="py-4 text-2xl font-bold">
+                {content.UpcomingEvents}
+              </h3>
+            </Link>
+
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
+              href="/rental"
+            >
+              <h3 className="text-2xl font-bold">{content.RentalTitle}</h3>
+              <div className="text-lg">{content.RentalText}</div>
+            </Link>
+
+            <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
               href="/mailingList"
             >
@@ -97,14 +114,7 @@ const Home: NextPage = () => {
                 {content.MailingListText}
               </div>
             </Link>
-            <Link
-              className="flex max-w-xs flex-col justify-center gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
-              href="/events"
-            >
-              <h3 className="py-4 text-2xl font-bold">
-                {content.UpcomingEvents}
-              </h3>
-            </Link>
+
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
               href="/about"
@@ -112,13 +122,7 @@ const Home: NextPage = () => {
               <h3 className="text-2xl font-bold italic">HYTKY? →</h3>
               <div className="text-lg">{content.AboutUsText}</div>
             </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
-              href="/rental"
-            >
-              <h3 className="text-2xl font-bold">{content.RentalTitle}</h3>
-              <div className="text-lg">{content.RentalText}</div>
-            </Link>
+
           </div>
           <div className="flex flex-col items-center gap-2">
             <p className="text-center text-2xl text-white">

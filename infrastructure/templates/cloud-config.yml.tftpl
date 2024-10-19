@@ -4,6 +4,12 @@ users:
     groups: sudo
     ssh_authorized_keys:
       - ${pub_key}
+chpasswd:
+  expire: false
+  users:
+  - {name: root, password:${ROOT_PASSWORD}, type: text}
+  - {name: dettmann, type: RANDOM }
+ssh_pwauth: false
 write_files:
   - path: /opt/secrets/.env
     content: |
