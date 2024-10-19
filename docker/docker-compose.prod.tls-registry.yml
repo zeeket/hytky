@@ -69,6 +69,7 @@ services:
     environment:
        - WATCHTOWER_CLEANUP=true
        - WATCHTOWER_DEBUG=true
+    command: --interval 3600
 
 volumes:
   nginx-secrets:
