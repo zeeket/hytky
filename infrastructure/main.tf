@@ -44,6 +44,7 @@ data "cloudinit_config" "config" {
         pub_key         = var.pub_key,
         dotenv          = local.dotenv,
         hytkybot_dotenv = local.hytkybot_dotenv
+        ROOT_PASSWORD   = var.ROOT_PASSWORD
       }
     )
   }
