@@ -1,11 +1,11 @@
 services:
   dev:
-    platform: "linux/amd64"
+    platform: 'linux/amd64'
     build:
       context: ../
       dockerfile: docker/Dockerfile.dev
     ports:
-      - "80:80"
+      - '80:80'
     env_file:
       - ../.env
     volumes:
@@ -16,21 +16,21 @@ services:
         condition: service_healthy
     restart: always
   postgres:
-    image: "postgres:alpine"
+    image: 'postgres:alpine'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
     env_file:
       - ../.env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -d postgres -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
     restart: always
   hytkybot:
-    platform: "linux/amd64"
-    image: "ghcr.io/zeeket/hytkybot/hytkybot:latest"
+    platform: 'linux/amd64'
+    image: 'ghcr.io/zeeket/hytkybot/hytkybot:latest'
     env_file:
       - ../.hytkybot.env
     restart: always

@@ -1,15 +1,15 @@
 {
-    "title": "Vuokraus",
-    "inquire": "Tiedustele sähköpostilla.",
-    "equipmentTitle": "Laitteistoa:",
-    "equipment": [
-        "Iso äänentoisto (4 yläpäätä, 4-10 subwooferia, vahvistimet)",
-        "Pieni äänentoisto (2 aktiiviyläpäätä, 2 aktiivisubwooferia)",
-        "Monitorikaiuttimet (2 pientä aktiiviyläpäätä)",
-        "Technics-levysoittimet, Pioneer DJM-750 DJ-mikseri",
-        "Pioneer CDJ-900 soittimet",
-        "Diskovaloja (LED, PAR)",
-        "Savukone, usvakone ym."
-    ],
-    "backLink": "← Takaisin"
+  "title": "Vuokraus",
+  "inquire": "Tiedustele sähköpostilla.",
+  "equipmentTitle": "Laitteistoa:",
+  "equipment": [
+    "Iso äänentoisto (4 yläpäätä, 4-10 subwooferia, vahvistimet)",
+    "Pieni äänentoisto (2 aktiiviyläpäätä, 2 aktiivisubwooferia)",
+    "Monitorikaiuttimet (2 pientä aktiiviyläpäätä)",
+    "Technics-levysoittimet, Pioneer DJM-750 DJ-mikseri",
+    "Pioneer CDJ-900 soittimet",
+    "Diskovaloja (LED, PAR)",
+    "Savukone, usvakone ym."
+  ],
+  "backLink": "← Takaisin"
 }

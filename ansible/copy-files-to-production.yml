@@ -3,8 +3,8 @@
   hosts: all
   become: yes
   vars:
-    domain: "{{ domain }}"
-    certbot_email: "{{ certbot_email }}"
+    domain: '{{ domain }}'
+    certbot_email: '{{ certbot_email }}'
   tasks:
     - name: Create directory /home/root/hytky
       file:
@@ -29,22 +29,22 @@
 
     - name: Synchronize docker directory (excluding hytky-postgres-data)
       synchronize:
-       src: ../docker/
-       dest: /home/root/hytky/docker/
-       rsync_opts:
-       - "--exclude=hytky-postgres-data/"
+        src: ../docker/
+        dest: /home/root/hytky/docker/
+        rsync_opts:
+          - '--exclude=hytky-postgres-data/'
 
     - name: Copy .env file
       copy:
         src: ../.env
         dest: /home/root/hytky/.env
-      
+
     - name: Update NEXTAUTH_URL in .env file
       lineinfile:
         path: /home/root/hytky/.env # Path to the file
-        regexp: '^NEXTAUTH_URL='  # Match the line starting with NEXTAUTH_URL
-        line: 'NEXTAUTH_URL=http://{{ ansible_host }}'  # Update the line with the IP
-    
+        regexp: '^NEXTAUTH_URL=' # Match the line starting with NEXTAUTH_URL
+        line: 'NEXTAUTH_URL=http://{{ ansible_host }}' # Update the line with the IP
+
     - name: Copy .hytkybot.env file
       copy:
         src: ../.hytkybot.env

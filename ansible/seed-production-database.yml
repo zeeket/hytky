@@ -6,5 +6,5 @@
     - name: Use dbsync container to run the seed command
       command: docker run --network hytky-prod_default --platform linux/amd64 --env-file ./.env -it --entrypoint "pnpx" hytky-prod-dbsync prisma db seed
       register: out
-      
+
     - debug: var=out.stdout_lines

@@ -1,6 +1,6 @@
 name: push-apply
 
-on: 
+on:
   push:
     branches:
       - main
@@ -14,14 +14,14 @@ jobs:
       run:
         working-directory: 'infrastructure'
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup Tofu
-      uses: opentofu/setup-opentofu@v1
-      with:
-        tofu_version: '1.7.0'
-    - name: Run Tofu
-      run: tofu fmt -check
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Tofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: '1.7.0'
+      - name: Run Tofu
+        run: tofu fmt -check
 
   apply:
     name: Apply Change
@@ -40,30 +40,30 @@ jobs:
       - name: Init
         run: tofu init
         env:
-            TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
       - name: Validate
         run: tofu validate
 
       - name: Apply
         env:
-            TF_VAR_GITHUB_SERVER_URL: ${{ github.server_url }}
-            TF_VAR_GITHUB_REPOSITORY: ${{ github.repository }}
-            TF_VAR_do_token: ${{ secrets.DO_PAT }}
-            TF_VAR_pub_key: ${{ secrets.PUB_KEY }}
-            TF_VAR_DATABASE_URL: ${{ secrets.DATABASE_URL }}
-            TF_VAR_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-            TF_VAR_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-            TF_VAR_NEXT_PUBLIC_TG_BOT_NAME: ${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}
-            TF_VAR_NEXT_PUBLIC_TG_INFO_CHANNEL: ${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}
-            TF_VAR_TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
-            TF_VAR_FORUM_ROOT_NAME: ${{ secrets.FORUM_ROOT_NAME }}
-            TF_VAR_TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
-            TF_VAR_TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
-            TF_VAR_GOOGLEVERIFICATION: ${{ secrets.GOOGLEVERIFICATION }}
-            TF_VAR_DKIM: ${{ secrets.DKIM }}
-            TF_VAR_DOMAIN: ${{ secrets.DOMAIN }}
-            TF_VAR_CERTBOT_EMAIL: ${{ secrets.CERTBOT_EMAIL }}
-            TF_VAR_ROOT_PASSWORD: ${{ secrets.ROOT_PASSWORD }}
-            TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+          TF_VAR_GITHUB_SERVER_URL: ${{ github.server_url }}
+          TF_VAR_GITHUB_REPOSITORY: ${{ github.repository }}
+          TF_VAR_do_token: ${{ secrets.DO_PAT }}
+          TF_VAR_pub_key: ${{ secrets.PUB_KEY }}
+          TF_VAR_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TF_VAR_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          TF_VAR_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          TF_VAR_NEXT_PUBLIC_TG_BOT_NAME: ${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}
+          TF_VAR_NEXT_PUBLIC_TG_INFO_CHANNEL: ${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}
+          TF_VAR_TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TF_VAR_FORUM_ROOT_NAME: ${{ secrets.FORUM_ROOT_NAME }}
+          TF_VAR_TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
+          TF_VAR_TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
+          TF_VAR_GOOGLEVERIFICATION: ${{ secrets.GOOGLEVERIFICATION }}
+          TF_VAR_DKIM: ${{ secrets.DKIM }}
+          TF_VAR_DOMAIN: ${{ secrets.DOMAIN }}
+          TF_VAR_CERTBOT_EMAIL: ${{ secrets.CERTBOT_EMAIL }}
+          TF_VAR_ROOT_PASSWORD: ${{ secrets.ROOT_PASSWORD }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: tofu apply -input=false -auto-approve

@@ -1,21 +1,17 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 
 export const threadRouter = createTRPCRouter({
-
   getThreadById: protectedProcedure
     .input(z.object({ threadId: z.number() }))
     .query(({ input, ctx }) => {
       return ctx.prisma.thread.findFirstOrThrow({
-          where: {
-            id: input.threadId,
-          },
-        });
-      }),
+        where: {
+          id: input.threadId,
+        },
+      });
+    }),
 
   getAllThreads: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.category.findMany({});
@@ -28,26 +24,34 @@ export const threadRouter = createTRPCRouter({
         where: {
           categoryId: input.categoryId,
         },
-      })
+      });
     }),
 
   createThread: protectedProcedure
-    .input(z.object({ name: z.string(), categoryId: z.number(), firstPostContent: z.string() }))
+    .input(
+      z.object({
+        name: z.string(),
+        categoryId: z.number(),
+        firstPostContent: z.string(),
+      })
+    )
     .mutation(({ input, ctx }) => {
-    return ctx.prisma.thread.create({
-      data: {
-        name: input.name,
-        authorId: ctx.session.user.id.toString(),
-        categoryId: input.categoryId,
-      },
-    }).then((thread: { id: number; }) => {
-      return ctx.prisma.post.create({
-        data: {
-          content: input.firstPostContent,
+      return ctx.prisma.thread
+        .create({
+          data: {
+            name: input.name,
             authorId: ctx.session.user.id.toString(),
-            threadId: thread.id,
+            categoryId: input.categoryId,
+          },
+        })
+        .then((thread: { id: number }) => {
+          return ctx.prisma.post.create({
+            data: {
+              content: input.firstPostContent,
+              authorId: ctx.session.user.id.toString(),
+              threadId: thread.id,
             },
-            });
           });
-  }),
+        });
+    }),
 });

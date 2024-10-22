@@ -4,14 +4,14 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - '80:80'
     volumes:
       - ./nginx-conf:/etc/nginx/conf.d
     depends_on:
       - hytky
 
   hytky:
-    platform: "linux/amd64"
+    platform: 'linux/amd64'
     container_name: hytky
     build:
       context: ../
@@ -27,7 +27,7 @@ services:
     restart: always
 
   postgres:
-    image: "postgres:alpine"
+    image: 'postgres:alpine'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
@@ -36,14 +36,14 @@ services:
     volumes:
       - ./hytky-postgres-data:/var/lib/postgresql/data:rw
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -d postgres -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
     restart: always
 
   dbsync:
-    platform: "linux/amd64"
+    platform: 'linux/amd64'
     build:
       context: ../
       dockerfile: docker/Dockerfile.dbsync
@@ -54,8 +54,8 @@ services:
     restart: no
 
   hytkybot:
-    platform: "linux/amd64"
-    image: "ghcr.io/zeeket/hytkybot/hytkybot:latest"
+    platform: 'linux/amd64'
+    image: 'ghcr.io/zeeket/hytkybot/hytkybot:latest'
     env_file:
       - ../.hytkybot.env
     restart: always

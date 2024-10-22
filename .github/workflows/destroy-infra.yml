@@ -19,7 +19,7 @@ jobs:
       - name: Init
         run: tofu init
         env:
-            TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
       - name: Destroy
         run: tofu destroy -input=false -auto-approve

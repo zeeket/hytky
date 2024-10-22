@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
 
-test("navigate to rental page and back", async ({ page }) => {
-  await page.goto("/");
+test('navigate to rental page and back', async ({ page }) => {
+  await page.goto('/');
 
   // Click the rental.
   await page.click('text="Vuokraus →"');

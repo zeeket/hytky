@@ -20,12 +20,12 @@
 
     - name: Add Docker GPG apt Key
       apt_key:
-        url: "{{ docker_apt_gpg_key }}"
+        url: '{{ docker_apt_gpg_key }}'
         state: present
 
     - name: Add Docker Repository
       apt_repository:
-        repo: "{{ docker_apt_repository }}"
+        repo: '{{ docker_apt_repository }}'
         state: present
         update_cache: true
 
@@ -56,8 +56,8 @@
 
     - name: Install or upgrade docker-compose
       get_url:
-        url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
-        checksum: "sha256:https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-linux-x86_64.sha256"
+        url: 'https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64'
+        checksum: 'sha256:https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-linux-x86_64.sha256'
         dest: /usr/local/bin/docker-compose
         mode: 'a+x'
         force: yes

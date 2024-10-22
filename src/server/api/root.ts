@@ -1,8 +1,8 @@
-import { createTRPCRouter } from "~/server/api/trpc";
-import { indexRouter } from "~/server/api/routers/index";
-import { categoryRouter } from "~/server/api/routers/category.router";
-import { threadRouter } from "~/server/api/routers/thread.router";
-import { postRouter } from "~/server/api/routers/post.router";
+import { createTRPCRouter } from '~/server/api/trpc';
+import { indexRouter } from '~/server/api/routers/index';
+import { categoryRouter } from '~/server/api/routers/category.router';
+import { threadRouter } from '~/server/api/routers/thread.router';
+import { postRouter } from '~/server/api/routers/post.router';
 
 /**
  * This is the primary router for your server.

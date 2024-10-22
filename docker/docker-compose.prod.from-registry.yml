@@ -4,14 +4,14 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - '80:80'
     volumes:
       - ./nginx-conf:/etc/nginx/conf.d
     depends_on:
       - hytky
 
   hytky:
-    image: "ghcr.io/zeeket/hytky/hytky:latest"
+    image: 'ghcr.io/zeeket/hytky/hytky:latest'
     container_name: hytky
     env_file:
       - ../.env
@@ -24,7 +24,7 @@ services:
     restart: always
 
   postgres:
-    image: "postgres:alpine"
+    image: 'postgres:alpine'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
@@ -33,14 +33,14 @@ services:
     volumes:
       - ./hytky-postgres-data:/var/lib/postgresql/data:rw
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -d postgres -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
     restart: always
 
   dbsync:
-    platform: "linux/amd64"
+    platform: 'linux/amd64'
     build:
       context: ../
       dockerfile: docker/Dockerfile.dbsync
@@ -51,8 +51,8 @@ services:
     restart: no
 
   hytkybot:
-    platform: "linux/amd64"
-    image: "ghcr.io/zeeket/hytkybot/hytkybot:latest"
+    platform: 'linux/amd64'
+    image: 'ghcr.io/zeeket/hytkybot/hytkybot:latest'
     env_file:
       - ../.hytkybot.env
     restart: always
@@ -61,8 +61,8 @@ services:
     image: containrrr/watchtower
     container_name: watchtower
     volumes:
-       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-       - WATCHTOWER_CLEANUP=true
-       - WATCHTOWER_DEBUG=true
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_DEBUG=true
     command: --interval 3600
