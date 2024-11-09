@@ -21,7 +21,7 @@
     "@trpc/react-query": "^10.45.1",
     "@trpc/server": "^10.45.1",
     "csstype": "^3.1.3",
-    "next": "13.4.1-canary.2",
+    "next": "14.2.10",
     "next-auth": "^4.24.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -29,7 +29,7 @@
     "sharp": "^0.32.6",
     "superjson": "1.12.3",
     "winston": "^3.11.0",
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@estruyf/github-actions-reporter": "^1.8.0",
@@ -46,7 +46,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "13.3.1",
     "eslint-config-prettier": "^9.1.0",
-    "postcss": "^8.4.35",
+    "postcss": "^8.4.47",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "prisma": "^4.16.2",
