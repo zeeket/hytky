@@ -13,6 +13,46 @@ dev:
 rmi:
 	docker compose -f docker/docker-compose.dev.yml down --rmi=local
 
+# Run the linter check. Usage: 'make lint'.
+lint:
+	if command -v pnpm &> /dev/null; then \
+		pnpx next lint; \
+	else \
+		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx next lint; \
+	fi
+
+# Run the linter and fix errors. Usage: 'make lintfix'.
+lintfix:
+	if command -v pnpm &> /dev/null; then \
+		pnpx next lint --fix; \
+	else \
+		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx next lint --fix; \
+	fi
+
+# Run the code style check. Usage: 'make prettier'.
+prettier:
+	if command -v pnpm &> /dev/null; then \
+		pnpx prettier . --check; \
+	else \
+		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx prettier . --check; \
+	fi
+
+# Run the code style check and fix errors. Usage: 'make prettierfix'.
+prettierfix:
+	if command -v pnpm &> /dev/null; then \
+		pnpx prettier . --write; \
+	else \
+		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx prettier . --write; \
+	fi
+
+# Run the tests. Usage: 'make test'.
+test:
+	pnpm exec playwright test
+
 # Start a production-like environment locally. Usage: 'make prod'.
 prod:
 	docker compose -f docker/docker-compose.prod.yml up --force-recreate
@@ -44,7 +84,7 @@ baseline:
 # Seed the (production) database. This should only be required after 'make prod'. Usage: 'make seed'.
 seed:
 	docker build -f docker/Dockerfile.dbsync --platform linux/amd64 -t hytky-dbsync .
-	docker run --network hytky-prod_default --platform linux/amd64 --env-file ./.env -it --entrypoint "pnpx" hytky-dbsync prisma db seed
+	docker run --network docker_default --platform linux/amd64 --env-file ./.env -it --entrypoint "pnpx" hytky-dbsync prisma db seed
 
 # Test connection to the server at the address given. Usage: 'make testconnect IP=123.123.123.123'.
 testconnect:

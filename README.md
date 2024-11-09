@@ -1,8 +1,6 @@
 # HYTKY
 
-[![Tests](https://github.com/zeeket/hytky/actions/workflows/playwright.yml/badge.svg)](https://github.com/zeeket/hytky/actions/workflows/playwright.yml)
-
-[![Prettier](https://github.com/zeeket/hytky/actions/workflows/prettier-check.yml/badge.svg)](https://github.com/zeeket/hytky/actions/workflows/prettier-check.yml)
+[![Tests](https://github.com/zeeket/hytky/actions/workflows/playwright.yml/badge.svg)](https://github.com/zeeket/hytky/actions/workflows/playwright.yml) [![Prettier](https://github.com/zeeket/hytky/actions/workflows/prettier-check.yml/badge.svg)](https://github.com/zeeket/hytky/actions/workflows/prettier-check.yml) [![ESLint](https://github.com/zeeket/hytky/actions/workflows/next-lint-check.yml/badge.svg)](https://github.com/zeeket/hytky/actions/workflows/next-lint-check.yml)
 
 Site and forum for a student organization centered around electronic music culture. This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 The forum login is designed to be exclusive to members of certain Telegram groups. A Telegram user's membership status in the groups is checked with [HYTKYbot](https://github.com/zeeket/HYTKYbot).
@@ -62,9 +60,9 @@ Latest image should get picked up by [Watchtower](https://containrrr.dev/watchto
 ## TODO
 
 - Allow image submissions to posts and store them in minio (S3).
-- use Watchtower to deploy production Docker image.
-- English language option for all pages.
+- English language option for forum UI.
 - Seed db from JSON if `prisma/eventArchive.json` or `prisma/forumArchive.json` exist.
 - Remotely back up a deployment's database to `prisma/forumBackup.json` with a command.
 - Use src/server/utis/validators
 - Use toasts
+- gcal microservice that updates events page

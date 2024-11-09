@@ -13,6 +13,10 @@ interface EventsContent {
   newcomersNight: string;
   checkBackSoon: string;
   backLink: string;
+  beforeConeheadLink: string;
+  conehead: string;
+  afterConeheadLink: string;
+  clubroom: string;
 }
 
 const fiContentTyped = fiContent as EventsContent;
@@ -29,7 +33,16 @@ const EventsPage: NextPage = () => {
         {content.title}
       </h1>
       <ul className="w-5/6 pt-8 text-center text-sm leading-relaxed text-white">
-        <li>{content.checkBackSoon}</li>
+        <li>
+          {content.beforeConeheadLink}
+          <Link href="https://freepartypeople.wordpress.com/">
+            <span className="text-oldschool-orange hover:underline">{content.conehead}</span>
+          </Link>
+          {content.afterConeheadLink}
+          <Link href="/about">
+            <span className="text-oldschool-orange hover:underline">{content.clubroom}</span>
+          </Link>
+        </li>
       </ul>
       <Link
         href="/"
