@@ -24,6 +24,7 @@ const SignInPage: NextPage = () => {
           signIn(
             'telegram-login',
             { callbackUrl: '/forum' },
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
             data as any
           ).catch((e) => {
             console.log('Virhe sisäänkirjautumisessa: ', e);

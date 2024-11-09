@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 interface createThreadModalProps {
   showCreateThreadModal: boolean;
-  setShowCreateThreadModal: (valueToSet: boolean) => void;
+  setShowCreateThreadModal: (showCreateThreadModal: boolean) => void;
   parentCategory: number;
 }
 

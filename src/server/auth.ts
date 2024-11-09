@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
       id: 'telegram-login',
       name: 'Telegram Login',
       credentials: {},
-      async authorize(credentials, req) {
+      async authorize(_, req) {
         const validator = new AuthDataValidator({
           botToken: `${env.TG_BOT_TOKEN}`,
         });
