@@ -22,10 +22,10 @@ jobs:
 
       - name: Run ESLint
         env:
-          DATABASE_URL: dummy_value
+          DATABASE_URL: postgres://postgres:examplechangeme@postgres:5432/postgres
           NEXTAUTH_SECRET: dummy_value
           TG_BOT_TOKEN: dummy_value
           FORUM_ROOT_NAME: dummy_value
           NEXT_PUBLIC_TG_BOT_NAME: dummy_value
-          NEXT_PUBLIC_TG_INFO_CHANNEL: dummy_value
+          NEXT_PUBLIC_TG_INFO_CHANNEL: https://google.com
         run: pnpx next lint
