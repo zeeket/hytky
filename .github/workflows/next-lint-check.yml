@@ -24,6 +24,7 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:examplechangeme@postgres:5432/postgres
           NEXTAUTH_SECRET: dummy_value
+          NEXTAUTH_URL: http://localhost:80
           TG_BOT_TOKEN: dummy_value
           FORUM_ROOT_NAME: dummy_value
           NEXT_PUBLIC_TG_BOT_NAME: dummy_value
