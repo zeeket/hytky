@@ -36,11 +36,15 @@ const EventsPage: NextPage = () => {
         <li>
           {content.beforeConeheadLink}
           <Link href="https://freepartypeople.wordpress.com/">
-            <span className="text-oldschool-orange hover:underline">{content.conehead}</span>
+            <span className="text-oldschool-orange hover:underline">
+              {content.conehead}
+            </span>
           </Link>
           {content.afterConeheadLink}
           <Link href="/about">
-            <span className="text-oldschool-orange hover:underline">{content.clubroom}</span>
+            <span className="text-oldschool-orange hover:underline">
+              {content.clubroom}
+            </span>
           </Link>
         </li>
       </ul>
