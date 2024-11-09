@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm install -g pnpm && pnpm install
 
-      - name: Run Prettier
+      - name: Run ESLint
         env:
           DATABASE_URL: dummy_value
           NEXTAUTH_SECRET: dummy_value
