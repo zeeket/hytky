@@ -1,0 +1,30 @@
+##### TEST DOCKER IMAGE
+##### DEPENDENCIES
+FROM mcr.microsoft.com/playwright:v1.46.0-noble
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+  libc6 
+WORKDIR /app
+RUN yarn global add pnpm
+
+##### ENV_VARS
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+ENV NODE_ENV=development
+ENV NEXTAUTH_URL=${NEXTAUTH_URL:-http://dev}
+ENV PORT=80
+ENV NEXT_TELEMETRY_DISABLED=1
+
+##### FILES
+COPY ../prisma ./
+COPY ../package.json ./
+COPY ../pnpm-lock.yaml ./
+COPY ../tests /app/tests
+COPY ../src/env.mjs /app/src/env.mjs
+COPY ../playwright.config.ts /app/playwright.config.ts
+RUN pnpm install
+RUN pnpm exec playwright install
+
+EXPOSE 9323
+
+CMD /bin/sh -c "pnpm exec playwright test --debug"

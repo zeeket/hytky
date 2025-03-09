@@ -28,7 +28,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "src/env.mjs"
+    "src/env.mjs",
+    "tests/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

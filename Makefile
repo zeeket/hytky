@@ -51,7 +51,7 @@ prettierfix:
 
 # Run the tests. Usage: 'make test'.
 test:
-	pnpm exec playwright test
+	docker compose -f docker/docker-compose.dev.test.yml up --force-recreate --exit-code-from playwright
 
 # Start a production-like environment locally. Usage: 'make prod'.
 prod:

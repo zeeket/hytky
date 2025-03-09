@@ -27,7 +27,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://127.0.0.1:80',
+    baseURL: 'http://dev:80',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -71,11 +71,5 @@ export default defineConfig({
     // },
   ],
   timeout: 60 * 10000, // 60 seconds for each test
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'make dev',
-    url: 'http://127.0.0.1:80',
-    timeout: 2 * 60000, // 2 minutes
-    reuseExistingServer: !process.env.CI,
-  },
+  // You must run docker compose up before running the tests.
 });

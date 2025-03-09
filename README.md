@@ -57,6 +57,12 @@ Replace 123.123.123.123 with your server's IP. Makefile asssumes you authenticat
 To push a new image, `git tag` a commit on the main branch with a semantic version number (for example `v1.0.0`).
 Latest image should get picked up by [Watchtower](https://containrrr.dev/watchtower/).
 
+### Continuous Integration
+
+- To run the tests, use `make test`.
+- To run the linter check, use `make lint`.
+- To run the code style check, use `make prettier`.
+
 ## TODO
 
 - Allow image submissions to posts and store them in minio (S3).
