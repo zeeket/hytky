@@ -63,3 +63,4 @@ public/hytkylogo.png
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+.vscode/launch.json

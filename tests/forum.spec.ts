@@ -15,5 +15,12 @@ test('Logged in user can access forum', async ({ browser }) => {
   const page = await context.newPage();
   await login(page);
   await page.goto('/forum/');
-  await page.waitForSelector('text="Luo uusi lanka"')
+  try {
+    await page.waitForSelector('text="Luo uusi lanka"', { timeout: 5000 });
+  }
+  catch (e) {
+    await page.screenshot({ path: 'forum.png' });
+    console.error(await page.content());
+    throw e;
+  }
 });

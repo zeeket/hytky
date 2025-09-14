@@ -1,7 +1,9 @@
 ##### DEVELOPMENT DOCKER IMAGE
 ##### DEPENDENCIES
 FROM --platform=linux/amd64 node:lts-alpine
-RUN apk add --no-cache libc6-compat openssl1.1-compat curl --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+    && apk update \
+    && apk add --no-cache libc6-compat curl
 WORKDIR /app
 RUN yarn global add pnpm
 

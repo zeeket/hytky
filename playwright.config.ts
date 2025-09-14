@@ -70,6 +70,6 @@ export default defineConfig({
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
   ],
-  timeout: 60 * 10000, // 60 seconds for each test
+  timeout: 15 * 1000, // 15 seconds for each test
   // You must run docker compose up before running the tests.
 });
