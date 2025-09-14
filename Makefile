@@ -16,19 +16,19 @@ rmi:
 # Run the linter check. Usage: 'make lint'.
 lint:
 	if command -v pnpm &> /dev/null; then \
-		pnpx next lint; \
+		pnpm exec eslint . --ext .js,.jsx,.ts,.tsx; \
 	else \
 		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
-		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx next lint; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint . --ext .js,.jsx,.ts,.tsx; \
 	fi
 
 # Run the linter and fix errors. Usage: 'make lintfix'.
 lintfix:
 	if command -v pnpm &> /dev/null; then \
-		pnpx next lint --fix; \
+		pnpm exec eslint . --ext .js,.jsx,.ts,.tsx --fix; \
 	else \
 		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
-		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx next lint --fix; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint . --ext .js,.jsx,.ts,.tsx --fix; \
 	fi
 
 # Run the code style check. Usage: 'make prettier'.

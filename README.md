@@ -14,8 +14,8 @@ The forum login is designed to be exclusive to members of certain Telegram group
 
 ### Recommended
 
- - Node.js
- - pnpm
+- Node.js
+- pnpm
 
 ### Instructions
 

@@ -7,7 +7,7 @@
     "build": "next build",
     "dev": "next dev",
     "postinstall": "prisma generate",
-    "lint": "next lint",
+    "lint": "pnpm exec eslint . --ext .js,.jsx,.ts,.tsx",
     "start": "next start"
   },
   "dependencies": {

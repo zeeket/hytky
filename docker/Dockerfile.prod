@@ -15,7 +15,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN \
  if [ -f pnpm-lock.yaml ]; \
  then \
-  yarn global add pnpm && pnpm add prisma@4.16.2 && pnpm i --ignore-scripts; \
+  yarn global add pnpm && pnpm add prisma@6.16.1 && pnpm i --ignore-scripts; \
  else \
   echo "Lockfile not found." && exit 1; \
  fi

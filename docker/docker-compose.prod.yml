@@ -17,7 +17,7 @@ services:
       context: ../
       dockerfile: docker/Dockerfile.prod
       args:
-        DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/postgres"
+        DATABASE_URL: 'postgresql://postgres:postgres@postgres:5432/postgres'
     env_file:
       - ../.env
     working_dir: /app
