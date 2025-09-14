@@ -1,0 +1,8 @@
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma
+  - sharp
+
+overrides:
+  brace-expansion@>=1.0.0 <=1.1.11: '>=1.1.12'

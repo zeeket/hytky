@@ -12,6 +12,11 @@ The forum login is designed to be exclusive to members of certain Telegram group
 - Docker Compose
 - Make
 
+### Recommended
+
+ - Node.js
+ - pnpm
+
 ### Instructions
 
 1. `git clone <this repo>`
@@ -65,4 +70,4 @@ Latest image should get picked up by [Watchtower](https://containrrr.dev/watchto
 - Remotely back up a deployment's database to `prisma/forumBackup.json` with a command.
 - Use src/server/utis/validators
 - Use toasts
-- gcal microservice that updates events page
+- Calendar integration that updates events page

@@ -29,7 +29,7 @@ const MailingListPage: NextPage = () => {
   return (
     <Layout title={'HYTKY '.concat(content.title)}>
       <LocaleSelect />
-      <h1 className="pb-2 text-5xl font-extrabold text-oldschool-orange">
+      <h1 className="text-oldschool-orange pb-2 text-5xl font-extrabold">
         {content.title}
       </h1>
       <h2 className="p-6 text-2xl text-white underline">
@@ -67,7 +67,7 @@ const MailingListPage: NextPage = () => {
       </p>
       <Link
         href="/"
-        className="mt-8 h-12 w-40 rounded-lg bg-white/10 p-3 text-center text-white transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-newschool-orange"
+        className="hover:bg-newschool-orange mt-8 h-12 w-40 rounded-lg bg-white/10 p-3 text-center text-white transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
       >
         {content.backLink}
       </Link>

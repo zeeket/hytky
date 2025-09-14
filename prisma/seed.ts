@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, Category } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const rootName = process.env.FORUM_ROOT_NAME || 'Forum Root';

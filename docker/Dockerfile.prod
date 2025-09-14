@@ -1,7 +1,7 @@
 ##### DEPENDENCIES
 
 FROM --platform=linux/amd64 node:lts-alpine as deps
-RUN apk add --no-cache libc6-compat openssl1.1-compat-libs-static --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
 
 # Install Prisma Client
@@ -15,7 +15,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN \
  if [ -f pnpm-lock.yaml ]; \
  then \
-  yarn global add pnpm && pnpm add prisma@4.16.2 && pnpm i; \
+  yarn global add pnpm && pnpm add prisma@4.16.2 && pnpm i --ignore-scripts; \
  else \
   echo "Lockfile not found." && exit 1; \
  fi
@@ -23,14 +23,15 @@ RUN \
 ##### BUILDER
 
 FROM --platform=linux/amd64 node:lts-alpine AS builder
-RUN apk add --no-cache libc6-compat openssl1.1-compat-libs-static --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN apk add --no-cache libc6-compat openssl openssl-dev
 RUN yarn global add pnpm
 ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN pnpm dlx prisma@4.16.2 generate
+RUN SKIP_ENV_VALIDATION=1 pnpm exec prisma generate
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Pass the name of the Telegram bot from GitHub variables to the build process if it exists.
@@ -56,7 +57,7 @@ RUN --mount=type=secret,id=NEXT_PUBLIC_TG_BOT_NAME \
 ##### RUNNER
 
 FROM --platform=linux/amd64 node:lts-alpine AS runner
-RUN apk add --no-cache libc6-compat openssl1.1-compat-libs-static --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN apk add --no-cache libc6-compat openssl openssl-dev
 RUN yarn global add pnpm
 WORKDIR /app
 

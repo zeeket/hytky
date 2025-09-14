@@ -113,7 +113,7 @@ const Home: NextPage = () => {
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-center text-white hover:bg-white/20"
             href="/mailingList"
           >
-            <h3 className="whitespace-normal break-words text-2xl font-bold">
+            <h3 className="text-2xl font-bold break-words whitespace-normal">
               {content.MailingListTitle}
             </h3>
             <div className="text-lg">{content.MailingListText}</div>
@@ -153,7 +153,7 @@ const AuthShowcase: React.FC = () => {
     locale === 'fi' ? fiContentTyped : enContentTyped;
 
   return (
-    <div className="flex flex-col items-center justify-center pb-6 pt-2">
+    <div className="flex flex-col items-center justify-center pt-2 pb-6">
       <p className="text-center text-2xl text-white">
         {sessionData && (
           <span>

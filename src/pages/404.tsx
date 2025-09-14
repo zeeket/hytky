@@ -5,7 +5,7 @@ const FourOhFour: NextPage = () => {
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
-        <h1 className="pb-2 text-5xl font-extrabold text-oldschool-orange">
+        <h1 className="text-oldschool-orange pb-2 text-5xl font-extrabold">
           404: Sivua ei löytynyt
         </h1>
         <p className="text-white">Miksi teknobileiden sivu sai 404-errorin?</p>

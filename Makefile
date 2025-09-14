@@ -84,7 +84,7 @@ baseline:
 # Seed the (production) database. This should only be required after 'make prod'. Usage: 'make seed'.
 seed:
 	docker build -f docker/Dockerfile.dbsync --platform linux/amd64 -t hytky-dbsync .
-	docker run --network docker_default --platform linux/amd64 --env-file ./.env -it --entrypoint "pnpx" hytky-dbsync prisma db seed
+	docker run --network docker_default --platform linux/amd64 --env-file ./.env -it --entrypoint "pnpx" hytky-dbsync ts-node --compiler-options '{"module":"CommonJS"}' prisma/seed.ts
 
 # Test connection to the server at the address given. Usage: 'make testconnect IP=123.123.123.123'.
 testconnect:

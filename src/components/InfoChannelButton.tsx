@@ -12,7 +12,7 @@ const InfoChannelButton = ({
     <div>
       <Link
         href={infochannellink}
-        className="my-2 box-border flex items-center space-x-2 rounded-md bg-telegram-blue p-2 text-sm text-white"
+        className="bg-telegram-blue my-2 box-border flex items-center space-x-2 rounded-md p-2 text-sm text-white"
       >
         <span className="inline-block">
           <TelegramIcon className="h-5 w-5" />

@@ -28,7 +28,7 @@ const RentalInfo: NextPage = () => {
   return (
     <Layout title={'HYTKY '.concat(content.title)}>
       <LocaleSelect />
-      <h1 className="text-5xl font-extrabold tracking-tight text-oldschool-orange sm:text-[5rem]">
+      <h1 className="text-oldschool-orange text-5xl font-extrabold tracking-tight sm:text-[5rem]">
         {content.title}
       </h1>
       <p className="p-4 text-2xl text-white">{content.inquire}</p>
@@ -47,7 +47,7 @@ const RentalInfo: NextPage = () => {
       </ul>
       <Link
         href="/"
-        className="mt-8 h-12 w-40 rounded-lg bg-white/10 p-3 text-center text-white transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-newschool-orange"
+        className="hover:bg-newschool-orange mt-8 h-12 w-40 rounded-lg bg-white/10 p-3 text-center text-white transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
       >
         {content.backLink}
       </Link>

@@ -1,3 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-oldschool-orange: #ffa500;
+  --color-newschool-orange: #f98404;
+  --color-telegram-blue: #54a9eb;
+}

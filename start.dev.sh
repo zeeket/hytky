@@ -1,2 +1,2 @@
 #!/bin/sh
-pnpm prisma generate && pnpm prisma db push && pnpm prisma db seed && pnpm run dev
+pnpm prisma generate && pnpm prisma db push && ts-node --compiler-options '{"module":"CommonJS"}' prisma/seed.ts && pnpm run dev

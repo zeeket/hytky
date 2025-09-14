@@ -16,6 +16,8 @@ services:
     build:
       context: ../
       dockerfile: docker/Dockerfile.prod
+      args:
+        DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/postgres"
     env_file:
       - ../.env
     working_dir: /app
@@ -27,7 +29,7 @@ services:
     restart: always
 
   postgres:
-    image: 'postgres:alpine'
+    image: 'postgres:16-alpine'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres

@@ -1,12 +1,10 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { LanguageIcon } from '@heroicons/react/24/solid';
 
 export const LocaleSelect = ({ style = '' }) => {
-  const pathname = usePathname();
   const router = useRouter();
   return (
     <div
@@ -15,15 +13,15 @@ export const LocaleSelect = ({ style = '' }) => {
       )}
     >
       <div className="border-2 border-dotted border-orange-600">
-        <div className="flex flex-row gap-2 pr-1 text-white">
-          <LanguageIcon className="pl-50 size-6 text-white" />
-          <Link href={{ pathname: pathname }} locale="fi">
+        <div className="flex flex-row items-center gap-2 pr-1 text-white">
+          <LanguageIcon className="ml-1 h-6 w-6 text-white" />
+          <Link href={{ pathname: router.pathname }} locale="fi">
             <span className={router.locale == 'fi' ? 'text-gray-700' : ''}>
               Fi
             </span>
           </Link>
           <span>|</span>
-          <Link href={{ pathname: pathname }} locale="en">
+          <Link href={{ pathname: router.pathname }} locale="en">
             <span className={router.locale == 'en' ? 'text-gray-700' : ''}>
               En
             </span>

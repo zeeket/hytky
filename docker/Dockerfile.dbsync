@@ -1,5 +1,5 @@
 FROM --platform=linux/amd64 node:lts-alpine
-RUN apk add --no-cache libc6-compat openssl1.1-compat --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
 RUN yarn global add pnpm typescript ts-node
 
@@ -13,7 +13,7 @@ COPY prisma ./prisma
 RUN \
  if [ -f pnpm-lock.yaml ]; \
  then \
-  pnpm add prisma@4.16.2 && pnpm i; \
+  pnpm i; \
  else \
   echo "Lockfile not found." && exit 1; \
  fi

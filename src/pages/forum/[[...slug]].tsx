@@ -66,7 +66,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
     <>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
         <div>
-          <h1 className="pb-2 text-5xl font-extrabold text-oldschool-orange">
+          <h1 className="text-oldschool-orange pb-2 text-5xl font-extrabold">
             Foorumi
           </h1>
         </div>

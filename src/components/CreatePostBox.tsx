@@ -31,7 +31,7 @@ const CreatePostBox = (props: CreatePostBoxProps) => {
         ></textarea>
         <button
           role="submit"
-          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white outline-none ring-red-600 ring-offset-2 focus:ring-2"
+          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2"
           onClick={handlePostButtonPress}
         >
           Lähetä

@@ -77,7 +77,7 @@ const CreateCategoryModal = ({
                             type="text"
                             name="name"
                             id="name"
-                            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
                             onChange={(e) => {
                               e.preventDefault();
                               handleCategoryNameChange(e.target.value);
@@ -87,7 +87,7 @@ const CreateCategoryModal = ({
                       </div>
                       <div className="mt-3 items-center gap-2 sm:flex">
                         <button
-                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white outline-none ring-red-600 ring-offset-2 focus:ring-2"
+                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2"
                           onClick={(e) => {
                             e.preventDefault();
                             handleCreateCategory(categoryName, parentCategory);
@@ -96,7 +96,7 @@ const CreateCategoryModal = ({
                           Luo
                         </button>
                         <button
-                          className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-indigo-600 ring-offset-2 focus:ring-2"
+                          className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 ring-indigo-600 ring-offset-2 outline-none focus:ring-2"
                           onClick={() => {
                             setShowCreateCategoryModal(false);
                           }}

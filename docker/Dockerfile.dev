@@ -1,9 +1,9 @@
 ##### DEVELOPMENT DOCKER IMAGE
 ##### DEPENDENCIES
 FROM --platform=linux/amd64 node:lts-alpine
-RUN apk add --no-cache libc6-compat openssl1.1-compat --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
-RUN yarn global add pnpm
+RUN yarn global add pnpm ts-node
 
 ##### ENV_VARS
 ARG DATABASE_URL=${DATABASE_URL}

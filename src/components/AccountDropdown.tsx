@@ -6,16 +6,16 @@ export const AccountDropdown = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const { data: session } = useSession();
   return (
-    <div className="absolute right-8 top-8 inline-block text-left">
+    <div className="absolute top-8 right-8 inline-block text-left">
       <UserCircleIcon
-        className="h-16 w-16 text-oldschool-orange"
+        className="text-oldschool-orange h-16 w-16"
         onClick={(e) => {
           e.preventDefault();
           setShowDropdown(!showDropdown);
         }}
       />
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+        <div className="ring-opacity-5 absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black">
           <div className="flex flex-col">
             <p className="text-center text-gray-400">
               Kirjautunut {session?.user.name} ({session?.user.role})
