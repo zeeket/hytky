@@ -129,7 +129,7 @@ const CreateThreadModal = ({
                       </div>
                       <div className="mt-3 items-center gap-2 sm:flex">
                         <button
-                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                           onClick={(e) => {
                             e.preventDefault();
                             handleCreateThread(

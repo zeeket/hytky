@@ -40,7 +40,9 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
     props.initialCategoryId
   );
   const [currentThreadId, setCurrentThreadId] = useState(threadObj?.id);
-  const [prevInitialCategoryId, setPrevInitialCategoryId] = useState(props.initialCategoryId);
+  const [prevInitialCategoryId, setPrevInitialCategoryId] = useState(
+    props.initialCategoryId
+  );
   const [prevThreadId, setPrevThreadId] = useState(threadObj?.id);
 
   // Sync state with props when navigating via URL (during render, not in effect)
@@ -54,10 +56,13 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
     setCurrentThreadId(threadObj?.id);
   }
 
-  const allCategoriesWithChildrenQuery = api.category.getAllCategories.useQuery(undefined, {
-    refetchOnMount: true,
-    refetchOnWindowFocus: false,
-  });
+  const allCategoriesWithChildrenQuery = api.category.getAllCategories.useQuery(
+    undefined,
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
   const allCategoriesWithChildren: CategoryWithChildren[] =
     allCategoriesWithChildrenQuery.data || [];
 

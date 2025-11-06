@@ -49,7 +49,9 @@ export async function createCategoryAtCurrentLocation(
   await page.locator('button.bg-red-600:has-text("Luo")').click();
 
   // Wait for modal to close
-  await page.locator('h4:has-text("Luo uusi kategoria")').waitFor({ state: 'hidden', timeout: 5000 });
+  await page
+    .locator('h4:has-text("Luo uusi kategoria")')
+    .waitFor({ state: 'hidden', timeout: 5000 });
 
   if (waitForPropagation) {
     // Wait a bit for data to propagate
@@ -93,7 +95,9 @@ export async function navigateIntoCategory(
 
   try {
     // Click the button (use .first() if useFirst is true to handle duplicates)
-    const locator = useFirst ? page.locator(selector).first() : page.locator(selector).first();
+    const locator = useFirst
+      ? page.locator(selector).first()
+      : page.locator(selector).first();
     await locator.click({ timeout: 5000 });
 
     // Wait for network to settle
@@ -103,21 +107,28 @@ export async function navigateIntoCategory(
       // Verify URL changed
       const newUrl = page.url();
       if (newUrl === currentUrl) {
-        console.warn(`[navigateIntoCategory] URL did not change after clicking "${categoryName}"`);
+        console.warn(
+          `[navigateIntoCategory] URL did not change after clicking "${categoryName}"`
+        );
         return false;
       }
 
       // Verify URL contains the category name (encoded)
       const encodedName = encodeURIComponent(categoryName);
       if (!newUrl.includes(encodedName)) {
-        console.warn(`[navigateIntoCategory] URL does not contain "${encodedName}". URL: ${newUrl}`);
+        console.warn(
+          `[navigateIntoCategory] URL does not contain "${encodedName}". URL: ${newUrl}`
+        );
         return false;
       }
     }
 
     return true;
   } catch (error) {
-    console.error(`[navigateIntoCategory] Failed to navigate to "${categoryName}":`, error);
+    console.error(
+      `[navigateIntoCategory] Failed to navigate to "${categoryName}":`,
+      error
+    );
     return false;
   }
 }
@@ -147,7 +158,9 @@ export async function createThread(
   await page.locator('button.bg-red-600:has-text("Luo")').click();
 
   // Wait for modal to close
-  await page.locator('h4:has-text("Luo uusi lanka")').waitFor({ state: 'hidden', timeout: 5000 });
+  await page
+    .locator('h4:has-text("Luo uusi lanka")')
+    .waitFor({ state: 'hidden', timeout: 5000 });
 
   if (verifyCreation) {
     // Wait a bit for data to propagate
@@ -173,7 +186,9 @@ export async function navigateToUrl(
     const status = response?.status();
 
     if (status !== expectedStatus) {
-      console.warn(`[navigateToUrl] Expected status ${expectedStatus}, got ${status}`);
+      console.warn(
+        `[navigateToUrl] Expected status ${expectedStatus}, got ${status}`
+      );
       return { success: false, status };
     }
 
@@ -181,9 +196,12 @@ export async function navigateToUrl(
 
     if (waitForContent) {
       // Wait for queries to complete (look for absence of loading message)
-      await page.locator('text="Ladataan..."').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {
-        // Loading message might not appear if data loads quickly
-      });
+      await page
+        .locator('text="Ladataan..."')
+        .waitFor({ state: 'hidden', timeout: 10000 })
+        .catch(() => {
+          // Loading message might not appear if data loads quickly
+        });
 
       // Give queries time to complete
       await page.waitForTimeout(1000);

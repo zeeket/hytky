@@ -13,6 +13,7 @@ All forum functionality is tested and working, including URL navigation. The ski
 ## Test Files
 
 ### Active Test Suites ✅
+
 - **forum.spec.ts** - Core forum functionality (viewing, creating categories/threads) - 21 tests
 - **forum-url-navigation-v3.spec.ts** - URL-based navigation tests - 6 tests
 - **forum-hierarchical-navigation-v3.spec.ts** - Hierarchical structure and duplicate name handling - 4 tests
@@ -20,6 +21,7 @@ All forum functionality is tested and working, including URL navigation. The ski
 - **rental.spec.ts** - Rental page navigation tests
 
 ### Deprecated Test Files ⏭️
+
 - **forum-url-navigation.spec.ts** - DEPRECATED, use v3 version
 - **forum-hierarchical-navigation.spec.ts** - DEPRECATED, use v3 version
 
@@ -47,6 +49,7 @@ pnpm exec playwright show-report
 ## Test Configuration
 
 Tests run **in parallel** for speed, with proper data isolation:
+
 - `workers: auto` - Multiple workers based on CPU cores (2 on CI)
 - `fullyParallel: true` - Tests run concurrently
 - Each test uses unique identifiers to avoid conflicts
@@ -96,6 +99,7 @@ The v3 tests use URL navigation for setup instead of clicks because:
 **The Mystery**: Original tests showed URL navigation "failing" with empty category lists
 
 **The Reality**: URL navigation works perfectly! The issue was with the test setup:
+
 - Tests used click navigation to create test data
 - Clicks failed due to duplicate names across parallel test runs
 - Data was created in wrong locations due to failed navigation
@@ -108,9 +112,11 @@ See `tests/docs/FINAL-INVESTIGATION.md` for complete analysis.
 ## Test Fixtures
 
 ### Helpers
+
 - **helpers/test-session.ts** - Creates valid NextAuth session tokens for testing
 - **fixtures/authenticated.ts** - Auto-injects authentication for all tests
 - **fixtures/coverage.ts** - Enables code coverage collection
 
 ### Authentication
+
 Tests use a pre-configured test user (ID: 999999999) that's seeded via `prisma/seed.ts`. Authentication is handled automatically via JWT tokens, bypassing the Telegram OAuth flow.

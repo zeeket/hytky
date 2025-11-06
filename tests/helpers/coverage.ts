@@ -59,12 +59,12 @@ export class CoverageHelper {
       const coverage = await page.coverage.stopJSCoverage();
 
       // Filter to keep only application code (exclude external resources)
-      const filteredCoverage = coverage.filter(entry => {
+      const filteredCoverage = coverage.filter((entry) => {
         const url = entry.url;
         return (
           (url.includes('dev.docker.orb.local') ||
-           url.includes('localhost') ||
-           url.includes('127.0.0.1')) &&
+            url.includes('localhost') ||
+            url.includes('127.0.0.1')) &&
           !url.includes('chrome-extension://')
         );
       });
@@ -124,7 +124,11 @@ export class CoverageHelper {
    * Save coverage to .nyc_output directory in V8 format
    * Downloads source files and transforms URLs to local paths for c8
    */
-  private async saveCoverage(page: Page, coverage: Coverage.JSCoverageEntry[], testName: string): Promise<void> {
+  private async saveCoverage(
+    page: Page,
+    coverage: Coverage.JSCoverageEntry[],
+    testName: string
+  ): Promise<void> {
     if (!existsSync(COVERAGE_DIR)) {
       mkdirSync(COVERAGE_DIR, { recursive: true });
     }

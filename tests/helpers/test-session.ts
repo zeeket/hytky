@@ -41,7 +41,9 @@ export async function createTestSessionToken(
   const secret = process.env.NEXTAUTH_SECRET;
 
   if (!secret) {
-    throw new Error('NEXTAUTH_SECRET environment variable is required for tests');
+    throw new Error(
+      'NEXTAUTH_SECRET environment variable is required for tests'
+    );
   }
 
   // Create JWT token with the same structure NextAuth uses
@@ -53,7 +55,7 @@ export async function createTestSessionToken(
       sub: user.id.toString(), // NextAuth requires 'sub' claim
       name: user.name,
       iat: Math.floor(Date.now() / 1000), // Issued at
-      exp: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60), // Expires in 30 days
+      exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // Expires in 30 days
     },
     secret,
   });

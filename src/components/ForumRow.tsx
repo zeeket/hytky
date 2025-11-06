@@ -39,7 +39,7 @@ export const ForumRow = (props: ForumRowProps) => {
       {threadInProp && <DocumentTextIcon className="h-6 w-6 text-white" />}
       <button
         type="button"
-        className="pl-2 text-white text-left"
+        className="pl-2 text-left text-white"
         onClick={() => {
           handleForumRowClick(props.content);
         }}

@@ -58,7 +58,8 @@ function formatCoverage(pct) {
 function getFileNote(filename) {
   if (filename.includes('pages_index')) return 'Main page';
   if (filename.includes('pages__app')) return 'App wrapper';
-  if (filename.includes('pages_auth') || filename.includes('signin')) return 'Authentication';
+  if (filename.includes('pages_auth') || filename.includes('signin'))
+    return 'Authentication';
   if (filename.includes('pages_rental')) return 'Rental page';
   if (filename.includes('pages_forum')) return 'Forum';
   if (filename.includes('pages_about')) return 'About page';
@@ -67,8 +68,10 @@ function getFileNote(filename) {
   if (filename.includes('_app.js')) return 'App wrapper';
   if (filename.includes('webpack')) return 'Webpack runtime';
   if (filename.includes('react-refresh')) return 'HMR';
-  if (filename.includes('buildManifest') || filename.includes('ssgManifest')) return 'Manifest';
-  if (filename.includes('telegram') || filename.includes('embed')) return 'Telegram widget';
+  if (filename.includes('buildManifest') || filename.includes('ssgManifest'))
+    return 'Manifest';
+  if (filename.includes('telegram') || filename.includes('embed'))
+    return 'Telegram widget';
   return 'Bundle';
 }
 
@@ -85,7 +88,8 @@ function simplifyFilename(filename) {
   if (filename.includes('main.js')) return 'main.js';
   if (filename.includes('_app.js')) return '_app.js';
   if (filename.includes('webpack')) return 'webpack.js';
-  if (filename.includes('telegram') || filename.includes('embed')) return 'telegram-widget.js';
+  if (filename.includes('telegram') || filename.includes('embed'))
+    return 'telegram-widget.js';
 
   // Fallback: take first 30 chars
   return filename.substring(0, 30) + (filename.length > 30 ? '...' : '');
@@ -97,11 +101,19 @@ function simplifyFilename(filename) {
 function main() {
   // Go up two directories from tests/scripts/ to project root
   const projectRoot = path.join(path.dirname(__dirname), '..');
-  const summaryPath = path.join(projectRoot, 'coverage', 'coverage-summary.json');
+  const summaryPath = path.join(
+    projectRoot,
+    'coverage',
+    'coverage-summary.json'
+  );
 
   if (!fs.existsSync(summaryPath)) {
-    console.error(`${colors.red}✗ Coverage summary not found at: ${summaryPath}${colors.reset}`);
-    console.error(`${colors.dim}Run tests with coverage first: pnpm run test:coverage${colors.reset}`);
+    console.error(
+      `${colors.red}✗ Coverage summary not found at: ${summaryPath}${colors.reset}`
+    );
+    console.error(
+      `${colors.dim}Run tests with coverage first: pnpm run test:coverage${colors.reset}`
+    );
     process.exit(1);
   }
 
@@ -112,13 +124,19 @@ function main() {
   const totalPct = total.statements.pct;
 
   console.log('');
-  console.log(`${colors.bold}${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`);
+  console.log(
+    `${colors.bold}${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`
+  );
   console.log(`${colors.bold}  📊 Coverage Report${colors.reset}`);
-  console.log(`${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`);
+  console.log(
+    `${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`
+  );
   console.log('');
 
   // Overall coverage
-  console.log(`  ${colors.bold}Overall Coverage:${colors.reset} ${formatCoverage(totalPct)}`);
+  console.log(
+    `  ${colors.bold}Overall Coverage:${colors.reset} ${formatCoverage(totalPct)}`
+  );
   console.log('');
 
   // Get all files except 'total'
@@ -153,9 +171,15 @@ function main() {
   }
 
   // Table header
-  console.log(`  ${colors.bold}┌${'─'.repeat(32)}┬${'─'.repeat(14)}┬${'─'.repeat(22)}┐${colors.reset}`);
-  console.log(`  ${colors.bold}│ File${' '.repeat(27)}│ Coverage     │ Description          │${colors.reset}`);
-  console.log(`  ${colors.bold}├${'─'.repeat(32)}┼${'─'.repeat(14)}┼${'─'.repeat(22)}┤${colors.reset}`);
+  console.log(
+    `  ${colors.bold}┌${'─'.repeat(32)}┬${'─'.repeat(14)}┬${'─'.repeat(22)}┐${colors.reset}`
+  );
+  console.log(
+    `  ${colors.bold}│ File${' '.repeat(27)}│ Coverage     │ Description          │${colors.reset}`
+  );
+  console.log(
+    `  ${colors.bold}├${'─'.repeat(32)}┼${'─'.repeat(14)}┼${'─'.repeat(22)}┤${colors.reset}`
+  );
 
   // Table rows
   files.forEach((file) => {
@@ -167,15 +191,25 @@ function main() {
     const coveragePlain = `${getCoverageEmoji(file.coverage)} ${file.coverage.toFixed(2)}%`;
     const paddingNeeded = 12 - coveragePlain.length;
 
-    console.log(`  │ ${nameCell} │ ${coverageCell}${' '.repeat(paddingNeeded)} │ ${noteCell} │`);
+    console.log(
+      `  │ ${nameCell} │ ${coverageCell}${' '.repeat(paddingNeeded)} │ ${noteCell} │`
+    );
   });
 
-  console.log(`  ${colors.bold}└${'─'.repeat(32)}┴${'─'.repeat(14)}┴${'─'.repeat(22)}┘${colors.reset}`);
+  console.log(
+    `  ${colors.bold}└${'─'.repeat(32)}┴${'─'.repeat(14)}┴${'─'.repeat(22)}┘${colors.reset}`
+  );
   console.log('');
-  console.log(`  ${colors.dim}View detailed report: ${colors.reset}${colors.cyan}coverage/index.html${colors.reset}`);
-  console.log(`  ${colors.dim}Run: ${colors.reset}${colors.cyan}open coverage/index.html${colors.reset}`);
+  console.log(
+    `  ${colors.dim}View detailed report: ${colors.reset}${colors.cyan}coverage/index.html${colors.reset}`
+  );
+  console.log(
+    `  ${colors.dim}Run: ${colors.reset}${colors.cyan}open coverage/index.html${colors.reset}`
+  );
   console.log('');
-  console.log(`${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`);
+  console.log(
+    `${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`
+  );
   console.log('');
 }
 

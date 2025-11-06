@@ -20,7 +20,9 @@ import {
 test.describe('Forum Hierarchical Navigation - Duplicate Name Handling', () => {
   test.setTimeout(60000);
 
-  test('disambiguates duplicate subcategory names by parent path', async ({ page }) => {
+  test('disambiguates duplicate subcategory names by parent path', async ({
+    page,
+  }) => {
     const uniqueId = generateUniqueId();
     const parentA = `Parent_A_${uniqueId}`;
     const parentB = `Parent_B_${uniqueId}`;
@@ -58,8 +60,14 @@ test.describe('Forum Hierarchical Navigation - Duplicate Name Handling', () => {
     expect(resultA.status).toBe(200);
 
     // Should see ONLY thread from A
-    const threadAVisible = await page.locator(`ul button:has-text("${threadInA}")`).isVisible().catch(() => false);
-    const threadBVisible = await page.locator(`ul button:has-text("${threadInB}")`).isVisible().catch(() => false);
+    const threadAVisible = await page
+      .locator(`ul button:has-text("${threadInA}")`)
+      .isVisible()
+      .catch(() => false);
+    const threadBVisible = await page
+      .locator(`ul button:has-text("${threadInB}")`)
+      .isVisible()
+      .catch(() => false);
 
     expect(threadAVisible).toBe(true);
     expect(threadBVisible).toBe(false);
@@ -71,8 +79,14 @@ test.describe('Forum Hierarchical Navigation - Duplicate Name Handling', () => {
     expect(resultB.status).toBe(200);
 
     // Should see ONLY thread from B
-    const threadAVisible2 = await page.locator(`ul button:has-text("${threadInA}")`).isVisible().catch(() => false);
-    const threadBVisible2 = await page.locator(`ul button:has-text("${threadInB}")`).isVisible().catch(() => false);
+    const threadAVisible2 = await page
+      .locator(`ul button:has-text("${threadInA}")`)
+      .isVisible()
+      .catch(() => false);
+    const threadBVisible2 = await page
+      .locator(`ul button:has-text("${threadInB}")`)
+      .isVisible()
+      .catch(() => false);
 
     expect(threadAVisible2).toBe(false);
     expect(threadBVisible2).toBe(true);
@@ -100,8 +114,14 @@ test.describe('Forum Hierarchical Navigation - Duplicate Name Handling', () => {
 
     expect(resultA.success).toBe(true);
 
-    const countA = await countElements(page, `ul button:has-text("${subcatA}")`);
-    const countB = await countElements(page, `ul button:has-text("${subcatB}")`);
+    const countA = await countElements(
+      page,
+      `ul button:has-text("${subcatA}")`
+    );
+    const countB = await countElements(
+      page,
+      `ul button:has-text("${subcatB}")`
+    );
 
     expect(countA).toBeGreaterThan(0);
     expect(countB).toBe(0); // Should NOT see SubCat B
@@ -111,14 +131,22 @@ test.describe('Forum Hierarchical Navigation - Duplicate Name Handling', () => {
 
     expect(resultB.success).toBe(true);
 
-    const countA2 = await countElements(page, `ul button:has-text("${subcatA}")`);
-    const countB2 = await countElements(page, `ul button:has-text("${subcatB}")`);
+    const countA2 = await countElements(
+      page,
+      `ul button:has-text("${subcatA}")`
+    );
+    const countB2 = await countElements(
+      page,
+      `ul button:has-text("${subcatB}")`
+    );
 
     expect(countA2).toBe(0); // Should NOT see SubCat A
     expect(countB2).toBeGreaterThan(0);
   });
 
-  test('handles multiple levels with duplicate names at different levels', async ({ page }) => {
+  test('handles multiple levels with duplicate names at different levels', async ({
+    page,
+  }) => {
     const uniqueId = generateUniqueId();
     const level1A = `L1_A_${uniqueId}`;
     const level1B = `L1_B_${uniqueId}`;
@@ -144,8 +172,14 @@ test.describe('Forum Hierarchical Navigation - Duplicate Name Handling', () => {
     const resultA = await navigateToUrl(page, urlDupA);
     expect(resultA.success).toBe(true);
 
-    const hasMarkerA = await countElements(page, `ul button:has-text("${markerA}")`);
-    const hasMarkerB = await countElements(page, `ul button:has-text("${markerB}")`);
+    const hasMarkerA = await countElements(
+      page,
+      `ul button:has-text("${markerA}")`
+    );
+    const hasMarkerB = await countElements(
+      page,
+      `ul button:has-text("${markerB}")`
+    );
 
     expect(hasMarkerA).toBeGreaterThan(0);
     expect(hasMarkerB).toBe(0);
@@ -154,8 +188,14 @@ test.describe('Forum Hierarchical Navigation - Duplicate Name Handling', () => {
     const resultB = await navigateToUrl(page, urlDupB);
     expect(resultB.success).toBe(true);
 
-    const hasMarkerA2 = await countElements(page, `ul button:has-text("${markerA}")`);
-    const hasMarkerB2 = await countElements(page, `ul button:has-text("${markerB}")`);
+    const hasMarkerA2 = await countElements(
+      page,
+      `ul button:has-text("${markerA}")`
+    );
+    const hasMarkerB2 = await countElements(
+      page,
+      `ul button:has-text("${markerB}")`
+    );
 
     expect(hasMarkerA2).toBe(0);
     expect(hasMarkerB2).toBeGreaterThan(0);
@@ -186,7 +226,10 @@ test.describe('Forum Hierarchical Navigation - Duplicate Name Handling', () => {
     await expect(page.locator(`text="${grandchild}"`)).toBeVisible();
 
     // All three levels should be in breadcrumb
-    const breadcrumb = await page.locator('text="Olet tässä:"').textContent().catch(() => '');
+    const breadcrumb = await page
+      .locator('text="Olet tässä:"')
+      .textContent()
+      .catch(() => '');
     expect(breadcrumb).toBeTruthy();
   });
 });

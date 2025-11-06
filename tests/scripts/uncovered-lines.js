@@ -54,7 +54,9 @@ function groupIntoRanges(numbers) {
  */
 function parseUncoveredLines(lcovPath) {
   if (!fs.existsSync(lcovPath)) {
-    console.error(`${colors.red}✗ lcov.info not found at: ${lcovPath}${colors.reset}`);
+    console.error(
+      `${colors.red}✗ lcov.info not found at: ${lcovPath}${colors.reset}`
+    );
     return null;
   }
 

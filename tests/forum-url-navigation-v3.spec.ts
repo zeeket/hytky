@@ -18,7 +18,9 @@ import {
 test.describe('Forum URL Navigation - Core Functionality', () => {
   test.setTimeout(60000);
 
-  test('navigates to top-level category and shows subcategories', async ({ page }) => {
+  test('navigates to top-level category and shows subcategories', async ({
+    page,
+  }) => {
     const uniqueId = generateUniqueId();
     const categoryName = `URLNav_Top_${uniqueId}`;
     const subcategoryName = `URLNav_Sub_${uniqueId}`;
@@ -37,7 +39,10 @@ test.describe('Forum URL Navigation - Core Functionality', () => {
     expect(result.status).toBe(200);
 
     // Verify subcategory is visible
-    const subcategoryCount = await countElements(page, `ul button:has-text("${subcategoryName}")`);
+    const subcategoryCount = await countElements(
+      page,
+      `ul button:has-text("${subcategoryName}")`
+    );
     expect(subcategoryCount).toBeGreaterThan(0);
   });
 
@@ -67,7 +72,10 @@ test.describe('Forum URL Navigation - Core Functionality', () => {
     expect(result.status).toBe(200);
 
     // Verify thread is visible
-    const threadCount = await countElements(page, `ul button:has-text("${threadName}")`);
+    const threadCount = await countElements(
+      page,
+      `ul button:has-text("${threadName}")`
+    );
     expect(threadCount).toBeGreaterThan(0);
   });
 
@@ -94,7 +102,9 @@ test.describe('Forum URL Navigation - Core Functionality', () => {
     expect(result.status).toBe(200);
 
     // Verify we're in thread view with correct content
-    await expect(page.locator(`h2:has-text("Lanka: ${threadName}")`)).toBeVisible();
+    await expect(
+      page.locator(`h2:has-text("Lanka: ${threadName}")`)
+    ).toBeVisible();
     await expect(page.locator(`text="${threadContent}"`)).toBeVisible();
   });
 
@@ -117,7 +127,10 @@ test.describe('Forum URL Navigation - Core Functionality', () => {
     expect(result.status).toBe(200);
 
     // Verify subcategory is visible
-    const subcategoryCount = await countElements(page, `ul button:has-text("${subcategoryName}")`);
+    const subcategoryCount = await countElements(
+      page,
+      `ul button:has-text("${subcategoryName}")`
+    );
     expect(subcategoryCount).toBeGreaterThan(0);
   });
 
@@ -125,7 +138,9 @@ test.describe('Forum URL Navigation - Core Functionality', () => {
     const uniqueId = generateUniqueId();
     const nonExistentPath = `/forum/NonExistent_${uniqueId}`;
 
-    const result = await navigateToUrl(page, nonExistentPath, { expectedStatus: 404 });
+    const result = await navigateToUrl(page, nonExistentPath, {
+      expectedStatus: 404,
+    });
 
     expect(result.status).toBe(404);
   });
@@ -158,7 +173,10 @@ test.describe('Forum URL Navigation - Core Functionality', () => {
     expect(result.status).toBe(200);
 
     // Verify thread is visible
-    const threadCount = await countElements(page, `ul button:has-text("${thread}")`);
+    const threadCount = await countElements(
+      page,
+      `ul button:has-text("${thread}")`
+    );
     expect(threadCount).toBeGreaterThan(0);
 
     // Verify breadcrumb shows full path

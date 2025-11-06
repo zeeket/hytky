@@ -14,12 +14,7 @@
     "**/env.mjs",
     "**/webpack-*"
   ],
-  "reporter": [
-    "html",
-    "lcov",
-    "text",
-    "json-summary"
-  ],
+  "reporter": ["html", "lcov", "text", "json-summary"],
   "reports-dir": "coverage",
   "temp-directory": ".nyc_output",
   "check-coverage": false,

@@ -6,18 +6,21 @@ type CoverageFixture = {
 };
 
 export const test = base.extend<CoverageFixture>({
-  _autoRunCoverage: [async ({ page, browserName }, use, testInfo) => {
-    const helper = new CoverageHelper();
+  _autoRunCoverage: [
+    async ({ page, browserName }, use, testInfo) => {
+      const helper = new CoverageHelper();
 
-    // Start coverage before test
-    await helper.startCoverage(page, browserName);
+      // Start coverage before test
+      await helper.startCoverage(page, browserName);
 
-    // Run test
-    await use();
+      // Run test
+      await use();
 
-    // Stop coverage after test
-    await helper.stopCoverage(page, browserName, testInfo.title);
-  }, { auto: true }],
+      // Stop coverage after test
+      await helper.stopCoverage(page, browserName, testInfo.title);
+    },
+    { auto: true },
+  ],
 });
 
 export { expect } from '@playwright/test';

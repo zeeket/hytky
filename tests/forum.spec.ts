@@ -30,8 +30,12 @@ test.describe('Forum Viewing', () => {
     await expect(page.locator('h1:has-text("Foorumi")')).toBeVisible();
 
     // Verify create buttons are visible (authenticated state)
-    await expect(page.locator('button:has-text("Luo uusi kategoria")')).toBeVisible();
-    await expect(page.locator('button:has-text("Luo uusi lanka")')).toBeVisible();
+    await expect(
+      page.locator('button:has-text("Luo uusi kategoria")')
+    ).toBeVisible();
+    await expect(
+      page.locator('button:has-text("Luo uusi lanka")')
+    ).toBeVisible();
 
     // Verify breadcrumb navigation
     await expect(page.locator('text="Olet tässä:"')).toBeVisible();
@@ -45,11 +49,15 @@ test.describe('Forum Viewing', () => {
     await page.locator('button:has-text("Luo uusi kategoria")').click();
 
     // Verify modal appears
-    await expect(page.locator('h4:has-text("Luo uusi kategoria")')).toBeVisible();
+    await expect(
+      page.locator('h4:has-text("Luo uusi kategoria")')
+    ).toBeVisible();
 
     // Verify form elements
     await expect(page.locator('input#name')).toBeVisible();
-    await expect(page.locator('button.bg-red-600:has-text("Luo")')).toBeVisible();
+    await expect(
+      page.locator('button.bg-red-600:has-text("Luo")')
+    ).toBeVisible();
     await expect(page.locator('button:has-text("Cancel")')).toBeVisible();
 
     // Close modal
@@ -71,7 +79,9 @@ test.describe('Forum Viewing', () => {
     expect(inputs.length).toBe(2);
 
     // Verify buttons
-    await expect(page.locator('button.bg-red-600:has-text("Luo")')).toBeVisible();
+    await expect(
+      page.locator('button.bg-red-600:has-text("Luo")')
+    ).toBeVisible();
     await expect(page.locator('button:has-text("Cancel")')).toBeVisible();
 
     // Close modal
@@ -91,15 +101,21 @@ test.describe('Forum Viewing', () => {
     await expect(page.locator('h1:has-text("Foorumi")')).toBeVisible();
   });
 
-  test('forum page renders correctly on direct navigation', async ({ page }) => {
+  test('forum page renders correctly on direct navigation', async ({
+    page,
+  }) => {
     // Navigate directly to forum without going through homepage first
     await page.goto('https://dev.docker.orb.local/forum');
     await page.waitForLoadState('networkidle');
 
     // Verify page loads with all essential elements
     await expect(page.locator('h1:has-text("Foorumi")')).toBeVisible();
-    await expect(page.locator('button:has-text("Luo uusi kategoria")')).toBeVisible();
-    await expect(page.locator('button:has-text("Luo uusi lanka")')).toBeVisible();
+    await expect(
+      page.locator('button:has-text("Luo uusi kategoria")')
+    ).toBeVisible();
+    await expect(
+      page.locator('button:has-text("Luo uusi lanka")')
+    ).toBeVisible();
 
     // Verify breadcrumb shows root
     await expect(page.locator('text="Olet tässä:"')).toBeVisible();
@@ -130,7 +146,9 @@ test.describe.serial('Forum Content Creation', () => {
 
     // Open create category modal
     await page.locator('button:has-text("Luo uusi kategoria")').click();
-    await expect(page.locator('h4:has-text("Luo uusi kategoria")')).toBeVisible();
+    await expect(
+      page.locator('h4:has-text("Luo uusi kategoria")')
+    ).toBeVisible();
 
     // Fill in category name
     await page.locator('input#name').fill(testCategoryName);
@@ -139,7 +157,9 @@ test.describe.serial('Forum Content Creation', () => {
     await page.locator('button.bg-red-600:has-text("Luo")').click();
 
     // Wait for modal to close (indicates success)
-    await expect(page.locator('h4:has-text("Luo uusi kategoria")')).not.toBeVisible();
+    await expect(
+      page.locator('h4:has-text("Luo uusi kategoria")')
+    ).not.toBeVisible();
   });
 
   test('newly created category appears on forum page', async ({ page }) => {
@@ -150,12 +170,17 @@ test.describe.serial('Forum Content Creation', () => {
     await expect(page.locator(`text="${testCategoryName}"`)).toBeVisible();
   });
 
-  test('can navigate into new category and create subcategory', async ({ page }) => {
+  test('can navigate into new category and create subcategory', async ({
+    page,
+  }) => {
     await page.goto('/forum');
     await page.waitForLoadState('networkidle');
 
     // Click on the category we just created
-    await page.locator(`ul button:has-text("${testCategoryName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Verify we're in the category (breadcrumb should show it)
@@ -163,7 +188,9 @@ test.describe.serial('Forum Content Creation', () => {
 
     // Open create category modal (to create subcategory)
     await page.locator('button:has-text("Luo uusi kategoria")').click();
-    await expect(page.locator('h4:has-text("Luo uusi kategoria")')).toBeVisible();
+    await expect(
+      page.locator('h4:has-text("Luo uusi kategoria")')
+    ).toBeVisible();
 
     // Fill in subcategory name
     await page.locator('input#name').fill(testSubcategoryName);
@@ -172,7 +199,9 @@ test.describe.serial('Forum Content Creation', () => {
     await page.locator('button.bg-red-600:has-text("Luo")').click();
 
     // Wait for modal to close
-    await expect(page.locator('h4:has-text("Luo uusi kategoria")')).not.toBeVisible();
+    await expect(
+      page.locator('h4:has-text("Luo uusi kategoria")')
+    ).not.toBeVisible();
   });
 
   test('subcategory appears in parent category', async ({ page }) => {
@@ -180,7 +209,10 @@ test.describe.serial('Forum Content Creation', () => {
     await page.waitForLoadState('networkidle');
 
     // Navigate to parent category
-    await page.locator(`ul button:has-text("${testCategoryName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Verify subcategory is visible
@@ -192,11 +224,17 @@ test.describe.serial('Forum Content Creation', () => {
     await page.waitForLoadState('networkidle');
 
     // Navigate to parent category
-    await page.locator(`ul button:has-text("${testCategoryName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Navigate to subcategory
-    await page.locator(`ul button:has-text("${testSubcategoryName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testSubcategoryName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Open create thread modal
@@ -213,7 +251,9 @@ test.describe.serial('Forum Content Creation', () => {
     await page.locator('button.bg-red-600:has-text("Luo")').click();
 
     // Wait for modal to close
-    await expect(page.locator('h4:has-text("Luo uusi lanka")')).not.toBeVisible();
+    await expect(
+      page.locator('h4:has-text("Luo uusi lanka")')
+    ).not.toBeVisible();
   });
 
   test('newly created thread appears in subcategory', async ({ page }) => {
@@ -221,11 +261,17 @@ test.describe.serial('Forum Content Creation', () => {
     await page.waitForLoadState('networkidle');
 
     // Navigate to parent category
-    await page.locator(`ul button:has-text("${testCategoryName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Navigate to subcategory
-    await page.locator(`ul button:has-text("${testSubcategoryName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testSubcategoryName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Verify thread is visible
@@ -237,20 +283,31 @@ test.describe.serial('Forum Content Creation', () => {
     await page.waitForLoadState('networkidle');
 
     // Navigate to parent category
-    await page.locator(`ul button:has-text("${testCategoryName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Navigate to subcategory
-    await page.locator(`ul button:has-text("${testSubcategoryName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testSubcategoryName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Click on the thread
-    await page.locator(`ul button:has-text("${testThreadName}")`).first().click();
+    await page
+      .locator(`ul button:has-text("${testThreadName}")`)
+      .first()
+      .click();
     await page.waitForLoadState('networkidle');
 
     // Verify we're in the thread view
     // Thread title is displayed as "Lanka: {threadName}" in an h2 tag
-    await expect(page.locator(`h2:has-text("Lanka: ${testThreadName}")`)).toBeVisible();
+    await expect(
+      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+    ).toBeVisible();
 
     // Verify the thread content (first post) is visible
     await expect(page.locator(`text="${testThreadContent}"`)).toBeVisible();
