@@ -16,19 +16,19 @@ rmi:
 # Run the linter check. Usage: 'make lint'.
 lint:
 	if command -v pnpm &> /dev/null; then \
-		pnpm exec eslint . --ext .js,.jsx,.ts,.tsx; \
+		pnpm exec eslint .; \
 	else \
 		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
-		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint . --ext .js,.jsx,.ts,.tsx; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint .; \
 	fi
 
 # Run the linter and fix errors. Usage: 'make lintfix'.
 lintfix:
 	if command -v pnpm &> /dev/null; then \
-		pnpm exec eslint . --ext .js,.jsx,.ts,.tsx --fix; \
+		pnpm exec eslint . --fix; \
 	else \
 		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
-		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint . --ext .js,.jsx,.ts,.tsx --fix; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint . --fix; \
 	fi
 
 # Run the code style check. Usage: 'make prettier'.
@@ -49,9 +49,18 @@ prettierfix:
 		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx prettier . --write; \
 	fi
 
-# Run the tests. Usage: 'make test'.
+# Run the tests with coverage report. Usage: 'make test'.
 test:
-	pnpm exec playwright test
+	@rm -rf .nyc_output coverage
+	@pnpm exec playwright test --project=chromium
+	@echo ""
+	@echo "Coverage Summary:"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@echo ""
+	@node tests/scripts/uncovered-lines.js
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "Full HTML report available at: coverage/index.html"
 
 # Start a production-like environment locally. Usage: 'make prod'.
 prod:

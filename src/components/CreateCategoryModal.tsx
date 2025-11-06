@@ -18,6 +18,11 @@ const CreateCategoryModal = ({
     onSuccess: () => {
       console.log('Category created successfully!');
       apiContext.category.invalidate().catch((err) => console.log(err));
+      setCategoryName('');
+      setShowCreateCategoryModal(false);
+    },
+    onError: (error) => {
+      console.error('Failed to create category:', error);
     },
   });
 
@@ -27,7 +32,6 @@ const CreateCategoryModal = ({
   ) => {
     console.log(categoryName, parentCategory);
     mutation.mutate({ name: categoryName, parentCategoryId: parentCategory });
-    setShowCreateCategoryModal(false);
   };
 
   const handleCategoryNameChange = (newName: string) => {
@@ -42,6 +46,15 @@ const CreateCategoryModal = ({
             <div
               className="fixed inset-0 h-full w-full bg-black opacity-40"
               onClick={() => setShowCreateCategoryModal(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setShowCreateCategoryModal(false);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Close modal"
             ></div>
             <div className="flex min-h-screen items-center px-4 py-8">
               <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
@@ -87,13 +100,14 @@ const CreateCategoryModal = ({
                       </div>
                       <div className="mt-3 items-center gap-2 sm:flex">
                         <button
-                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2"
+                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={(e) => {
                             e.preventDefault();
                             handleCreateCategory(categoryName, parentCategory);
                           }}
+                          disabled={mutation.isLoading}
                         >
-                          Luo
+                          {mutation.isLoading ? 'Luodaan...' : 'Luo'}
                         </button>
                         <button
                           className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 ring-indigo-600 ring-offset-2 outline-none focus:ring-2"

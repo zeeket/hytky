@@ -17,8 +17,14 @@ const CreateThreadModal = ({
   const apiContext = api.useContext();
   const mutation = api.thread.createThread.useMutation({
     onSuccess: () => {
-      console.log('Category created successfully!');
+      console.log('Thread created successfully!');
       apiContext.thread.invalidate().catch((err) => console.log(err));
+      setThreadName('');
+      setFirstPostContent('');
+      setShowCreateThreadModal(false);
+    },
+    onError: (error) => {
+      console.error('Failed to create thread:', error);
     },
   });
 
@@ -33,7 +39,6 @@ const CreateThreadModal = ({
       categoryId: parentCategory,
       firstPostContent: firstPostContent,
     });
-    setShowCreateThreadModal(false);
   };
 
   const handleThreadNameChange = (newName: string) => {
@@ -52,6 +57,15 @@ const CreateThreadModal = ({
             <div
               className="fixed inset-0 h-full w-full bg-black opacity-40"
               onClick={() => setShowCreateThreadModal(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setShowCreateThreadModal(false);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Close modal"
             ></div>
             <div className="flex min-h-screen items-center px-4 py-8">
               <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
@@ -115,7 +129,7 @@ const CreateThreadModal = ({
                       </div>
                       <div className="mt-3 items-center gap-2 sm:flex">
                         <button
-                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2"
+                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={(e) => {
                             e.preventDefault();
                             handleCreateThread(
@@ -124,8 +138,9 @@ const CreateThreadModal = ({
                               firstPostContent
                             );
                           }}
+                          disabled={mutation.isLoading}
                         >
-                          Luo
+                          {mutation.isLoading ? 'Luodaan...' : 'Luo'}
                         </button>
                         <button
                           className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 ring-indigo-600 ring-offset-2 outline-none focus:ring-2"

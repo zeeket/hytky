@@ -21,16 +21,17 @@ import CreatePostBox from '~/components/CreatePostBox';
 interface ForumProps {
   initialCategoryId: number;
   categoriesInPath: string;
-  thread: string | undefined;
+  thread: string | null | undefined;
 }
 
 const Forum: NextPage<ForumProps> = (props: ForumProps) => {
   const propsObj: CategoryWithChildren[] = superjson.parse(
     props.categoriesInPath
   );
-  const threadObj: ThreadWithPostsAndAuthors | undefined = props.thread
-    ? superjson.parse(props.thread)
-    : undefined;
+  const threadObj: ThreadWithPostsAndAuthors | undefined =
+    props.thread && props.thread !== null
+      ? superjson.parse(props.thread)
+      : undefined;
   const router = useRouter();
 
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
@@ -39,28 +40,48 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
     props.initialCategoryId
   );
   const [currentThreadId, setCurrentThreadId] = useState(threadObj?.id);
+  const [prevInitialCategoryId, setPrevInitialCategoryId] = useState(props.initialCategoryId);
+  const [prevThreadId, setPrevThreadId] = useState(threadObj?.id);
 
-  const allCategoriesWithChildrenQuery =
-    api.category.getAllCategories.useQuery();
+  // Sync state with props when navigating via URL (during render, not in effect)
+  if (props.initialCategoryId !== prevInitialCategoryId) {
+    setPrevInitialCategoryId(props.initialCategoryId);
+    setCurrentCategoryId(props.initialCategoryId);
+  }
+
+  if (threadObj?.id !== prevThreadId) {
+    setPrevThreadId(threadObj?.id);
+    setCurrentThreadId(threadObj?.id);
+  }
+
+  const allCategoriesWithChildrenQuery = api.category.getAllCategories.useQuery(undefined, {
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  });
   const allCategoriesWithChildren: CategoryWithChildren[] =
     allCategoriesWithChildrenQuery.data || [];
+
   const childrenOfCurrentCategory = allCategoriesWithChildren.filter(
     (category: CategoryWithChildren) =>
       category.parentCategoryId === currentCategoryId
   );
 
   const threadsOfCurrentCategoryQuery =
-    api.thread.getThreadsByCategoryId.useQuery({
-      categoryId: currentCategoryId,
-    });
+    api.thread.getThreadsByCategoryId.useQuery(
+      {
+        categoryId: currentCategoryId,
+      },
+      {
+        refetchOnMount: true,
+        refetchOnWindowFocus: false,
+      }
+    );
   const threadsOfCurrentCategory = threadsOfCurrentCategoryQuery.data || [];
 
   const rowsOfCurrentCategory = [
     ...childrenOfCurrentCategory,
     ...threadsOfCurrentCategory,
   ];
-
-  //console.log("currentCategoryId: ",currentCategoryId);
 
   return (
     <>
@@ -72,10 +93,14 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
         </div>
         <AccountDropdown />
 
-        {allCategoriesWithChildrenQuery.isLoading ||
-        !props.categoriesInPath ||
-        threadsOfCurrentCategoryQuery.isLoading ? (
+        {(allCategoriesWithChildrenQuery.isLoading ||
+          !allCategoriesWithChildrenQuery.data ||
+          threadsOfCurrentCategoryQuery.isLoading ||
+          !threadsOfCurrentCategoryQuery.data) &&
+        props.categoriesInPath ? (
           <p className="text-white">Ladataan...</p>
+        ) : !props.categoriesInPath ? (
+          <p className="text-white">Virhe ladattaessa...</p>
         ) : (
           <div className="flex flex-col space-y-6">
             <ForumPathBar
@@ -163,73 +188,68 @@ const categoryPathExists = async (
 } | null> => {
   const prisma = new PrismaClient();
 
-  let previous: CategoryWithChildren | null = null;
   const rootCategory = await getRootCategory();
-  const categoriesInPath = await prisma.category.findMany({
-    orderBy: {
-      id: 'asc',
-    },
-    where: {
-      name: { in: path },
-    },
-    include: {
-      childCategories: true,
-    },
-  });
+  const categories: CategoryWithChildren[] = [rootCategory];
 
-  console.log('categoriesInPath: ', categoriesInPath);
+  let currentParentId: number | null = rootCategory.id;
 
-  if (categoriesInPath.length < path.length - 1) {
-    return null;
-  }
+  // Traverse the path hierarchically, finding each category as a child of the previous one
+  for (let i = 0; i < path.length; i++) {
+    const segmentName = path[i];
 
-  const categories = [rootCategory, ...categoriesInPath];
+    // Try to find this segment as a category
+    const category = await prisma.category.findFirst({
+      where: {
+        name: segmentName,
+        parentCategoryId: currentParentId,
+      },
+      include: {
+        childCategories: true,
+      },
+    });
 
-  const exists = categories.every((category) => {
-    if (previous === null && category.parentCategoryId !== null) {
-      return false;
-    }
-
-    if (previous !== null && category.parentCategoryId !== previous.id) {
-      return false;
-    }
-
-    previous = category;
-    return true;
-  });
-
-  if (!exists) {
-    return null;
-  } else {
-    if (categoriesInPath.length === path.length - 1) {
-      const threadWithPosts = await prisma.thread.findFirst({
-        where: {
-          name: path[path.length - 1],
-          categoryId: categoriesInPath[categoriesInPath.length - 1]?.id,
-        },
-        include: {
-          posts: {
-            include: {
-              author: {
-                select: {
-                  name: true,
+    if (category) {
+      // Found the category, add it to the path and continue
+      categories.push(category);
+      currentParentId = category.id;
+    } else {
+      // Not found as a category, check if it's the last segment and could be a thread
+      if (i === path.length - 1) {
+        // Try to find it as a thread in the current category
+        const threadWithPosts = await prisma.thread.findFirst({
+          where: {
+            name: segmentName,
+            categoryId: currentParentId,
+          },
+          include: {
+            posts: {
+              include: {
+                author: {
+                  select: {
+                    name: true,
+                  },
                 },
               },
             },
           },
-        },
-      });
-      if (!threadWithPosts) {
-        //found categories but last bit in path was not a thread
-        return null;
-      } else {
-        //categories and thread
-        return { categories: categories, threadWithPosts: threadWithPosts };
+        });
+
+        if (threadWithPosts) {
+          // Found as a thread
+          await prisma.$disconnect();
+          return { categories: categories, threadWithPosts: threadWithPosts };
+        }
       }
+
+      // Path segment not found as category or thread
+      await prisma.$disconnect();
+      return null;
     }
-    //only categories, no thread
-    return { categories: categories, threadWithPosts: null };
   }
+
+  // All segments were categories, no thread
+  await prisma.$disconnect();
+  return { categories: categories, threadWithPosts: null };
 };
 
 const getRootCategory = async (): Promise<CategoryWithChildren> => {
@@ -242,6 +262,7 @@ const getRootCategory = async (): Promise<CategoryWithChildren> => {
       childCategories: true,
     },
   });
+  await prisma.$disconnect();
   if (!rootCategory) {
     throw new Error('Root category not found');
   }
@@ -253,7 +274,6 @@ export const getServerSideProps = async ({
 }: {
   query: { slug: string[] };
 }) => {
-  //console.log(query);
   if (query.slug) {
     // going to a category or thread
 
@@ -268,13 +288,15 @@ export const getServerSideProps = async ({
     if (!objsFromSlug || !categoriesInPath) {
       return { notFound: true };
     }
-    //console.log("lastCategory: ",lastCategory)
+
     return {
       props: {
         initialCategoryId:
           categoriesInPath[categoriesInPath.length - 1]?.id || 1,
         categoriesInPath: superjson.stringify(categoriesInPath),
-        thread: superjson.stringify(objsFromSlug?.threadWithPosts),
+        thread: objsFromSlug?.threadWithPosts
+          ? superjson.stringify(objsFromSlug.threadWithPosts)
+          : null,
       },
     };
   } else {
@@ -290,6 +312,7 @@ export const getServerSideProps = async ({
       props: {
         initialCategoryId: 1,
         categoriesInPath: superjson.stringify(categoriesInPath),
+        thread: null,
       },
     };
   }

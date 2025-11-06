@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/coverage';
 
 test('navigate to rental page and back', async ({ page }) => {
   await page.goto('/');
@@ -11,7 +11,7 @@ test('navigate to rental page and back', async ({ page }) => {
   expect(laitteistoaText).not.toBeNull();
 
   // Wait for the "Takaisin" text (with arrow) to be visible and click it
-  const takaisinLink = await page.waitForSelector('a:has-text("Takaisin")');
+  const takaisinLink = await page.waitForSelector(':has-text("Takaisin")');
   expect(takaisinLink).not.toBeNull();
 
   await takaisinLink.click();

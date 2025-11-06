@@ -18,34 +18,34 @@ export const ForumRow = (props: ForumRowProps) => {
   const categoryInProp = isCategory(props.content);
 
   const handleForumRowClick = (clickedItem: Category | Thread) => {
+    // URL encode the item name to handle spaces and special characters
+    const encodedPath = `${props.router.asPath}/${encodeURIComponent(clickedItem.name)}`;
+
     props.router
-      .push(`${props.router.asPath}/${clickedItem.name}`)
+      .push(encodedPath)
       .then(() => {
         threadInProp
           ? props.setCurrentThreadId(clickedItem.id)
           : props.setCurrentCategoryId(clickedItem.id);
       })
       .catch((err) => {
-        console.log(err);
+        console.error('Navigation error:', err);
       });
   };
 
   return (
-    <div
-      className="flex flex-row space-x-2 divide-x"
-      onClick={(e) => {
-        e.preventDefault();
-        handleForumRowClick(props.content);
-      }}
-    >
+    <div className="flex flex-row space-x-2 divide-x">
       {categoryInProp && <FolderIcon className="text-purple h-6 w-6" />}
       {threadInProp && <DocumentTextIcon className="h-6 w-6 text-white" />}
-      <a
-        href={`${props.router.asPath}/${props.content.name}`}
-        className="pl-2 text-white"
+      <button
+        type="button"
+        className="pl-2 text-white text-left"
+        onClick={() => {
+          handleForumRowClick(props.content);
+        }}
       >
         {props.content.name}
-      </a>
+      </button>
     </div>
   );
 };
