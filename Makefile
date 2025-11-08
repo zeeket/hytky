@@ -51,6 +51,17 @@ prettierfix:
 
 # Run all tests (unit + e2e) with coverage reports. Usage: 'make test'.
 test:
+	@echo "Checking dev environment status..."
+	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
+		echo "Dev environment not running. Starting it now..."; \
+		docker compose -f docker/docker-compose.dev.yml up -d; \
+		echo "Waiting for services to be ready..."; \
+		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
+		echo "Dev environment is ready!"; \
+	else \
+		echo "Dev environment already running."; \
+	fi
+	@echo ""
 	@echo "Running all tests (unit + e2e)..."
 	@echo ""
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -81,6 +92,17 @@ test-unit:
 
 # Run the e2e tests with coverage report. Usage: 'make test-e2e'.
 test-e2e:
+	@echo "Checking dev environment status..."
+	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
+		echo "Dev environment not running. Starting it now..."; \
+		docker compose -f docker/docker-compose.dev.yml up -d; \
+		echo "Waiting for services to be ready..."; \
+		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
+		echo "Dev environment is ready!"; \
+	else \
+		echo "Dev environment already running."; \
+	fi
+	@echo ""
 	@rm -rf .nyc_output coverage
 	@pnpm exec playwright test --project=chromium
 	@echo ""

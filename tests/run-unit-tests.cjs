@@ -15,6 +15,11 @@ const { spawn } = require('child_process');
 // Load environment variables from .env files
 loadEnvConfig(process.cwd());
 
+// Skip environment validation during Jest tests
+// The validation is primarily for build-time checking, not test-time
+// Environment variables are already loaded and validated by this wrapper script
+process.env.SKIP_ENV_VALIDATION = 'true';
+
 // Convert postgres docker network name to localhost for host-based tests
 if (process.env.DATABASE_URL?.includes('postgres:5432')) {
   process.env.DATABASE_URL = process.env.DATABASE_URL.replace(
