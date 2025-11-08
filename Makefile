@@ -49,8 +49,38 @@ prettierfix:
 		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx prettier . --write; \
 	fi
 
-# Run the tests with coverage report. Usage: 'make test'.
+# Run all tests (unit + e2e) with coverage reports. Usage: 'make test'.
 test:
+	@echo "Running all tests (unit + e2e)..."
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "1. Running Unit Tests (Server-Side)"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@pnpm test:unit:coverage
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "2. Running E2E Tests (Client-Side)"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@rm -rf .nyc_output coverage
+	@pnpm exec playwright test --project=chromium
+	@echo ""
+	@echo "E2E Coverage Summary:"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@echo ""
+	@node tests/scripts/uncovered-lines.js
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@echo "Coverage Reports:"
+	@echo "  - Server-side (unit tests): coverage-jest/index.html"
+	@echo "  - Client-side (e2e tests):  coverage/index.html"
+
+# Run the unit tests with coverage report. Usage: 'make test-unit'.
+test-unit:
+	@pnpm test:unit:coverage
+
+# Run the e2e tests with coverage report. Usage: 'make test-e2e'.
+test-e2e:
 	@rm -rf .nyc_output coverage
 	@pnpm exec playwright test --project=chromium
 	@echo ""

@@ -12,7 +12,7 @@ loadEnvConfig(process.cwd());
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: './tests/e2e',
   /* Run tests in files in parallel (safe with unique test data) */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
