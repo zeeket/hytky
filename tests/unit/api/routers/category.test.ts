@@ -25,6 +25,24 @@ describe('categoryRouter', () => {
     });
 
     it('should get root category when authenticated', async () => {
+      // Create test user
+      const user = await prisma.user.create({
+        data: {
+          id: 'test-user-id1',
+          name: 'Test User',
+          email: 'test1@example.com',
+        },
+      });
+
+      // Seed test data
+      await prisma.category.create({
+        data: {
+          name: 'Root Category',
+          parentCategoryId: null,
+          createdById: user.id,
+        },
+      });
+
       const session = createMockSession();
       const caller = createTestCaller(session);
 
@@ -38,6 +56,32 @@ describe('categoryRouter', () => {
     });
 
     it('should include child categories in result', async () => {
+      // Create test user
+      const user = await prisma.user.create({
+        data: {
+          id: 'test-user-id2',
+          name: 'Test User',
+          email: 'test2@example.com',
+        },
+      });
+
+      // Seed test data with parent and child categories
+      const parent = await prisma.category.create({
+        data: {
+          name: 'Parent Category',
+          parentCategoryId: null,
+          createdById: user.id,
+        },
+      });
+
+      await prisma.category.create({
+        data: {
+          name: 'Child Category',
+          parentCategoryId: parent.id,
+          createdById: user.id,
+        },
+      });
+
       const session = createMockSession();
       const caller = createTestCaller(session);
 
@@ -199,6 +243,31 @@ describe('categoryRouter', () => {
     });
 
     it('should get all categories when authenticated', async () => {
+      // Create test user
+      const user = await prisma.user.create({
+        data: {
+          id: 'test-user-id6',
+          name: 'Test User',
+          email: 'test6@example.com',
+        },
+      });
+
+      // Seed test data with multiple categories
+      await prisma.category.createMany({
+        data: [
+          {
+            name: 'Category 1',
+            parentCategoryId: null,
+            createdById: user.id,
+          },
+          {
+            name: 'Category 2',
+            parentCategoryId: null,
+            createdById: user.id,
+          },
+        ],
+      });
+
       const session = createMockSession();
       const caller = createTestCaller(session);
 
