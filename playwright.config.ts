@@ -9,6 +9,13 @@ const { loadEnvConfig } = nextEnv;
 loadEnvConfig(process.cwd());
 
 /**
+ * Base URL for tests - configurable via PLAYWRIGHT_BASE_URL env var.
+ * Defaults to Docker-based local dev URL, can be overridden for CI.
+ */
+const baseURL =
+  process.env.PLAYWRIGHT_BASE_URL || 'https://dev.docker.orb.local';
+
+/**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -28,7 +35,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'https://dev.docker.orb.local',
+    baseURL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -80,8 +87,10 @@ export default defineConfig({
   timeout: 30000, // 30 seconds for each test
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'make dev',
-    url: 'http://localhost:80', // Health check uses HTTP directly
+    // In CI, run Next.js directly. Locally, use Docker via make dev
+    command: process.env.CI ? 'pnpm dev' : 'make dev',
+    // Health check URL matches the command - CI uses direct localhost, local uses Docker proxy
+    url: process.env.CI ? 'http://localhost:3000' : 'http://localhost:80',
     timeout: 2 * 60000, // 2 minutes
     reuseExistingServer: !process.env.CI,
   },

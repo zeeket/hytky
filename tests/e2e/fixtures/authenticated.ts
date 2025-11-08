@@ -35,15 +35,22 @@ export const test = base.extend<AuthenticatedFixture>({
       const sessionToken = await createTestSessionToken(DEFAULT_TEST_USER);
       const cookieName = getSessionCookieName();
 
+      // Extract domain and protocol from base URL
+      const baseURL =
+        process.env.PLAYWRIGHT_BASE_URL || 'https://dev.docker.orb.local';
+      const url = new URL(baseURL);
+      const domain = url.hostname;
+      const isSecure = url.protocol === 'https:';
+
       // Inject the session cookie into the browser context
       await context.addCookies([
         {
           name: cookieName,
           value: sessionToken,
-          domain: 'dev.docker.orb.local',
+          domain,
           path: '/',
           httpOnly: true,
-          secure: true,
+          secure: isSecure,
           sameSite: 'Lax',
         },
       ]);

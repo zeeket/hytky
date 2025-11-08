@@ -58,11 +58,16 @@ export class CoverageHelper {
     try {
       const coverage = await page.coverage.stopJSCoverage();
 
+      // Extract hostname from base URL for filtering
+      const baseURL =
+        process.env.PLAYWRIGHT_BASE_URL || 'https://dev.docker.orb.local';
+      const baseHostname = new URL(baseURL).hostname;
+
       // Filter to keep only application code (exclude external resources)
       const filteredCoverage = coverage.filter((entry) => {
         const url = entry.url;
         return (
-          (url.includes('dev.docker.orb.local') ||
+          (url.includes(baseHostname) ||
             url.includes('localhost') ||
             url.includes('127.0.0.1')) &&
           !url.includes('chrome-extension://')

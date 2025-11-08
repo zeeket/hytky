@@ -87,6 +87,7 @@ jobs:
           echo "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}" >> .env
           echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
           echo "FORUM_ROOT_NAME=${{ secrets.FORUM_ROOT_NAME }}" >> .env
+          echo "PLAYWRIGHT_BASE_URL=http://localhost:3000" >> .env
 
       - name: Create .hytkybot.env file
         run: |

@@ -70,8 +70,13 @@ export async function createTestSessionToken(
  * - HTTP: 'next-auth.session-token'
  * - HTTPS: '__Secure-next-auth.session-token'
  *
- * Since tests run against HTTPS (dev.docker.orb.local), we use the secure variant.
+ * The cookie name is determined by the base URL protocol.
  */
 export function getSessionCookieName(): string {
-  return '__Secure-next-auth.session-token';
+  const baseURL =
+    process.env.PLAYWRIGHT_BASE_URL || 'https://dev.docker.orb.local';
+  const isSecure = baseURL.startsWith('https://');
+  return isSecure
+    ? '__Secure-next-auth.session-token'
+    : 'next-auth.session-token';
 }
