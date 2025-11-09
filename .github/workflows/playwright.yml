@@ -41,6 +41,7 @@ jobs:
         run: |
           echo "DATABASE_URL=postgres://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/postgres" >> .env
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
           echo "NEXT_PUBLIC_TG_BOT_NAME=${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}" >> .env
           echo "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}" >> .env
           echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
@@ -83,6 +84,7 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
           echo "NEXT_PUBLIC_TG_BOT_NAME=${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}" >> .env
           echo "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}" >> .env
           echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
