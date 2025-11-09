@@ -66,6 +66,31 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      hytkybot:
+        image: ghcr.io/zeeket/hytkybot/hytkybot:latest
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
+          TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
+          PORT: 3000
+        ports:
+          - 3000:3000
+
     steps:
       - uses: actions/checkout@v4
 
@@ -81,7 +106,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "DATABASE_URL=postgres://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/postgres" >> .env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
           echo "NEXTAUTH_URL=http://localhost:3000" >> .env
@@ -97,6 +122,9 @@ jobs:
           echo "TG_ACTIVE_GROUP_IDS=${{ secrets.TG_ACTIVE_GROUP_IDS }}" >> .hytkybot.env
           echo "TG_ADMIN_GROUP_IDS=${{ secrets.TG_ADMIN_GROUP_IDS }}" >> .hytkybot.env
           echo "PORT=3000" >> .hytkybot.env
+
+      - name: Run Prisma migrations
+        run: pnpm exec prisma migrate deploy
 
       - name: Run Playwright tests
         run: pnpm exec playwright test
