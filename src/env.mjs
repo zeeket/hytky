@@ -21,6 +21,7 @@ const server = z.object({
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
   TG_BOT_TOKEN: z.string(),
   FORUM_ROOT_NAME: z.string(),
+  HYTKYBOT_URL: z.string().url().default('http://hytkybot:3000'),
 });
 
 /**
@@ -47,6 +48,7 @@ const processEnv = {
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   TG_BOT_TOKEN: process.env.TG_BOT_TOKEN,
   FORUM_ROOT_NAME: process.env.FORUM_ROOT_NAME,
+  HYTKYBOT_URL: process.env.HYTKYBOT_URL,
 };
 
 // Don't touch the part below

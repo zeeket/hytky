@@ -48,7 +48,17 @@ declare module 'next-auth' {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  // Trust the proxy in Docker/reverse proxy environments
+  trustHost: true,
   callbacks: {
+    redirect: async ({ url, baseUrl }) => {
+      // Handle relative URLs
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      // Handle same origin URLs
+      else if (new URL(url).origin === baseUrl) return url;
+      // Default to base URL
+      return baseUrl;
+    },
     jwt: ({ token, user }) => {
       //console.log(`user.id: ${user?.id}`);
       if (user) {
@@ -79,39 +89,45 @@ export const authOptions: NextAuthOptions = {
       id: 'telegram-login',
       name: 'Telegram Login',
       credentials: {},
-      async authorize(_, req) {
-        const validator = new AuthDataValidator({
-          botToken: `${env.TG_BOT_TOKEN}`,
-        });
-        const data = objectToAuthDataMap(req.query || {});
-        const user: TelegramUserData = await validator.validate(data);
-        if (user.id && user.first_name) {
-          const role: UserRole = await checkUserRole(user.id);
-          logger.info(`role: ${role}`);
-          logger.info(`userId: ${user.id.toString()}`);
-          if (role === 'nakki') {
-            logger.info('user is nakki, not allowed to login');
-            return null;
-          }
-          await prisma.user.upsert({
-            where: { id: user.id.toString() },
-            update: {
-              name: [user.first_name, user.last_name || ''].join(' '),
-            },
-            create: {
-              id: user.id.toString(),
-              name: [user.first_name, user.last_name || ''].join(' '),
-            },
+      async authorize(_credentials, req) {
+        try {
+          const validator = new AuthDataValidator({
+            botToken: `${env.TG_BOT_TOKEN}`,
           });
-          return {
-            id: user.id,
-            name: [user.first_name, user.last_name || ''].join(' '),
-            image: user.photo_url || '',
-            role: role,
-          };
+          const data = objectToAuthDataMap(req.query || {});
+          const user: TelegramUserData = await validator.validate(data);
+
+          if (user.id && user.first_name) {
+            const role: UserRole = await checkUserRole(user.id);
+            logger.info(`role: ${role}`);
+            logger.info(`userId: ${user.id.toString()}`);
+            if (role === 'nakki') {
+              logger.info('user is nakki, not allowed to login');
+              return null;
+            }
+            await prisma.user.upsert({
+              where: { id: user.id.toString() },
+              update: {
+                name: [user.first_name, user.last_name || ''].join(' '),
+              },
+              create: {
+                id: user.id.toString(),
+                name: [user.first_name, user.last_name || ''].join(' '),
+              },
+            });
+            return {
+              id: user.id,
+              name: [user.first_name, user.last_name || ''].join(' '),
+              image: user.photo_url || '',
+              role: role,
+            };
+          }
+          //return null if Telegram login validation fails
+          return null;
+        } catch (error) {
+          console.error('Validation error:', error);
+          return null;
         }
-        //return null if Telegram login validation fails
-        return null;
       },
     }),
   ],
