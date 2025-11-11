@@ -1,6 +1,6 @@
 import { type Category, type Thread } from '@prisma/client';
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PrismaClient } from '@prisma/client';
 import { env } from '~/env.mjs';
 import { api } from '~/utils/api';
@@ -45,16 +45,20 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
   );
   const [prevThreadId, setPrevThreadId] = useState(threadObj?.id);
 
-  // Sync state with props when navigating via URL (during render, not in effect)
-  if (props.initialCategoryId !== prevInitialCategoryId) {
-    setPrevInitialCategoryId(props.initialCategoryId);
-    setCurrentCategoryId(props.initialCategoryId);
-  }
+  // Sync state with props when navigating via URL
+  useEffect(() => {
+    if (props.initialCategoryId !== prevInitialCategoryId) {
+      setPrevInitialCategoryId(props.initialCategoryId);
+      setCurrentCategoryId(props.initialCategoryId);
+    }
+  }, [props.initialCategoryId, prevInitialCategoryId]);
 
-  if (threadObj?.id !== prevThreadId) {
-    setPrevThreadId(threadObj?.id);
-    setCurrentThreadId(threadObj?.id);
-  }
+  useEffect(() => {
+    if (threadObj?.id !== prevThreadId) {
+      setPrevThreadId(threadObj?.id);
+      setCurrentThreadId(threadObj?.id);
+    }
+  }, [threadObj?.id, prevThreadId]);
 
   const allCategoriesWithChildrenQuery = api.category.getAllCategories.useQuery(
     undefined,
