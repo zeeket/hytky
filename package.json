@@ -77,5 +77,8 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.5.6"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
   }
 }

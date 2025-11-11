@@ -127,6 +127,9 @@ jobs:
       - name: Run Prisma migrations
         run: pnpm exec prisma migrate deploy
 
+      - name: Seed database for tests
+        run: pnpm exec prisma db seed
+
       - name: Run Playwright tests
         run: pnpm exec playwright test
 
