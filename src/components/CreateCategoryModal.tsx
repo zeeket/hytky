@@ -13,16 +13,22 @@ const CreateCategoryModal = ({
   parentCategory,
 }: createCategoryModalProps) => {
   const [categoryName, setCategoryName] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const apiContext = api.useContext();
   const mutation = api.category.createCategory.useMutation({
     onSuccess: () => {
       console.log('Category created successfully!');
       apiContext.category.invalidate().catch((err) => console.log(err));
       setCategoryName('');
+      setErrorMessage(null);
       setShowCreateCategoryModal(false);
     },
     onError: (error) => {
       console.error('Failed to create category:', error);
+      setErrorMessage(
+        error.message || 'Kategorian luominen epäonnistui. Yritä uudelleen.'
+      );
+      setCategoryName('');
     },
   });
 
@@ -36,6 +42,16 @@ const CreateCategoryModal = ({
 
   const handleCategoryNameChange = (newName: string) => {
     setCategoryName(newName);
+    // Clear error message when user starts typing
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setCategoryName('');
+    setErrorMessage(null);
+    setShowCreateCategoryModal(false);
   };
 
   return (
@@ -45,11 +61,11 @@ const CreateCategoryModal = ({
           <div className="fixed inset-0 z-10 overflow-y-auto">
             <div
               className="fixed inset-0 h-full w-full bg-black opacity-40"
-              onClick={() => setShowCreateCategoryModal(false)}
+              onClick={handleCloseModal}
               onKeyDown={(e) => {
                 if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setShowCreateCategoryModal(false);
+                  handleCloseModal();
                 }
               }}
               role="button"
@@ -90,6 +106,7 @@ const CreateCategoryModal = ({
                             type="text"
                             name="name"
                             id="name"
+                            value={categoryName}
                             className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
                             onChange={(e) => {
                               e.preventDefault();
@@ -97,6 +114,11 @@ const CreateCategoryModal = ({
                             }}
                           />
                         </div>
+                        {errorMessage && (
+                          <div className="mt-2 text-sm text-red-600">
+                            {errorMessage}
+                          </div>
+                        )}
                       </div>
                       <div className="mt-3 items-center gap-2 sm:flex">
                         <button
@@ -111,9 +133,7 @@ const CreateCategoryModal = ({
                         </button>
                         <button
                           className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 ring-indigo-600 ring-offset-2 outline-none focus:ring-2"
-                          onClick={() => {
-                            setShowCreateCategoryModal(false);
-                          }}
+                          onClick={handleCloseModal}
                         >
                           Cancel
                         </button>
