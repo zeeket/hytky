@@ -1,5 +1,5 @@
 import { api } from '~/utils/api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface createCategoryModalProps {
   showCreateCategoryModal: boolean;
@@ -28,8 +28,27 @@ const CreateCategoryModal = ({
       setErrorMessage(
         error.message || 'Kategorian luominen epäonnistui. Yritä uudelleen.'
       );
+      // Reset categoryName on error to prevent stale data
+      setCategoryName('');
     },
   });
+
+  // Reset state when modal is closed externally (via prop change)
+  useEffect(() => {
+    if (!showCreateCategoryModal) {
+      setCategoryName('');
+      setErrorMessage(null);
+    }
+  }, [showCreateCategoryModal]);
+
+  // Cleanup on unmount: reset state to prevent stale data if component unmounts
+  // This handles edge cases where component unmounts before mutation completes
+  useEffect(() => {
+    return () => {
+      setCategoryName('');
+      setErrorMessage(null);
+    };
+  }, []);
 
   const handleCreateCategory = (
     categoryName: string,
