@@ -102,6 +102,7 @@ const CreateThreadModal = ({
                             name="name"
                             id="name"
                             className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                            value={threadName}
                             onChange={(e) =>
                               handleThreadNameChange(e.target.value)
                             }
@@ -120,6 +121,7 @@ const CreateThreadModal = ({
                               name="name"
                               id="name"
                               className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                              value={firstPostContent}
                               onChange={(e) =>
                                 handleFirstPostContentChange(e.target.value)
                               }

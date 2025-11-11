@@ -28,7 +28,6 @@ const CreateCategoryModal = ({
       setErrorMessage(
         error.message || 'Kategorian luominen epäonnistui. Yritä uudelleen.'
       );
-      setCategoryName('');
     },
   });
 
