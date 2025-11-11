@@ -70,7 +70,8 @@ test('login flow - verify Telegram widget integration', async ({ page }) => {
 
   // Must contain the bot username from environment
   const botName = process.env.NEXT_PUBLIC_TG_BOT_NAME;
-  expect(botName).toBe('testHYTKYbot');
+  // Accept both production and test bot names
+  expect(['testHYTKYbot', 'HYTKYbot']).toContain(botName);
   expect(iframeSrc).toContain(botName);
 
   // Should contain origin parameter (domain validation)

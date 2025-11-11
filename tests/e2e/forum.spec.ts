@@ -105,7 +105,7 @@ test.describe('Forum Viewing', () => {
     page,
   }) => {
     // Navigate directly to forum without going through homepage first
-    await page.goto('https://dev.docker.orb.local/forum');
+    await page.goto('/forum');
     await page.waitForLoadState('networkidle');
 
     // Verify page loads with all essential elements
