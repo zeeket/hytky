@@ -15,14 +15,20 @@ const CreatePostBox = (props: CreatePostBoxProps) => {
     },
   });
 
-  const handlePostButtonPress = () => {
+  const handlePostButtonPress = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     mutation.mutate({ content: postContent, threadId: props.threadId });
     console.log('handlePostButtonPress');
   };
 
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutation.mutate({ content: postContent, threadId: props.threadId });
+  };
+
   return (
     <div className="pt-8">
-      <form>
+      <form onSubmit={handleFormSubmit}>
         <textarea
           className="h-32 w-full bg-gray-800 text-white"
           onChange={(e) => {
