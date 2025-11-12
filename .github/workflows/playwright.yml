@@ -135,6 +135,9 @@ jobs:
       - name: Seed database for tests
         run: pnpm exec prisma db seed
 
+      - name: Clean coverage directories
+        run: rm -rf .nyc_output coverage
+
       - name: Run Playwright tests
         run: pnpm exec playwright test
 

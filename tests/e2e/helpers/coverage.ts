@@ -147,7 +147,10 @@ export class CoverageHelper {
     // Download all source files and transform URLs
     const transformedCoverage = await Promise.all(
       coverage.map(async (entry) => {
-        const localPath = await this.downloadSource(page, entry.url);
+        let localPath = await this.downloadSource(page, entry.url);
+        // Ensure path is filesystem-safe (remove any remaining invalid characters)
+        // This handles cases where URLs slip through with colons or other invalid chars
+        localPath = localPath.replace(/[:"<>|*?\r\n]/g, '_');
         return {
           scriptId: '0',
           url: localPath,
