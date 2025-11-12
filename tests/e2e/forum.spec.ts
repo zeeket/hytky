@@ -476,4 +476,95 @@ test.describe.serial('Forum Content Creation', () => {
     // Verify the textarea is now empty (cleared after submission)
     await expect(textarea).toHaveValue('');
   });
+
+  test('should create exactly one post when submitting form (regression test for duplicate posts)', async ({
+    page,
+  }) => {
+    // Intercept network requests to verify only one mutation is called
+    // Set this up before any navigation to catch all requests
+    let mutationCallCount = 0;
+    page.on('request', (request) => {
+      if (
+        request.url().includes('/api/trpc/post.createPost') &&
+        request.method() === 'POST'
+      ) {
+        mutationCallCount++;
+      }
+    });
+
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to parent category
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to subcategory
+    await page
+      .locator(`ul button:has-text("${testSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Click on the thread
+    await page
+      .locator(`ul button:has-text("${testThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Verify we're in the thread view
+    await expect(
+      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+    ).toBeVisible();
+
+    // Count initial posts using a more reliable method
+    // Get all post list items (excluding the form itself)
+    const initialPostElements = await page
+      .locator('ol li:not(:has(textarea))')
+      .all();
+    const initialPostCount = initialPostElements.length;
+
+    // Create a new post with unique content
+    const uniquePostContent = `Regression test post at ${Date.now()}`;
+    const textarea = page.locator('textarea');
+    await expect(textarea).toBeVisible();
+
+    // Fill in the textarea
+    await textarea.fill(uniquePostContent);
+
+    // Verify textarea has content before submission
+    await expect(textarea).toHaveValue(uniquePostContent);
+
+    // Wait for the tRPC mutation to complete and page to navigate
+    const navigationPromise = page.waitForLoadState('networkidle');
+
+    // Click the submit button - this should trigger form submission
+    await page.locator('button:has-text("Lähetä")').click();
+
+    // Wait for the page to update (router.replace will refresh)
+    await navigationPromise;
+
+    // Additional wait to ensure DOM is updated
+    await page.waitForTimeout(1000);
+
+    // Verify only one mutation was called
+    expect(mutationCallCount).toBe(1);
+
+    // Verify the new post appears exactly once in the thread
+    const postInstances = await page
+      .locator(`text="${uniquePostContent}"`)
+      .count();
+    expect(postInstances).toBe(1);
+
+    // Verify post count increased by exactly 1
+    const finalPostElements = await page
+      .locator('ol li:not(:has(textarea))')
+      .all();
+    const finalPostCount = finalPostElements.length;
+    expect(finalPostCount).toBe(initialPostCount + 1);
+  });
 });
