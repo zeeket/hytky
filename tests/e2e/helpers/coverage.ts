@@ -121,7 +121,13 @@ export class CoverageHelper {
       return localPath;
     } catch (error) {
       console.warn(`[Coverage] Failed to download source: ${url}`, error);
-      return url; // Fallback to original URL
+      // Fallback: create a sanitized path for URLs that can't be downloaded
+      // Replace characters that are invalid in file paths (especially colons for Windows/NTFS)
+      const sanitized = url
+        .replace(/[:"<>|*?\r\n]/g, '_')
+        .replace(/^https?_+\/\//, '')
+        .replace(/\/+/g, '_');
+      return join(SOURCES_DIR, `${sanitized}.js`);
     }
   }
 
