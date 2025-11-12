@@ -93,7 +93,7 @@ test.describe('Forum Viewing', () => {
     await page.waitForLoadState('networkidle');
 
     // Click on root category link in breadcrumb
-    await page.locator('a[href=""]').first().click();
+    await page.locator('a[href="/forum"]').first().click();
     await page.waitForLoadState('networkidle');
 
     // Should still be on forum page
