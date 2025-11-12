@@ -279,16 +279,12 @@ export const getServerSideProps = async ({
     };
   } else {
     // going to the root category
-    const rootCategory = {
-      id: 1,
-      name: env.FORUM_ROOT_NAME,
-      parentCategoryId: null,
-      childCategories: [] as Category[],
-    } as CategoryWithChildren;
+    // Fetch the actual root category from the database instead of hardcoding id: 1
+    const rootCategory = await getRootCategory();
     const categoriesInPath = [rootCategory] as CategoryWithChildren[];
     return {
       props: {
-        initialCategoryId: 1,
+        initialCategoryId: rootCategory.id,
         categoriesInPath: superjson.stringify(categoriesInPath),
         thread: null,
       },
