@@ -83,14 +83,11 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
         </div>
         <AccountDropdown />
 
-        {(allCategoriesWithChildrenQuery.isLoading ||
-          !allCategoriesWithChildrenQuery.data ||
-          threadsOfCurrentCategoryQuery.isLoading ||
-          !threadsOfCurrentCategoryQuery.data) &&
-        props.categoriesInPath ? (
+        {allCategoriesWithChildrenQuery.isLoading ||
+        !allCategoriesWithChildrenQuery.data ||
+        threadsOfCurrentCategoryQuery.isLoading ||
+        !threadsOfCurrentCategoryQuery.data ? (
           <p className="text-white">Ladataan...</p>
-        ) : !props.categoriesInPath ? (
-          <p className="text-white">Virhe ladattaessa...</p>
         ) : (
           <div className="flex flex-col space-y-6">
             <ForumPathBar router={router} categoriesInPath={propsObj} />
@@ -178,7 +175,7 @@ const categoryPathExists = async (
     const segmentName = path[i];
 
     // Try to find this segment as a category
-    const category = await prisma.category.findFirst({
+    const category: CategoryWithChildren | null = await prisma.category.findFirst({
       where: {
         name: segmentName,
         parentCategoryId: currentParentId,
