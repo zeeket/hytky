@@ -175,15 +175,16 @@ const categoryPathExists = async (
     const segmentName = path[i];
 
     // Try to find this segment as a category
-    const category: CategoryWithChildren | null = await prisma.category.findFirst({
-      where: {
-        name: segmentName,
-        parentCategoryId: currentParentId,
-      },
-      include: {
-        childCategories: true,
-      },
-    });
+    const category: CategoryWithChildren | null =
+      await prisma.category.findFirst({
+        where: {
+          name: segmentName,
+          parentCategoryId: currentParentId,
+        },
+        include: {
+          childCategories: true,
+        },
+      });
 
     if (category) {
       // Found the category, add it to the path and continue
