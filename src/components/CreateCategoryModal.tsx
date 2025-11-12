@@ -1,5 +1,5 @@
 import { api } from '~/utils/api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface createCategoryModalProps {
   showCreateCategoryModal: boolean;
@@ -55,6 +55,24 @@ const CreateCategoryModal = ({
     setShowCreateCategoryModal(false);
   };
 
+  // Handle Escape key globally to close modal
+  useEffect(() => {
+    if (!showCreateCategoryModal) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setCategoryName('');
+        setErrorMessage(null);
+        setShowCreateCategoryModal(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showCreateCategoryModal, setShowCreateCategoryModal]);
+
   return (
     <>
       {showCreateCategoryModal ? (
@@ -64,7 +82,9 @@ const CreateCategoryModal = ({
               className="fixed inset-0 h-full w-full bg-black opacity-40"
               onClick={handleCloseModal}
               onKeyDown={(e) => {
-                if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                // Handle Escape key to close modal (standard behavior)
+                // Enter and Space are intentionally not handled here to allow normal typing in inputs
+                if (e.key === 'Escape') {
                   e.preventDefault();
                   handleCloseModal();
                 }
@@ -73,8 +93,17 @@ const CreateCategoryModal = ({
               tabIndex={0}
               aria-label="Close modal"
             ></div>
-            <div className="flex min-h-screen items-center px-4 py-8">
-              <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
+            <div
+              className="flex min-h-screen items-center px-4 py-8"
+              onClick={(e) => e.stopPropagation()}
+              role="presentation"
+            >
+              <div
+                className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+              >
                 <div className="mt-3 sm:flex">
                   <div className="mx-auto flex h-12 w-12 flex-none items-center justify-center rounded-full bg-red-100">
                     <svg
@@ -91,10 +120,17 @@ const CreateCategoryModal = ({
                     </svg>
                   </div>
                   <div className="mt-2 text-center sm:ml-4 sm:text-left">
-                    <h4 className="text-lg font-medium text-gray-800">
+                    <h4
+                      id="modal-title"
+                      className="text-lg font-medium text-gray-800"
+                    >
                       Luo uusi kategoria
                     </h4>
-                    <form>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
                       <div className="mt-4">
                         <label
                           htmlFor="name"
@@ -112,6 +148,12 @@ const CreateCategoryModal = ({
                             onChange={(e) => {
                               e.preventDefault();
                               handleCategoryNameChange(e.target.value);
+                            }}
+                            onKeyDown={(e) => {
+                              // Prevent Enter from submitting the form
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                              }
                             }}
                           />
                         </div>

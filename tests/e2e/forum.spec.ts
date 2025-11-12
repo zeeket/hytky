@@ -64,6 +64,50 @@ test.describe('Forum Viewing', () => {
     await page.locator('button:has-text("Cancel")').click();
   });
 
+  test('typing Enter or Space in category modal input does not close modal', async ({
+    page,
+  }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Open create category modal
+    await page.locator('button:has-text("Luo uusi kategoria")').click();
+    const modalHeading = page.locator('h4:has-text("Luo uusi kategoria")');
+    await expect(modalHeading).toBeVisible();
+
+    // Get the input field
+    const categoryNameInput = page.locator('input#name');
+
+    // Type in the category name input and press Enter
+    await categoryNameInput.fill('Test Category Name');
+    await categoryNameInput.press('Enter');
+
+    // Wait a bit to ensure any potential modal close animation completes
+    await page.waitForTimeout(500);
+
+    // Verify modal is still open (should NOT close)
+    await expect(modalHeading).toBeVisible();
+
+    // Type in the input and press Space
+    await categoryNameInput.fill('Test category');
+    await categoryNameInput.press('Space');
+
+    // Wait a bit to ensure any potential modal close animation completes
+    await page.waitForTimeout(500);
+
+    // Verify modal is still open (should NOT close)
+    await expect(modalHeading).toBeVisible();
+
+    // Verify the input value is preserved
+    // Note: pressing Space adds a space character, so the value will be "Test category "
+    await expect(categoryNameInput).toHaveValue('Test category ');
+
+    // Close modal by pressing Escape (which should work)
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(500);
+    await expect(modalHeading).not.toBeVisible();
+  });
+
   test('can open create thread modal', async ({ page }) => {
     await page.goto('/forum');
     await page.waitForLoadState('networkidle');
@@ -86,6 +130,54 @@ test.describe('Forum Viewing', () => {
 
     // Close modal
     await page.locator('button:has-text("Cancel")').click();
+  });
+
+  test('typing Enter or Space in thread modal inputs does not close modal', async ({
+    page,
+  }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Open create thread modal
+    await page.locator('button:has-text("Luo uusi lanka")').click();
+    const modalHeading = page.locator('h4:has-text("Luo uusi lanka")');
+    await expect(modalHeading).toBeVisible();
+
+    // Get the input fields
+    const inputs = await page.locator('input#name').all();
+    expect(inputs.length).toBe(2);
+    const threadNameInput = inputs[0];
+    const contentInput = inputs[1];
+
+    // Type in the thread name input and press Enter
+    await threadNameInput.fill('Test Thread Name');
+    await threadNameInput.press('Enter');
+
+    // Wait a bit to ensure any potential modal close animation completes
+    await page.waitForTimeout(500);
+
+    // Verify modal is still open (should NOT close)
+    await expect(modalHeading).toBeVisible();
+
+    // Type in the content input and press Space
+    await contentInput.fill('Test content');
+    await contentInput.press('Space');
+
+    // Wait a bit to ensure any potential modal close animation completes
+    await page.waitForTimeout(500);
+
+    // Verify modal is still open (should NOT close)
+    await expect(modalHeading).toBeVisible();
+
+    // Verify the input values are preserved
+    // Note: pressing Space adds a space character, so the value will be "Test content "
+    await expect(threadNameInput).toHaveValue('Test Thread Name');
+    await expect(contentInput).toHaveValue('Test content ');
+
+    // Close modal by pressing Escape (which should work)
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(500);
+    await expect(modalHeading).not.toBeVisible();
   });
 
   test('can interact with forum navigation elements', async ({ page }) => {

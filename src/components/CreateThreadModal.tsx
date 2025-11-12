@@ -1,5 +1,5 @@
 import { api } from '~/utils/api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface createThreadModalProps {
   showCreateThreadModal: boolean;
@@ -49,6 +49,22 @@ const CreateThreadModal = ({
     setFirstPostContent(newContent);
   };
 
+  // Handle Escape key globally to close modal
+  useEffect(() => {
+    if (!showCreateThreadModal) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowCreateThreadModal(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showCreateThreadModal, setShowCreateThreadModal]);
+
   return (
     <>
       {showCreateThreadModal ? (
@@ -58,7 +74,9 @@ const CreateThreadModal = ({
               className="fixed inset-0 h-full w-full bg-black opacity-40"
               onClick={() => setShowCreateThreadModal(false)}
               onKeyDown={(e) => {
-                if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                // Handle Escape key to close modal (standard behavior)
+                // Enter and Space are intentionally not handled here to allow normal typing in inputs
+                if (e.key === 'Escape') {
                   e.preventDefault();
                   setShowCreateThreadModal(false);
                 }
@@ -67,8 +85,17 @@ const CreateThreadModal = ({
               tabIndex={0}
               aria-label="Close modal"
             ></div>
-            <div className="flex min-h-screen items-center px-4 py-8">
-              <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
+            <div
+              className="flex min-h-screen items-center px-4 py-8"
+              onClick={(e) => e.stopPropagation()}
+              role="presentation"
+            >
+              <div
+                className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+              >
                 <div className="mt-3 sm:flex">
                   <div className="mx-auto flex h-12 w-12 flex-none items-center justify-center rounded-full bg-red-100">
                     <svg
@@ -85,10 +112,17 @@ const CreateThreadModal = ({
                     </svg>
                   </div>
                   <div className="mt-2 text-center sm:ml-4 sm:text-left">
-                    <h4 className="text-lg font-medium text-gray-800">
+                    <h4
+                      id="modal-title"
+                      className="text-lg font-medium text-gray-800"
+                    >
                       Luo uusi lanka
                     </h4>
-                    <form>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
                       <div className="mt-4">
                         <label
                           htmlFor="name"
@@ -106,6 +140,12 @@ const CreateThreadModal = ({
                             onChange={(e) =>
                               handleThreadNameChange(e.target.value)
                             }
+                            onKeyDown={(e) => {
+                              // Prevent Enter from submitting the form
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                         </div>
                         <div className="mt-4">
@@ -125,6 +165,12 @@ const CreateThreadModal = ({
                               onChange={(e) =>
                                 handleFirstPostContentChange(e.target.value)
                               }
+                              onKeyDown={(e) => {
+                                // Prevent Enter from submitting the form
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                }
+                              }}
                             />
                           </div>
                         </div>
