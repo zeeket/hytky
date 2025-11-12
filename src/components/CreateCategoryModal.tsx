@@ -1,5 +1,5 @@
 import { api } from '~/utils/api';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface createCategoryModalProps {
   showCreateCategoryModal: boolean;
@@ -32,15 +32,6 @@ const CreateCategoryModal = ({
       setCategoryName('');
     },
   });
-
-  // Cleanup on unmount: reset state to prevent stale data if component unmounts
-  // This handles edge cases where component unmounts before mutation completes
-  useEffect(() => {
-    return () => {
-      setCategoryName('');
-      setErrorMessage(null);
-    };
-  }, []);
 
   const handleCreateCategory = (
     categoryName: string,
