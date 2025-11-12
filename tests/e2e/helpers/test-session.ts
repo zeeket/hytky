@@ -14,7 +14,7 @@ import { encode } from 'next-auth/jwt';
  */
 
 export interface TestUser {
-  id: number;
+  id: string;
   name: string;
   role: 'admin' | 'active' | 'nakki';
 }
@@ -23,7 +23,7 @@ export interface TestUser {
  * Default test user matching the seeded test data
  */
 export const DEFAULT_TEST_USER: TestUser = {
-  id: 999999999,
+  id: '999999999',
   name: 'Test User',
   role: 'active',
 };
@@ -52,7 +52,7 @@ export async function createTestSessionToken(
     token: {
       userId: user.id,
       role: user.role,
-      sub: user.id.toString(), // NextAuth requires 'sub' claim
+      sub: user.id, // NextAuth requires 'sub' claim
       name: user.name,
       iat: Math.floor(Date.now() / 1000), // Issued at
       exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // Expires in 30 days

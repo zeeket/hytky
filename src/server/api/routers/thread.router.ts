@@ -40,7 +40,7 @@ export const threadRouter = createTRPCRouter({
         .create({
           data: {
             name: input.name,
-            authorId: ctx.session.user.id.toString(),
+            authorId: ctx.session.user.id,
             categoryId: input.categoryId,
           },
         })
@@ -48,7 +48,7 @@ export const threadRouter = createTRPCRouter({
           return ctx.prisma.post.create({
             data: {
               content: input.firstPostContent,
-              authorId: ctx.session.user.id.toString(),
+              authorId: ctx.session.user.id,
               threadId: thread.id,
             },
           });

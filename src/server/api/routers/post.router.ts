@@ -33,7 +33,7 @@ export const postRouter = createTRPCRouter({
       const newPost = await ctx.prisma.post.create({
         data: {
           content: input.content,
-          authorId: ctx.session.user.id.toString(),
+          authorId: ctx.session.user.id,
           threadId: input.threadId,
         },
       });

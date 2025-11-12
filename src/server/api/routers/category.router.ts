@@ -49,7 +49,7 @@ export const categoryRouter = createTRPCRouter({
         data: {
           name: input.name,
           parentCategoryId: input.parentCategoryId,
-          createdById: ctx.session?.user.id?.toString(),
+          createdById: ctx.session?.user.id,
         },
       });
       return newCategory;

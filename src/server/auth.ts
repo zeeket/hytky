@@ -25,14 +25,14 @@ import { checkUserRole } from '../utils/checkUserRole';
  */
 declare module 'next-auth/jwt' {
   interface JWT {
-    userId: number;
+    userId: string;
     role: UserRole;
   }
 }
 
 declare module 'next-auth' {
   interface User {
-    id: number;
+    id: string;
     name: string;
     image: string;
     role: UserRole;
@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
       //console.log(`user.id: ${user?.id}`);
       if (user) {
         //console.log(`user keys: ${Object.keys(user)}`)
-        token.userId = user.id as number;
+        token.userId = user.id;
         token.role = user.role;
       }
       return token;
@@ -106,7 +106,7 @@ export const authOptions: NextAuthOptions = {
               logger.info('user is nakki, not allowed to login');
               return null;
             }
-            await prisma.user.upsert({
+            const dbUser = await prisma.user.upsert({
               where: { id: user.id.toString() },
               update: {
                 name: [user.first_name, user.last_name || ''].join(' '),
@@ -117,7 +117,7 @@ export const authOptions: NextAuthOptions = {
               },
             });
             return {
-              id: user.id,
+              id: dbUser.id, // Return the database user's string ID, not the Telegram number
               name: [user.first_name, user.last_name || ''].join(' '),
               image: user.photo_url || '',
               role: role,
