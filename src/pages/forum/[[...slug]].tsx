@@ -1,8 +1,7 @@
-import { type Category, type Thread } from '@prisma/client';
+import { type Thread } from '@prisma/client';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import { PrismaClient } from '@prisma/client';
-import { env } from '~/env.mjs';
 import { api } from '~/utils/api';
 import CreateCategoryModal from '../../components/CreateCategoryModal';
 import CreateThreadModal from '../../components/CreateThreadModal';
