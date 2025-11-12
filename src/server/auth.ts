@@ -55,7 +55,8 @@ export const authOptions: NextAuthOptions = {
       // Handle relative URLs
       if (url.startsWith('/')) return `${baseUrl}${url}`;
       // Handle same origin URLs
-      else if (new URL(url).origin === baseUrl) return url;
+      // Compare origins, not full URLs, since baseUrl may include a path
+      else if (new URL(url).origin === new URL(baseUrl).origin) return url;
       // Default to base URL
       return baseUrl;
     },
