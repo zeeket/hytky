@@ -33,14 +33,6 @@ const CreateCategoryModal = ({
     },
   });
 
-  // Reset state when modal is closed externally (via prop change)
-  useEffect(() => {
-    if (!showCreateCategoryModal) {
-      setCategoryName('');
-      setErrorMessage(null);
-    }
-  }, [showCreateCategoryModal]);
-
   // Cleanup on unmount: reset state to prevent stale data if component unmounts
   // This handles edge cases where component unmounts before mutation completes
   useEffect(() => {

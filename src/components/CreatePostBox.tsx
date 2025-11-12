@@ -1,8 +1,10 @@
 import { api } from '~/utils/api';
 import { useState } from 'react';
+import { type NextRouter } from 'next/router';
 
 export type CreatePostBoxProps = {
   threadId: number;
+  router: NextRouter;
 };
 
 const CreatePostBox = (props: CreatePostBoxProps) => {
@@ -11,7 +13,15 @@ const CreatePostBox = (props: CreatePostBoxProps) => {
   const mutation = api.post.createPost.useMutation({
     onSuccess: () => {
       console.log('post created successfully!');
+      setPostContent('');
+      props.router
+        .replace(props.router.asPath)
+        .catch((err) => console.log(err));
       apiContext.post.invalidate().catch((err) => console.log(err));
+      apiContext.thread.invalidate().catch((err) => console.log(err));
+    },
+    onError: (error) => {
+      console.error('Failed to create post:', error);
     },
   });
 
@@ -31,6 +41,7 @@ const CreatePostBox = (props: CreatePostBoxProps) => {
       <form onSubmit={handleFormSubmit}>
         <textarea
           className="h-32 w-full bg-gray-800 text-white"
+          value={postContent}
           onChange={(e) => {
             setPostContent(e.target.value);
           }}

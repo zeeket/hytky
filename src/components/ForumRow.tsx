@@ -5,8 +5,6 @@ import { type NextRouter } from 'next/router';
 export type ForumRowProps = {
   content: Category | Thread;
   router: NextRouter;
-  setCurrentCategoryId: (id: number) => void;
-  setCurrentThreadId: (id: number) => void;
 };
 
 const isCategory = (category: Category | Thread): boolean => {
@@ -21,16 +19,9 @@ export const ForumRow = (props: ForumRowProps) => {
     // URL encode the item name to handle spaces and special characters
     const encodedPath = `${props.router.asPath}/${encodeURIComponent(clickedItem.name)}`;
 
-    props.router
-      .push(encodedPath)
-      .then(() => {
-        threadInProp
-          ? props.setCurrentThreadId(clickedItem.id)
-          : props.setCurrentCategoryId(clickedItem.id);
-      })
-      .catch((err) => {
-        console.error('Navigation error:', err);
-      });
+    props.router.push(encodedPath).catch((err) => {
+      console.error('Navigation error:', err);
+    });
   };
 
   return (

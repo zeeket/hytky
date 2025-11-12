@@ -1,6 +1,6 @@
 import { type Category, type Thread } from '@prisma/client';
 import type { NextPage } from 'next';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PrismaClient } from '@prisma/client';
 import { env } from '~/env.mjs';
 import { api } from '~/utils/api';
@@ -36,29 +36,10 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
 
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
   const [showCreateThreadModal, setShowCreateThreadModal] = useState(false);
-  const [currentCategoryId, setCurrentCategoryId] = useState(
-    props.initialCategoryId
-  );
-  const [currentThreadId, setCurrentThreadId] = useState(threadObj?.id);
-  const [prevInitialCategoryId, setPrevInitialCategoryId] = useState(
-    props.initialCategoryId
-  );
-  const [prevThreadId, setPrevThreadId] = useState(threadObj?.id);
 
-  // Sync state with props when navigating via URL
-  useEffect(() => {
-    if (props.initialCategoryId !== prevInitialCategoryId) {
-      setPrevInitialCategoryId(props.initialCategoryId);
-      setCurrentCategoryId(props.initialCategoryId);
-    }
-  }, [props.initialCategoryId, prevInitialCategoryId]);
-
-  useEffect(() => {
-    if (threadObj?.id !== prevThreadId) {
-      setPrevThreadId(threadObj?.id);
-      setCurrentThreadId(threadObj?.id);
-    }
-  }, [threadObj?.id, prevThreadId]);
+  // Derive state directly from props - no need for local state since URL is source of truth
+  const currentCategoryId = props.initialCategoryId;
+  const currentThreadId = threadObj?.id;
 
   const allCategoriesWithChildrenQuery = api.category.getAllCategories.useQuery(
     undefined,
@@ -112,12 +93,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
           <p className="text-white">Virhe ladattaessa...</p>
         ) : (
           <div className="flex flex-col space-y-6">
-            <ForumPathBar
-              router={router}
-              categoriesInPath={propsObj}
-              setCurrentCategoryId={setCurrentCategoryId}
-              setCurrentThreadId={setCurrentThreadId}
-            />
+            <ForumPathBar router={router} categoriesInPath={propsObj} />
             <ul className="flex flex-col">
               {currentThreadId && threadObj && (
                 <div>
@@ -141,12 +117,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                 rowsOfCurrentCategory.map(
                   (row: CategoryWithChildren | Thread) => (
                     <li key={row.id} className="text-white">
-                      <ForumRow
-                        content={row}
-                        router={router}
-                        setCurrentCategoryId={setCurrentCategoryId}
-                        setCurrentThreadId={setCurrentThreadId}
-                      />
+                      <ForumRow content={row} router={router} />
                     </li>
                   )
                 )}
@@ -154,7 +125,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
           </div>
         )}
         {currentThreadId ? (
-          <CreatePostBox threadId={currentThreadId} />
+          <CreatePostBox threadId={currentThreadId} router={router} />
         ) : (
           <div className="flex h-60 items-center justify-center">
             <button

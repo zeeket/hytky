@@ -8,19 +8,10 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
     `categoriesInPath length: ${categoriesInPath.length} path length: ${path.length}`
   );
 
-  const handleForumPathBarClick = (
-    pathToThisCategory: string,
-    thisCategoryId: number
-  ) => {
-    props.router
-      .push({ pathname: pathToThisCategory })
-      .then(() => {
-        props.setCurrentCategoryId(thisCategoryId);
-        props.setCurrentThreadId(NaN);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const handleForumPathBarClick = (pathToThisCategory: string) => {
+    props.router.push({ pathname: pathToThisCategory }).catch((err) => {
+      console.log(err);
+    });
   };
 
   return (
@@ -36,7 +27,7 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
               className="text-white underline decoration-transparent transition duration-300 ease-in-out hover:decoration-inherit"
               onClick={(e) => {
                 e.preventDefault();
-                handleForumPathBarClick(pathToThisCategory, p.id);
+                handleForumPathBarClick(pathToThisCategory);
               }}
             >
               {p.name}
@@ -52,6 +43,4 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
 export type ForumPathBarProps = {
   router: NextRouter;
   categoriesInPath: CategoryWithChildren[];
-  setCurrentCategoryId: (idToSet: number) => void;
-  setCurrentThreadId: (idToSet: number) => void;
 };

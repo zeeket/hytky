@@ -315,4 +315,73 @@ test.describe.serial('Forum Content Creation', () => {
     // Verify breadcrumb bar is present (even if categoriesInPath is empty due to SSR limitation)
     await expect(page.locator('text="Olet tässä:"')).toBeVisible();
   });
+
+  test('can create a post in thread and see it appear with cleared input', async ({
+    page,
+  }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to parent category
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to subcategory
+    await page
+      .locator(`ul button:has-text("${testSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Click on the thread
+    await page
+      .locator(`ul button:has-text("${testThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Verify we're in the thread view
+    await expect(
+      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+    ).toBeVisible();
+
+    // Count initial posts
+    const initialPosts = await page.locator('ol li').count();
+
+    // Create a new post
+    const newPostContent = `Reply to test thread at ${timestamp}`;
+    const textarea = page.locator('textarea');
+    await expect(textarea).toBeVisible();
+
+    // Fill in the textarea
+    await textarea.fill(newPostContent);
+
+    // Verify textarea has content before submission
+    await expect(textarea).toHaveValue(newPostContent);
+
+    // Wait for the tRPC mutation to complete and page to navigate
+    const navigationPromise = page.waitForLoadState('networkidle');
+
+    // Click the submit button
+    await page.locator('button:has-text("Lähetä")').click();
+
+    // Wait for the page to update (router.replace will refresh)
+    await navigationPromise;
+
+    // Additional wait to ensure DOM is updated
+    await page.waitForTimeout(1000);
+
+    // Verify the new post appears in the thread
+    await expect(page.locator(`text="${newPostContent}"`)).toBeVisible();
+
+    // Verify post count increased by 1
+    const newPostCount = await page.locator('ol li').count();
+    expect(newPostCount).toBe(initialPosts + 1);
+
+    // Verify the textarea is now empty (cleared after submission)
+    await expect(textarea).toHaveValue('');
+  });
 });
