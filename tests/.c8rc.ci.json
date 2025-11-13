@@ -16,7 +16,7 @@
     "**/prisma/**",
     "**/docker/**"
   ],
-  "reporter": ["html", "lcov", "text", "json-summary"],
+  "reporter": ["text", "json-summary"],
   "reports-dir": "coverage",
   "temp-directory": ".nyc_output",
   "check-coverage": false,
@@ -27,5 +27,7 @@
   "exclude-after-remap": false,
   "allowExternal": true,
   "skip-full": false,
-  "src": ["src"]
+  "src": ["src"],
+  "excludeNodeModules": true,
+  "omit-relative": false
 }
