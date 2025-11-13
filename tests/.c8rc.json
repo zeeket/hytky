@@ -14,7 +14,8 @@
     "**/env.mjs",
     "**/webpack-*",
     "**/prisma/**",
-    "**/docker/**"
+    "**/docker/**",
+    "**/*webpack-internal*/**"
   ],
   "reporter": ["html", "lcov", "text", "json-summary"],
   "reports-dir": "coverage",
@@ -27,5 +28,7 @@
   "exclude-after-remap": false,
   "allowExternal": true,
   "skip-full": false,
-  "src": ["src"]
+  "src": ["src"],
+  "excludeNodeModules": true,
+  "omit-relative": false
 }
