@@ -39,6 +39,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 9
+          run_install: false
 
       - name: Get pnpm store directory
         shell: bash
@@ -54,7 +55,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Create .env file
         run: |
@@ -123,6 +124,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 9
+          run_install: false
 
       - name: Get pnpm store directory
         shell: bash
@@ -138,7 +140,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Cache Next.js build
         uses: actions/cache@v4
