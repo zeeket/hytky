@@ -11,6 +11,7 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/.next/**',
       '**/coverage/**',
+      '**/coverage-jest/**',
       '**/.nyc_output/**',
       '**/test-results/**',
       '**/playwright-report/**',
