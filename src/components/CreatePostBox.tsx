@@ -27,6 +27,9 @@ const CreatePostBox = (props: CreatePostBoxProps) => {
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (postContent.trim().length === 0) {
+      return;
+    }
     mutation.mutate({ content: postContent, threadId: props.threadId });
   };
 
@@ -42,9 +45,10 @@ const CreatePostBox = (props: CreatePostBoxProps) => {
         ></textarea>
         <button
           type="submit"
-          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2"
+          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={postContent.trim().length === 0 || mutation.isLoading}
         >
-          Lähetä
+          {mutation.isLoading ? 'Lähetetään...' : 'Lähetä'}
         </button>
       </form>
     </div>
