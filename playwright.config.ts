@@ -48,12 +48,18 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        ignoreHTTPSErrors: true, // OrbStack uses self-signed certs for .orb.local
+      },
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        ignoreHTTPSErrors: true, // OrbStack uses self-signed certs for .orb.local
+      },
     },
 
     {
