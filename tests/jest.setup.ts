@@ -5,4 +5,4 @@
  * wrapper script before Jest starts, so DATABASE_URL is already set correctly.
  */
 
-// Add any test-specific global setup here if needed
+import '@testing-library/jest-dom';

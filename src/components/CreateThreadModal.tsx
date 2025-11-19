@@ -14,6 +14,7 @@ const CreateThreadModal = ({
 }: createThreadModalProps) => {
   const [threadName, setThreadName] = useState('');
   const [firstPostContent, setFirstPostContent] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const apiContext = api.useContext();
   const mutation = api.thread.createThread.useMutation({
     onSuccess: () => {
@@ -21,10 +22,14 @@ const CreateThreadModal = ({
       apiContext.thread.invalidate().catch((err) => console.log(err));
       setThreadName('');
       setFirstPostContent('');
+      setErrorMessage(null);
       setShowCreateThreadModal(false);
     },
     onError: (error) => {
       console.error('Failed to create thread:', error);
+      setErrorMessage(
+        error?.message ?? 'Thread creation failed. Please try again.'
+      );
     },
   });
 
@@ -34,6 +39,7 @@ const CreateThreadModal = ({
     firstPostContent: string
   ) => {
     console.log(threadName, parentCategory);
+    setErrorMessage(null);
     mutation.mutate({
       name: threadName,
       categoryId: parentCategory,
@@ -175,6 +181,15 @@ const CreateThreadModal = ({
                           </div>
                         </div>
                       </div>
+                      {errorMessage ? (
+                        <p
+                          className="mt-4 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700"
+                          role="alert"
+                          aria-live="assertive"
+                        >
+                          {errorMessage}
+                        </p>
+                      ) : null}
                       <div className="mt-3 items-center gap-2 sm:flex">
                         <button
                           className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -193,6 +208,9 @@ const CreateThreadModal = ({
                         <button
                           className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 ring-indigo-600 ring-offset-2 outline-none focus:ring-2"
                           onClick={() => {
+                            setThreadName('');
+                            setFirstPostContent('');
+                            setErrorMessage(null);
                             setShowCreateThreadModal(false);
                           }}
                         >

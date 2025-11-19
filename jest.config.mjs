@@ -8,7 +8,7 @@ export default {
         jsc: {
           parser: {
             syntax: 'typescript',
-            tsx: false,
+            tsx: true,
           },
           target: 'es2021',
           transform: {
@@ -43,7 +43,7 @@ export default {
   },
 
   // Test file patterns - only look in tests/unit
-  testMatch: ['<rootDir>/tests/unit/**/*.test.ts'],
+  testMatch: ['<rootDir>/tests/unit/**/*.test.{ts,tsx}'],
 
   // Module path aliases (matching tsconfig.json)
   moduleNameMapper: {
@@ -68,8 +68,8 @@ export default {
     '!**/*.d.ts',
   ],
 
-  // Setup files - use setupFiles (not setupFilesAfterEnv) to run BEFORE module imports
-  setupFiles: ['<rootDir>/tests/jest.setup.ts'],
+  // Setup files - run after the test environment is set up
+  setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],
 
   // Don't transform node_modules except specific ESM packages
   transformIgnorePatterns: [
