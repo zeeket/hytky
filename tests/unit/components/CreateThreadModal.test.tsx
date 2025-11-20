@@ -48,16 +48,18 @@ describe('CreateThreadModal', () => {
     const setShowCreateThreadModal = jest.fn();
 
     // Set up the mock to call onError when mutate is called
-    apiModule.__mocks.useMutation.mockImplementation((options?: { onError?: (error: { message?: string }) => void }) => {
-      return {
-        mutate: jest.fn(() => {
-          // Call onError with an error that has no message to test the fallback
-          // This simulates the mutation failing without a specific error message
-          options?.onError?.({ message: undefined });
-        }),
-        isLoading: false,
-      };
-    });
+    apiModule.__mocks.useMutation.mockImplementation(
+      (options?: { onError?: (error: { message?: string }) => void }) => {
+        return {
+          mutate: jest.fn(() => {
+            // Call onError with an error that has no message to test the fallback
+            // This simulates the mutation failing without a specific error message
+            options?.onError?.({ message: undefined });
+          }),
+          isLoading: false,
+        };
+      }
+    );
 
     render(
       <CreateThreadModal
@@ -84,4 +86,3 @@ describe('CreateThreadModal', () => {
     expect(setShowCreateThreadModal).not.toHaveBeenCalled();
   });
 });
-
