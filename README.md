@@ -7,8 +7,8 @@
 [![Jest Tests](https://img.shields.io/badge/Jest-34%2F34%20tests%20passing-brightgreen)](https://github.com/zeeket/hytky/actions/workflows/playwright.yml)
 
 [![Combined Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-combined.json)](.github/badges/coverage-combined.json)
-[![Playwright Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-jest.json)](.github/badges/coverage-jest.json)
-[![Jest Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-playwright.json)](.github/badges/coverage-playwright.json)
+[![Jest Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-jest.json)](.github/badges/coverage-jest.json)
+[![Playwright Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-playwright.json)](.github/badges/coverage-playwright.json)
 
 Site and forum for a student organization centered around electronic music culture. This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 The forum login is designed to be exclusive to members of certain Telegram groups. A Telegram user's membership status in the groups is checked with [HYTKYbot](https://github.com/zeeket/HYTKYbot).
