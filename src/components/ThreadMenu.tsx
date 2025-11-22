@@ -121,7 +121,10 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
             </h3>
 
             <div className="mb-4">
-              <label htmlFor="category-select" className="mb-2 block text-sm text-gray-300">
+              <label
+                htmlFor="category-select"
+                className="mb-2 block text-sm text-gray-300"
+              >
                 Valitse kohde kategoria:
               </label>
               <select
