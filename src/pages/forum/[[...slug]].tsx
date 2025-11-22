@@ -6,6 +6,7 @@ import { api } from '~/utils/api';
 import CreateCategoryModal from '../../components/CreateCategoryModal';
 import CreateThreadModal from '../../components/CreateThreadModal';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import {
   type CategoryWithChildren,
   type PostWithAuthor,
@@ -16,6 +17,7 @@ import superjson from 'superjson';
 import { AccountDropdown } from '~/components/AccountDropdown';
 import { ForumRow } from '~/components/ForumRow';
 import CreatePostBox from '~/components/CreatePostBox';
+import { ThreadMenu } from '~/components/ThreadMenu';
 
 interface ForumProps {
   initialCategoryId: number;
@@ -32,6 +34,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
       ? superjson.parse(props.thread)
       : undefined;
   const router = useRouter();
+  const { data: session } = useSession();
 
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
   const [showCreateThreadModal, setShowCreateThreadModal] = useState(false);
@@ -39,6 +42,57 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
   // Derive state directly from props - no need for local state since URL is source of truth
   const currentCategoryId = props.initialCategoryId;
   const currentThreadId = threadObj?.id;
+
+  const deleteThreadMutation = api.thread.deleteThread.useMutation({
+    onSuccess: () => {
+      // Navigate back to parent category
+      const parentPath = propsObj
+        .slice(1)
+        .map((cat) => cat.name)
+        .join('/');
+      router.push(parentPath ? `/forum/${parentPath}` : '/forum');
+    },
+  });
+
+  const moveThreadMutation = api.thread.moveThread.useMutation({
+    onSuccess: (movedThread) => {
+      // Navigate to the thread in its new location
+      // We need to build the path to the new category
+      const targetCategory = allCategoriesWithChildren.find(
+        (cat) => cat.id === movedThread.categoryId
+      );
+      if (targetCategory && threadObj) {
+        // Build path by traversing up the category tree
+        const pathParts: string[] = [];
+        let currentCat: CategoryWithChildren | undefined = targetCategory;
+        while (currentCat && currentCat.parentCategoryId !== null) {
+          pathParts.unshift(currentCat.name);
+          currentCat = allCategoriesWithChildren.find(
+            (cat) => cat.id === currentCat?.parentCategoryId
+          );
+        }
+        const newPath = `/forum/${pathParts.join('/')}/${threadObj.name}`;
+        router.push(newPath);
+      }
+    },
+  });
+
+  const handleDeleteThread = () => {
+    if (currentThreadId && confirm('Haluatko varmasti poistaa tämän langan?')) {
+      deleteThreadMutation.mutate({ threadId: currentThreadId });
+    }
+  };
+
+  const handleMoveThread = (targetCategoryId: number) => {
+    if (currentThreadId) {
+      moveThreadMutation.mutate({
+        threadId: currentThreadId,
+        targetCategoryId,
+      });
+    }
+  };
+
+  const isThreadAuthor = threadObj && session?.user?.id === threadObj.authorId;
 
   const allCategoriesWithChildrenQuery = api.category.getAllCategories.useQuery(
     undefined,
@@ -93,9 +147,24 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
             <ul className="flex flex-col">
               {currentThreadId && threadObj && (
                 <div>
-                  <h2 className="pb-8 text-xl text-white">
-                    Lanka: {threadObj.name}
-                  </h2>
+                  <div className="flex items-center justify-between pb-8">
+                    <div className="flex items-center">
+                      <h2 className="text-xl text-white">
+                        Lanka: {threadObj.name}
+                      </h2>
+                      {isThreadAuthor && (
+                        <ThreadMenu
+                          threadId={currentThreadId}
+                          currentCategoryId={currentCategoryId}
+                          categories={allCategoriesWithChildren}
+                          onDelete={handleDeleteThread}
+                          onMove={handleMoveThread}
+                          isDeleting={deleteThreadMutation.isLoading}
+                          isMoving={moveThreadMutation.isLoading}
+                        />
+                      )}
+                    </div>
+                  </div>
                   <ol>
                     {threadObj.posts.map((post: PostWithAuthor) => (
                       <li key={post.id} className="text-white">

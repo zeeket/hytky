@@ -16,6 +16,13 @@ const testSubcategoryName = `Test Subcategory ${timestamp}`;
 const testThreadName = `Test Thread ${timestamp}`;
 const testThreadContent = `This is test content created at ${timestamp}`;
 
+// For thread menu tests
+const menuTestCategoryName = `Menu Test Category ${timestamp}`;
+const menuTestSubcategoryName = `Menu Test Subcategory ${timestamp}`;
+const moveTargetCategoryName = `Move Target Category ${timestamp}`;
+const menuTestThreadName = `Menu Test Thread ${timestamp}`;
+const menuTestThreadContent = `Menu test content created at ${timestamp}`;
+
 test.describe('Forum Viewing', () => {
   test.setTimeout(30000);
 
@@ -566,5 +573,422 @@ test.describe.serial('Forum Content Creation', () => {
       .all();
     const finalPostCount = finalPostElements.length;
     expect(finalPostCount).toBe(initialPostCount + 1);
+  });
+
+  test('thread menu is visible when viewing own thread', async ({ page }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to parent category
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to subcategory
+    await page
+      .locator(`ul button:has-text("${testSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Click on the thread
+    await page
+      .locator(`ul button:has-text("${testThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Verify we're in the thread view
+    await expect(
+      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+    ).toBeVisible();
+
+    // Verify hamburger menu is visible (user is the author)
+    await expect(
+      page.locator('[data-testid="thread-menu-button"]')
+    ).toBeVisible();
+
+    // Click menu and verify delete button is inside
+    await page.locator('[data-testid="thread-menu-button"]').click();
+    await expect(
+      page.locator('[data-testid="delete-thread-button"]')
+    ).toBeVisible();
+  });
+
+  test('can delete own thread and get redirected to parent category', async ({
+    page,
+  }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to parent category
+    await page
+      .locator(`ul button:has-text("${testCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to subcategory
+    await page
+      .locator(`ul button:has-text("${testSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Click on the thread
+    await page
+      .locator(`ul button:has-text("${testThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Verify we're in the thread view
+    await expect(
+      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+    ).toBeVisible();
+
+    // Set up dialog handler to accept confirmation
+    page.on('dialog', (dialog) => dialog.accept());
+
+    // Open menu and click delete button
+    await page.locator('[data-testid="thread-menu-button"]').click();
+    await page.locator('[data-testid="delete-thread-button"]').click();
+
+    // Wait for navigation back to parent category
+    await page.waitForLoadState('networkidle');
+
+    // Verify we're back in the subcategory (thread should no longer exist)
+    // The thread should not be visible anymore
+    await expect(
+      page.locator(`ul button:has-text("${testThreadName}")`)
+    ).not.toBeVisible();
+
+    // Verify we're in the subcategory by checking the URL or breadcrumb
+    await expect(page.locator(`text="${testSubcategoryName}"`)).toBeVisible();
+  });
+});
+
+/**
+ * Thread Menu Tests
+ *
+ * These tests verify the hamburger menu functionality for threads:
+ * 1. Menu displays correctly with both options
+ * 2. Thread can be moved to another category
+ * 3. Thread can be deleted via the menu
+ */
+test.describe.serial('Thread Menu', () => {
+  test.setTimeout(30000);
+
+  // Setup: Create categories and thread for menu tests
+  test('setup: create test categories and thread', async ({ page }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Create main test category
+    await page.locator('button:has-text("Luo uusi kategoria")').click();
+    await page.locator('input#name').fill(menuTestCategoryName);
+    await page.locator('button.bg-red-600:has-text("Luo")').click();
+    await expect(
+      page.locator('h4:has-text("Luo uusi kategoria")')
+    ).not.toBeVisible();
+
+    // Navigate into it and create subcategory
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    await page.locator('button:has-text("Luo uusi kategoria")').click();
+    await page.locator('input#name').fill(menuTestSubcategoryName);
+    await page.locator('button.bg-red-600:has-text("Luo")').click();
+    await expect(
+      page.locator('h4:has-text("Luo uusi kategoria")')
+    ).not.toBeVisible();
+
+    // Create move target category at root level
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+    await page.locator('button:has-text("Luo uusi kategoria")').click();
+    await page.locator('input#name').fill(moveTargetCategoryName);
+    await page.locator('button.bg-red-600:has-text("Luo")').click();
+    await expect(
+      page.locator('h4:has-text("Luo uusi kategoria")')
+    ).not.toBeVisible();
+
+    // Navigate to subcategory and create test thread
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    await page.locator('button:has-text("Luo uusi lanka")').click();
+    const inputs = await page.locator('input#name').all();
+    await inputs[0].fill(menuTestThreadName);
+    await inputs[1].fill(menuTestThreadContent);
+    await page.locator('button.bg-red-600:has-text("Luo")').click();
+    await expect(
+      page.locator('h4:has-text("Luo uusi lanka")')
+    ).not.toBeVisible();
+  });
+
+  test('hamburger menu is visible when viewing own thread', async ({
+    page,
+  }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to test thread
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Verify we're in the thread view
+    await expect(
+      page.locator(`h2:has-text("Lanka: ${menuTestThreadName}")`)
+    ).toBeVisible();
+
+    // Verify hamburger menu button is visible
+    await expect(
+      page.locator('[data-testid="thread-menu-button"]')
+    ).toBeVisible();
+  });
+
+  test('hamburger menu shows both options when clicked', async ({ page }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to test thread
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Click hamburger menu
+    await page.locator('[data-testid="thread-menu-button"]').click();
+
+    // Verify both options are visible
+    await expect(
+      page.locator('[data-testid="move-thread-button"]')
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-testid="delete-thread-button"]')
+    ).toBeVisible();
+
+    // Verify button text
+    await expect(page.locator('[data-testid="move-thread-button"]')).toHaveText(
+      'Siirrä lanka'
+    );
+    await expect(
+      page.locator('[data-testid="delete-thread-button"]')
+    ).toHaveText('Poista lanka');
+  });
+
+  test('can open move thread modal', async ({ page }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to test thread
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Click hamburger menu then move button
+    await page.locator('[data-testid="thread-menu-button"]').click();
+    await page.locator('[data-testid="move-thread-button"]').click();
+
+    // Verify move modal appears
+    await expect(page.locator('h3:has-text("Siirrä lanka")')).toBeVisible();
+    await expect(page.locator('[data-testid="category-select"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="confirm-move-button"]')
+    ).toBeVisible();
+
+    // Close modal
+    await page.locator('button:has-text("Peruuta")').click();
+    await expect(page.locator('h3:has-text("Siirrä lanka")')).not.toBeVisible();
+  });
+
+  test('can move thread to different category', async ({ page }) => {
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to test thread
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Open move modal
+    await page.locator('[data-testid="thread-menu-button"]').click();
+    await page.locator('[data-testid="move-thread-button"]').click();
+    await expect(page.locator('h3:has-text("Siirrä lanka")')).toBeVisible();
+
+    // Select target category
+    await page
+      .locator('[data-testid="category-select"]')
+      .selectOption({ label: moveTargetCategoryName });
+
+    // Confirm move
+    await page.locator('[data-testid="confirm-move-button"]').click();
+
+    // Wait for navigation
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000);
+
+    // Verify thread is now in the target category - navigate there to check
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${moveTargetCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Thread should be visible in target category
+    await expect(
+      page.locator(`ul button:has-text("${menuTestThreadName}")`)
+    ).toBeVisible();
+
+    // Verify thread is no longer in original category
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Thread should NOT be visible in original category
+    await expect(
+      page.locator(`ul button:has-text("${menuTestThreadName}")`)
+    ).not.toBeVisible();
+  });
+
+  test('can delete thread via hamburger menu', async ({ page }) => {
+    // First, create a new thread specifically for deletion test
+    const deleteTestThreadName = `Delete Test Thread ${timestamp}`;
+
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to subcategory
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Create thread for deletion
+    await page.locator('button:has-text("Luo uusi lanka")').click();
+    const inputs = await page.locator('input#name').all();
+    await inputs[0].fill(deleteTestThreadName);
+    await inputs[1].fill('Content to be deleted');
+    await page.locator('button.bg-red-600:has-text("Luo")').click();
+    await expect(
+      page.locator('h4:has-text("Luo uusi lanka")')
+    ).not.toBeVisible();
+
+    // Navigate to the thread
+    await page.goto('/forum');
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${deleteTestThreadName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Set up dialog handler to accept confirmation
+    page.on('dialog', (dialog) => dialog.accept());
+
+    // Open menu and click delete
+    await page.locator('[data-testid="thread-menu-button"]').click();
+    await page.locator('[data-testid="delete-thread-button"]').click();
+
+    // Wait for navigation back to parent category
+    await page.waitForLoadState('networkidle');
+
+    // Verify thread is deleted
+    await expect(
+      page.locator(`ul button:has-text("${deleteTestThreadName}")`)
+    ).not.toBeVisible();
   });
 });
