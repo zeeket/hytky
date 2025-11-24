@@ -36,5 +36,5 @@ const jest = spawn('jest', jestArgs, {
 });
 
 jest.on('exit', (code) => {
-  process.exit(code);
+  process.exit(code ?? undefined);
 });

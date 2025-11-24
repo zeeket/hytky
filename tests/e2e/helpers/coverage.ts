@@ -1,4 +1,4 @@
-import { type Page, type Coverage } from '@playwright/test';
+import { type Page } from '@playwright/test';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
@@ -15,6 +15,10 @@ const SOURCES_DIR = join(COVERAGE_DIR, 'sources');
  * Note: This collects browser-side execution coverage. For server-side
  * coverage, you would need a separate Node.js instrumentation approach.
  */
+type JSCoverageEntries = Awaited<
+  ReturnType<Page['coverage']['stopJSCoverage']>
+>;
+
 export class CoverageHelper {
   private coverageStarted = false;
 
@@ -137,7 +141,7 @@ export class CoverageHelper {
    */
   private async saveCoverage(
     page: Page,
-    coverage: Coverage.JSCoverageEntry[],
+    coverage: JSCoverageEntries,
     testName: string
   ): Promise<void> {
     if (!existsSync(COVERAGE_DIR)) {

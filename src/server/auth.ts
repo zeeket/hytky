@@ -40,6 +40,10 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: User;
   }
+  interface NextAuthOptions {
+    /** Allow auth callbacks to trust reverse proxies inside Docker */
+    trustHost?: boolean;
+  }
 }
 
 /**

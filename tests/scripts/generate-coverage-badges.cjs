@@ -23,6 +23,9 @@ if (!fs.existsSync(BADGES_DIR)) {
 /**
  * Get color for coverage percentage
  */
+/**
+ * @param {number} percentage
+ */
 function getCoverageColor(percentage) {
   if (percentage >= 90) return 'brightgreen';
   if (percentage >= 80) return 'green';
@@ -34,6 +37,10 @@ function getCoverageColor(percentage) {
 
 /**
  * Create shields.io endpoint JSON
+ */
+/**
+ * @param {string} label
+ * @param {number} percentage
  */
 function createBadge(label, percentage) {
   const color = getCoverageColor(percentage);
@@ -65,7 +72,10 @@ function getJestCoverage() {
     const total = summary.total;
     return total.statements.pct;
   } catch (error) {
-    console.error('Error reading Jest coverage:', error.message);
+    console.error(
+      'Error reading Jest coverage:',
+      error instanceof Error ? error.message : error
+    );
     return null;
   }
 }
@@ -90,13 +100,20 @@ function getPlaywrightCoverage() {
     const total = summary.total;
     return total.statements.pct;
   } catch (error) {
-    console.error('Error reading Playwright coverage:', error.message);
+    console.error(
+      'Error reading Playwright coverage:',
+      error instanceof Error ? error.message : error
+    );
     return null;
   }
 }
 
 /**
  * Calculate combined coverage (weighted average)
+ */
+/**
+ * @param {number|null} jestPct
+ * @param {number|null} playwrightPct
  */
 function getCombinedCoverage(jestPct, playwrightPct) {
   if (jestPct === null && playwrightPct === null) return null;

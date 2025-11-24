@@ -150,9 +150,10 @@ export async function createThread(
   await page.locator('button:has-text("Luo uusi lanka")').click();
 
   // Fill in name and content
-  const inputs = await page.locator('input#name').all();
-  await inputs[0].fill(threadName);
-  await inputs[1].fill(content);
+  const nameInput = page.locator('input#name').nth(0);
+  const contentInput = page.locator('input#name').nth(1);
+  await nameInput.fill(threadName);
+  await contentInput.fill(content);
 
   // Submit
   await page.locator('button.bg-red-600:has-text("Luo")').click();
