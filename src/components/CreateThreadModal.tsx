@@ -1,5 +1,5 @@
 import { api } from '~/utils/api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface createThreadModalProps {
   showCreateThreadModal: boolean;
@@ -14,11 +14,22 @@ const CreateThreadModal = ({
 }: createThreadModalProps) => {
   const [threadName, setThreadName] = useState('');
   const [firstPostContent, setFirstPostContent] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const apiContext = api.useContext();
   const mutation = api.thread.createThread.useMutation({
     onSuccess: () => {
-      console.log('Category created successfully!');
+      console.log('Thread created successfully!');
       apiContext.thread.invalidate().catch((err) => console.log(err));
+      setThreadName('');
+      setFirstPostContent('');
+      setErrorMessage(null);
+      setShowCreateThreadModal(false);
+    },
+    onError: (error) => {
+      console.error('Failed to create thread:', error);
+      setErrorMessage(
+        error?.message ?? 'Thread creation failed. Please try again.'
+      );
     },
   });
 
@@ -28,12 +39,12 @@ const CreateThreadModal = ({
     firstPostContent: string
   ) => {
     console.log(threadName, parentCategory);
+    setErrorMessage(null);
     mutation.mutate({
       name: threadName,
       categoryId: parentCategory,
       firstPostContent: firstPostContent,
     });
-    setShowCreateThreadModal(false);
   };
 
   const handleThreadNameChange = (newName: string) => {
@@ -44,6 +55,22 @@ const CreateThreadModal = ({
     setFirstPostContent(newContent);
   };
 
+  // Handle Escape key globally to close modal
+  useEffect(() => {
+    if (!showCreateThreadModal) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowCreateThreadModal(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showCreateThreadModal, setShowCreateThreadModal]);
+
   return (
     <>
       {showCreateThreadModal ? (
@@ -52,9 +79,29 @@ const CreateThreadModal = ({
             <div
               className="fixed inset-0 h-full w-full bg-black opacity-40"
               onClick={() => setShowCreateThreadModal(false)}
+              onKeyDown={(e) => {
+                // Handle Escape key to close modal (standard behavior)
+                // Enter and Space are intentionally not handled here to allow normal typing in inputs
+                if (e.key === 'Escape') {
+                  e.preventDefault();
+                  setShowCreateThreadModal(false);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Close modal"
             ></div>
-            <div className="flex min-h-screen items-center px-4 py-8">
-              <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
+            <div
+              className="flex min-h-screen items-center px-4 py-8"
+              onClick={(e) => e.stopPropagation()}
+              role="presentation"
+            >
+              <div
+                className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+              >
                 <div className="mt-3 sm:flex">
                   <div className="mx-auto flex h-12 w-12 flex-none items-center justify-center rounded-full bg-red-100">
                     <svg
@@ -71,10 +118,17 @@ const CreateThreadModal = ({
                     </svg>
                   </div>
                   <div className="mt-2 text-center sm:ml-4 sm:text-left">
-                    <h4 className="text-lg font-medium text-gray-800">
+                    <h4
+                      id="modal-title"
+                      className="text-lg font-medium text-gray-800"
+                    >
                       Luo uusi lanka
                     </h4>
-                    <form>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
                       <div className="mt-4">
                         <label
                           htmlFor="name"
@@ -88,9 +142,16 @@ const CreateThreadModal = ({
                             name="name"
                             id="name"
                             className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                            value={threadName}
                             onChange={(e) =>
                               handleThreadNameChange(e.target.value)
                             }
+                            onKeyDown={(e) => {
+                              // Prevent Enter from submitting the form
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                         </div>
                         <div className="mt-4">
@@ -106,16 +167,32 @@ const CreateThreadModal = ({
                               name="name"
                               id="name"
                               className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                              value={firstPostContent}
                               onChange={(e) =>
                                 handleFirstPostContentChange(e.target.value)
                               }
+                              onKeyDown={(e) => {
+                                // Prevent Enter from submitting the form
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                }
+                              }}
                             />
                           </div>
                         </div>
                       </div>
+                      {errorMessage ? (
+                        <p
+                          className="mt-4 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700"
+                          role="alert"
+                          aria-live="assertive"
+                        >
+                          {errorMessage}
+                        </p>
+                      ) : null}
                       <div className="mt-3 items-center gap-2 sm:flex">
                         <button
-                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2"
+                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                           onClick={(e) => {
                             e.preventDefault();
                             handleCreateThread(
@@ -124,12 +201,16 @@ const CreateThreadModal = ({
                               firstPostContent
                             );
                           }}
+                          disabled={mutation.isLoading}
                         >
-                          Luo
+                          {mutation.isLoading ? 'Luodaan...' : 'Luo'}
                         </button>
                         <button
                           className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 ring-indigo-600 ring-offset-2 outline-none focus:ring-2"
                           onClick={() => {
+                            setThreadName('');
+                            setFirstPostContent('');
+                            setErrorMessage(null);
                             setShowCreateThreadModal(false);
                           }}
                         >

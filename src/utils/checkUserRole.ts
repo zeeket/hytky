@@ -1,8 +1,9 @@
 import { type UserRole } from '~/server/api/types';
+import { env } from '~/env.mjs';
 
 export const checkUserRole = async (id: number): Promise<UserRole> => {
   const idString = id.toString();
-  const response = await fetch('http://hytkybot:3000', {
+  const response = await fetch(env.HYTKYBOT_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

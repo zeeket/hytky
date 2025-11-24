@@ -28,12 +28,12 @@ export const postRouter = createTRPCRouter({
     }),
 
   createPost: protectedProcedure
-    .input(z.object({ content: z.string(), threadId: z.number() }))
+    .input(z.object({ content: z.string().min(1), threadId: z.number() }))
     .mutation(async ({ input, ctx }) => {
       const newPost = await ctx.prisma.post.create({
         data: {
           content: input.content,
-          authorId: ctx.session?.user.id?.toString(),
+          authorId: ctx.session.user.id,
           threadId: input.threadId,
         },
       });

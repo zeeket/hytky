@@ -1,8 +1,10 @@
 import { api } from '~/utils/api';
 import { useState } from 'react';
+import { type NextRouter } from 'next/router';
 
 export type CreatePostBoxProps = {
   threadId: number;
+  router: NextRouter;
 };
 
 const CreatePostBox = (props: CreatePostBoxProps) => {
@@ -11,30 +13,42 @@ const CreatePostBox = (props: CreatePostBoxProps) => {
   const mutation = api.post.createPost.useMutation({
     onSuccess: () => {
       console.log('post created successfully!');
+      setPostContent('');
+      props.router
+        .replace(props.router.asPath)
+        .catch((err) => console.log(err));
       apiContext.post.invalidate().catch((err) => console.log(err));
+      apiContext.thread.invalidate().catch((err) => console.log(err));
+    },
+    onError: (error) => {
+      console.error('Failed to create post:', error);
     },
   });
 
-  const handlePostButtonPress = () => {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (postContent.trim().length === 0) {
+      return;
+    }
     mutation.mutate({ content: postContent, threadId: props.threadId });
-    console.log('handlePostButtonPress');
   };
 
   return (
     <div className="pt-8">
-      <form>
+      <form onSubmit={handleFormSubmit}>
         <textarea
           className="h-32 w-full bg-gray-800 text-white"
+          value={postContent}
           onChange={(e) => {
             setPostContent(e.target.value);
           }}
         ></textarea>
         <button
-          role="submit"
-          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2"
-          onClick={handlePostButtonPress}
+          type="submit"
+          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={postContent.trim().length === 0 || mutation.isLoading}
         >
-          Lähetä
+          {mutation.isLoading ? 'Lähetetään...' : 'Lähetä'}
         </button>
       </form>
     </div>

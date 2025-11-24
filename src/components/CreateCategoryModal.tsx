@@ -1,5 +1,5 @@
 import { api } from '~/utils/api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface createCategoryModalProps {
   showCreateCategoryModal: boolean;
@@ -13,11 +13,23 @@ const CreateCategoryModal = ({
   parentCategory,
 }: createCategoryModalProps) => {
   const [categoryName, setCategoryName] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const apiContext = api.useContext();
   const mutation = api.category.createCategory.useMutation({
     onSuccess: () => {
       console.log('Category created successfully!');
       apiContext.category.invalidate().catch((err) => console.log(err));
+      setCategoryName('');
+      setErrorMessage(null);
+      setShowCreateCategoryModal(false);
+    },
+    onError: (error) => {
+      console.error('Failed to create category:', error);
+      setErrorMessage(
+        error.message || 'Kategorian luominen epäonnistui. Yritä uudelleen.'
+      );
+      // Reset categoryName on error to prevent stale data
+      setCategoryName('');
     },
   });
 
@@ -27,12 +39,39 @@ const CreateCategoryModal = ({
   ) => {
     console.log(categoryName, parentCategory);
     mutation.mutate({ name: categoryName, parentCategoryId: parentCategory });
-    setShowCreateCategoryModal(false);
   };
 
   const handleCategoryNameChange = (newName: string) => {
     setCategoryName(newName);
+    // Clear error message when user starts typing
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
   };
+
+  const handleCloseModal = () => {
+    setCategoryName('');
+    setErrorMessage(null);
+    setShowCreateCategoryModal(false);
+  };
+
+  // Handle Escape key globally to close modal
+  useEffect(() => {
+    if (!showCreateCategoryModal) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setCategoryName('');
+        setErrorMessage(null);
+        setShowCreateCategoryModal(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showCreateCategoryModal, setShowCreateCategoryModal]);
 
   return (
     <>
@@ -41,10 +80,30 @@ const CreateCategoryModal = ({
           <div className="fixed inset-0 z-10 overflow-y-auto">
             <div
               className="fixed inset-0 h-full w-full bg-black opacity-40"
-              onClick={() => setShowCreateCategoryModal(false)}
+              onClick={handleCloseModal}
+              onKeyDown={(e) => {
+                // Handle Escape key to close modal (standard behavior)
+                // Enter and Space are intentionally not handled here to allow normal typing in inputs
+                if (e.key === 'Escape') {
+                  e.preventDefault();
+                  handleCloseModal();
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Close modal"
             ></div>
-            <div className="flex min-h-screen items-center px-4 py-8">
-              <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
+            <div
+              className="flex min-h-screen items-center px-4 py-8"
+              onClick={(e) => e.stopPropagation()}
+              role="presentation"
+            >
+              <div
+                className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+              >
                 <div className="mt-3 sm:flex">
                   <div className="mx-auto flex h-12 w-12 flex-none items-center justify-center rounded-full bg-red-100">
                     <svg
@@ -61,10 +120,17 @@ const CreateCategoryModal = ({
                     </svg>
                   </div>
                   <div className="mt-2 text-center sm:ml-4 sm:text-left">
-                    <h4 className="text-lg font-medium text-gray-800">
+                    <h4
+                      id="modal-title"
+                      className="text-lg font-medium text-gray-800"
+                    >
                       Luo uusi kategoria
                     </h4>
-                    <form>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
                       <div className="mt-4">
                         <label
                           htmlFor="name"
@@ -77,29 +143,40 @@ const CreateCategoryModal = ({
                             type="text"
                             name="name"
                             id="name"
+                            value={categoryName}
                             className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
                             onChange={(e) => {
                               e.preventDefault();
                               handleCategoryNameChange(e.target.value);
                             }}
+                            onKeyDown={(e) => {
+                              // Prevent Enter from submitting the form
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                         </div>
+                        {errorMessage && (
+                          <div className="mt-2 text-sm text-red-600">
+                            {errorMessage}
+                          </div>
+                        )}
                       </div>
                       <div className="mt-3 items-center gap-2 sm:flex">
                         <button
-                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2"
+                          className="mt-2 w-full flex-1 rounded-md bg-red-600 p-2.5 text-white ring-red-600 ring-offset-2 outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                           onClick={(e) => {
                             e.preventDefault();
                             handleCreateCategory(categoryName, parentCategory);
                           }}
+                          disabled={mutation.isLoading}
                         >
-                          Luo
+                          {mutation.isLoading ? 'Luodaan...' : 'Luo'}
                         </button>
                         <button
                           className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 ring-indigo-600 ring-offset-2 outline-none focus:ring-2"
-                          onClick={() => {
-                            setShowCreateCategoryModal(false);
-                          }}
+                          onClick={handleCloseModal}
                         >
                           Cancel
                         </button>

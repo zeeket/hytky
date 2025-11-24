@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Tests
 
 on:
   push:
@@ -7,9 +7,27 @@ on:
     branches: [main]
 
 jobs:
-  test:
-    timeout-minutes: 60
+  unit-tests:
+    name: Unit Tests (Jest)
+    timeout-minutes: 10
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@v4
@@ -21,18 +39,117 @@ jobs:
       - name: Install dependencies
         run: npm install -g pnpm && pnpm install
 
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
-
       - name: Create .env file
         run: |
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "DATABASE_URL=postgres://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/postgres" >> .env
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
           echo "NEXT_PUBLIC_TG_BOT_NAME=${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}" >> .env
           echo "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}" >> .env
           echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
           echo "FORUM_ROOT_NAME=${{ secrets.FORUM_ROOT_NAME }}" >> .env
+          echo "HYTKYBOT_URL=http://localhost:3001" >> .env
+
+      - name: Run Prisma migrations
+        run: pnpm exec prisma migrate deploy
+
+      - name: Run Jest unit tests
+        run: pnpm test:unit:coverage
+
+      - name: Upload Jest coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jest-coverage-report
+          path: coverage-jest/
+          retention-days: 30
+
+  e2e-tests:
+    name: E2E Tests (Playwright)
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      hytkybot:
+        image: ghcr.io/zeeket/hytkybot/hytkybot:latest
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
+          TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
+          PORT: 3000
+        ports:
+          - 3001:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm install -g pnpm && pnpm install
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-
+
+      - name: Get Playwright version
+        shell: bash
+        run: |
+          echo "PLAYWRIGHT_VERSION=$(pnpm list @playwright/test --depth=0 --json | jq -r '.[0].devDependencies["@playwright/test"].version')" >> $GITHUB_ENV
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps
+
+      - name: Create .env file
+        run: |
+          echo "DATABASE_URL=postgres://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/postgres" >> .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+          echo "NEXT_PUBLIC_TG_BOT_NAME=${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}" >> .env
+          echo "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}" >> .env
+          echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
+          echo "FORUM_ROOT_NAME=${{ secrets.FORUM_ROOT_NAME }}" >> .env
+          echo "HYTKYBOT_URL=http://localhost:3001" >> .env
+          echo "PLAYWRIGHT_BASE_URL=http://localhost:3000" >> .env
 
       - name: Create .hytkybot.env file
         run: |
@@ -41,12 +158,76 @@ jobs:
           echo "TG_ADMIN_GROUP_IDS=${{ secrets.TG_ADMIN_GROUP_IDS }}" >> .hytkybot.env
           echo "PORT=3000" >> .hytkybot.env
 
+      - name: Run Prisma migrations
+        run: pnpm exec prisma migrate deploy
+
+      - name: Seed database for tests
+        run: pnpm exec prisma db seed
+
+      - name: Clean coverage directories
+        run: rm -rf .nyc_output coverage
+
       - name: Run Playwright tests
         run: pnpm exec playwright test
 
-      - uses: actions/upload-artifact@v4
+      - name: Generate coverage report with c8
+        if: always()
+        run: pnpm exec c8 report --config tests/.c8rc.ci.json
+
+      - name: Upload Playwright coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-coverage-report
+          path: coverage/
+          retention-days: 30
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+  update-badges:
+    name: Update Coverage Badges
+    runs-on: ubuntu-latest
+    needs: [unit-tests, e2e-tests]
+    if: |
+      github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/tests') ||
+      github.event_name == 'pull_request' && (github.base_ref == 'main' || github.head_ref == 'tests')
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Download Jest coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: jest-coverage-report
+          path: coverage-jest
+
+      - name: Download Playwright coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-coverage-report
+          path: coverage
+
+      - name: Generate coverage badges
+        run: node tests/scripts/generate-coverage-badges.cjs
+
+      - name: Commit badges
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .github/badges/
+          git diff --staged --quiet || git commit -m "chore: update coverage badges [skip ci]"
+          git push

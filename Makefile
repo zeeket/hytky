@@ -16,19 +16,19 @@ rmi:
 # Run the linter check. Usage: 'make lint'.
 lint:
 	if command -v pnpm &> /dev/null; then \
-		pnpm exec eslint . --ext .js,.jsx,.ts,.tsx; \
+		pnpm exec eslint .; \
 	else \
 		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
-		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint . --ext .js,.jsx,.ts,.tsx; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint .; \
 	fi
 
 # Run the linter and fix errors. Usage: 'make lintfix'.
 lintfix:
 	if command -v pnpm &> /dev/null; then \
-		pnpm exec eslint . --ext .js,.jsx,.ts,.tsx --fix; \
+		pnpm exec eslint . --fix; \
 	else \
 		docker build -t hytky-dev-lint -f docker/Dockerfile.dev . > /dev/null 2>&1; \
-		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint . --ext .js,.jsx,.ts,.tsx --fix; \
+		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpm exec eslint . --fix; \
 	fi
 
 # Run the code style check. Usage: 'make prettier'.
@@ -49,9 +49,94 @@ prettierfix:
 		docker run --rm --platform linux/amd64 --env-file .env -v ./:/app -v /app/node_modules/ hytky-dev-lint pnpx prettier . --write; \
 	fi
 
-# Run the tests. Usage: 'make test'.
+# Run all tests (unit + e2e) with coverage reports. Usage: 'make test'.
 test:
-	pnpm exec playwright test
+	@echo "Checking dev environment status..."
+	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
+		echo "Dev environment not running. Starting it now..."; \
+		docker compose -f docker/docker-compose.dev.yml up -d; \
+		echo "Waiting for services to be ready..."; \
+		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
+		echo "Dev environment is ready!"; \
+	else \
+		echo "Dev environment already running."; \
+	fi
+	@echo ""
+	@echo "Running all tests (unit + e2e)..."
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "1. Running Unit Tests (Server-Side)"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@pnpm test:unit:coverage
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "2. Running E2E Tests (Client-Side)"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@rm -rf .nyc_output coverage
+	@pnpm exec playwright test --project=chromium
+	@echo ""
+	@echo "E2E Coverage Summary:"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@echo ""
+	@node tests/scripts/uncovered-lines.js
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@echo "Coverage Reports:"
+	@echo "  - Server-side (unit tests): coverage-jest/index.html"
+	@echo "  - Client-side (e2e tests):  coverage/index.html"
+
+# Run the unit tests with coverage report. Usage: 'make test-unit'.
+test-unit:
+	@pnpm test:unit:coverage
+
+# Run the e2e tests with coverage report. Usage: 'make test-e2e'.
+test-e2e:
+	@echo "Checking dev environment status..."
+	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
+		echo "Dev environment not running. Starting it now..."; \
+		docker compose -f docker/docker-compose.dev.yml up -d; \
+		echo "Waiting for services to be ready..."; \
+		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
+		echo "Dev environment is ready!"; \
+	else \
+		echo "Dev environment already running."; \
+	fi
+	@echo ""
+	@rm -rf .nyc_output coverage
+	@pnpm exec playwright test --project=chromium
+	@echo ""
+	@echo "Coverage Summary:"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@echo ""
+	@node tests/scripts/uncovered-lines.js
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "Full HTML report available at: coverage/index.html"
+
+# Run e2e tests with all browsers (chromium, firefox, webkit). Usage: 'make test-all'.
+test-all:
+	@echo "Checking dev environment status..."
+	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
+		echo "Dev environment not running. Starting it now..."; \
+		docker compose -f docker/docker-compose.dev.yml up -d; \
+		echo "Waiting for services to be ready..."; \
+		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
+		echo "Dev environment is ready!"; \
+	else \
+		echo "Dev environment already running."; \
+	fi
+	@echo ""
+	@rm -rf .nyc_output coverage
+	@pnpm exec playwright test --project=chromium --project=firefox --project=webkit
+	@echo ""
+	@echo "Coverage Summary:"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@echo ""
+	@node tests/scripts/uncovered-lines.js
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "Full HTML report available at: coverage/index.html"
 
 # Start a production-like environment locally. Usage: 'make prod'.
 prod:

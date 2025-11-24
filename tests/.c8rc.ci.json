@@ -1,0 +1,33 @@
+{
+  "all": false,
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/coverage/**",
+    "**/*.config.ts",
+    "**/*.config.js",
+    "**/*.config.mjs",
+    "**/env.mjs",
+    "**/webpack-*",
+    "**/prisma/**",
+    "**/docker/**"
+  ],
+  "reporter": ["text", "json-summary"],
+  "reports-dir": "coverage",
+  "temp-directory": ".nyc_output",
+  "check-coverage": false,
+  "lines": 80,
+  "functions": 80,
+  "branches": 80,
+  "statements": 80,
+  "exclude-after-remap": false,
+  "allowExternal": true,
+  "skip-full": false,
+  "src": ["src"],
+  "excludeNodeModules": true,
+  "omit-relative": false
+}

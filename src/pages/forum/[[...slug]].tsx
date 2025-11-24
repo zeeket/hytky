@@ -1,12 +1,12 @@
-import { type Category, type Thread } from '@prisma/client';
+import { type Thread } from '@prisma/client';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import { PrismaClient } from '@prisma/client';
-import { env } from '~/env.mjs';
 import { api } from '~/utils/api';
 import CreateCategoryModal from '../../components/CreateCategoryModal';
 import CreateThreadModal from '../../components/CreateThreadModal';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import {
   type CategoryWithChildren,
   type PostWithAuthor,
@@ -17,50 +17,114 @@ import superjson from 'superjson';
 import { AccountDropdown } from '~/components/AccountDropdown';
 import { ForumRow } from '~/components/ForumRow';
 import CreatePostBox from '~/components/CreatePostBox';
+import { ThreadMenu } from '~/components/ThreadMenu';
 
 interface ForumProps {
   initialCategoryId: number;
   categoriesInPath: string;
-  thread: string | undefined;
+  thread: string | null | undefined;
 }
 
 const Forum: NextPage<ForumProps> = (props: ForumProps) => {
   const propsObj: CategoryWithChildren[] = superjson.parse(
     props.categoriesInPath
   );
-  const threadObj: ThreadWithPostsAndAuthors | undefined = props.thread
-    ? superjson.parse(props.thread)
-    : undefined;
+  const threadObj: ThreadWithPostsAndAuthors | undefined =
+    props.thread && props.thread !== null
+      ? superjson.parse(props.thread)
+      : undefined;
   const router = useRouter();
+  const { data: session } = useSession();
 
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
   const [showCreateThreadModal, setShowCreateThreadModal] = useState(false);
-  const [currentCategoryId, setCurrentCategoryId] = useState(
-    props.initialCategoryId
-  );
-  const [currentThreadId, setCurrentThreadId] = useState(threadObj?.id);
 
-  const allCategoriesWithChildrenQuery =
-    api.category.getAllCategories.useQuery();
+  // Derive state directly from props - no need for local state since URL is source of truth
+  const currentCategoryId = props.initialCategoryId;
+  const currentThreadId = threadObj?.id;
+
+  const deleteThreadMutation = api.thread.deleteThread.useMutation({
+    onSuccess: () => {
+      // Navigate back to parent category
+      const parentPath = propsObj
+        .slice(1)
+        .map((cat) => cat.name)
+        .join('/');
+      router.push(parentPath ? `/forum/${parentPath}` : '/forum');
+    },
+  });
+
+  const moveThreadMutation = api.thread.moveThread.useMutation({
+    onSuccess: (movedThread) => {
+      // Navigate to the thread in its new location
+      // We need to build the path to the new category
+      const targetCategory = allCategoriesWithChildren.find(
+        (cat) => cat.id === movedThread.categoryId
+      );
+      if (targetCategory && threadObj) {
+        // Build path by traversing up the category tree
+        const pathParts: string[] = [];
+        let currentCat: CategoryWithChildren | undefined = targetCategory;
+        while (currentCat && currentCat.parentCategoryId !== null) {
+          pathParts.unshift(currentCat.name);
+          currentCat = allCategoriesWithChildren.find(
+            (cat) => cat.id === currentCat?.parentCategoryId
+          );
+        }
+        const newPath = `/forum/${pathParts.join('/')}/${threadObj.name}`;
+        router.push(newPath);
+      }
+    },
+  });
+
+  const handleDeleteThread = () => {
+    if (currentThreadId && confirm('Haluatko varmasti poistaa tämän langan?')) {
+      deleteThreadMutation.mutate({ threadId: currentThreadId });
+    }
+  };
+
+  const handleMoveThread = (targetCategoryId: number) => {
+    if (currentThreadId) {
+      moveThreadMutation.mutate({
+        threadId: currentThreadId,
+        targetCategoryId,
+      });
+    }
+  };
+
+  const isThreadAuthor = threadObj && session?.user?.id === threadObj.authorId;
+
+  const allCategoriesWithChildrenQuery = api.category.getAllCategories.useQuery(
+    undefined,
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
   const allCategoriesWithChildren: CategoryWithChildren[] =
     allCategoriesWithChildrenQuery.data || [];
+
   const childrenOfCurrentCategory = allCategoriesWithChildren.filter(
     (category: CategoryWithChildren) =>
       category.parentCategoryId === currentCategoryId
   );
 
   const threadsOfCurrentCategoryQuery =
-    api.thread.getThreadsByCategoryId.useQuery({
-      categoryId: currentCategoryId,
-    });
+    api.thread.getThreadsByCategoryId.useQuery(
+      {
+        categoryId: currentCategoryId,
+      },
+      {
+        refetchOnMount: true,
+        refetchOnWindowFocus: false,
+      }
+    );
   const threadsOfCurrentCategory = threadsOfCurrentCategoryQuery.data || [];
 
   const rowsOfCurrentCategory = [
     ...childrenOfCurrentCategory,
     ...threadsOfCurrentCategory,
   ];
-
-  //console.log("currentCategoryId: ",currentCategoryId);
 
   return (
     <>
@@ -73,23 +137,34 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
         <AccountDropdown />
 
         {allCategoriesWithChildrenQuery.isLoading ||
-        !props.categoriesInPath ||
-        threadsOfCurrentCategoryQuery.isLoading ? (
+        !allCategoriesWithChildrenQuery.data ||
+        threadsOfCurrentCategoryQuery.isLoading ||
+        !threadsOfCurrentCategoryQuery.data ? (
           <p className="text-white">Ladataan...</p>
         ) : (
           <div className="flex flex-col space-y-6">
-            <ForumPathBar
-              router={router}
-              categoriesInPath={propsObj}
-              setCurrentCategoryId={setCurrentCategoryId}
-              setCurrentThreadId={setCurrentThreadId}
-            />
+            <ForumPathBar router={router} categoriesInPath={propsObj} />
             <ul className="flex flex-col">
               {currentThreadId && threadObj && (
                 <div>
-                  <h2 className="pb-8 text-xl text-white">
-                    Lanka: {threadObj.name}
-                  </h2>
+                  <div className="flex items-center justify-between pb-8">
+                    <div className="flex items-center">
+                      <h2 className="text-xl text-white">
+                        Lanka: {threadObj.name}
+                      </h2>
+                      {isThreadAuthor && (
+                        <ThreadMenu
+                          threadId={currentThreadId}
+                          currentCategoryId={currentCategoryId}
+                          categories={allCategoriesWithChildren}
+                          onDelete={handleDeleteThread}
+                          onMove={handleMoveThread}
+                          isDeleting={deleteThreadMutation.isLoading}
+                          isMoving={moveThreadMutation.isLoading}
+                        />
+                      )}
+                    </div>
+                  </div>
                   <ol>
                     {threadObj.posts.map((post: PostWithAuthor) => (
                       <li key={post.id} className="text-white">
@@ -107,12 +182,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                 rowsOfCurrentCategory.map(
                   (row: CategoryWithChildren | Thread) => (
                     <li key={row.id} className="text-white">
-                      <ForumRow
-                        content={row}
-                        router={router}
-                        setCurrentCategoryId={setCurrentCategoryId}
-                        setCurrentThreadId={setCurrentThreadId}
-                      />
+                      <ForumRow content={row} router={router} />
                     </li>
                   )
                 )}
@@ -120,7 +190,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
           </div>
         )}
         {currentThreadId ? (
-          <CreatePostBox threadId={currentThreadId} />
+          <CreatePostBox threadId={currentThreadId} router={router} />
         ) : (
           <div className="flex h-60 items-center justify-center">
             <button
@@ -163,73 +233,69 @@ const categoryPathExists = async (
 } | null> => {
   const prisma = new PrismaClient();
 
-  let previous: CategoryWithChildren | null = null;
   const rootCategory = await getRootCategory();
-  const categoriesInPath = await prisma.category.findMany({
-    orderBy: {
-      id: 'asc',
-    },
-    where: {
-      name: { in: path },
-    },
-    include: {
-      childCategories: true,
-    },
-  });
+  const categories: CategoryWithChildren[] = [rootCategory];
 
-  console.log('categoriesInPath: ', categoriesInPath);
+  let currentParentId: number | null = rootCategory.id;
 
-  if (categoriesInPath.length < path.length - 1) {
-    return null;
-  }
+  // Traverse the path hierarchically, finding each category as a child of the previous one
+  for (let i = 0; i < path.length; i++) {
+    const segmentName = path[i];
 
-  const categories = [rootCategory, ...categoriesInPath];
-
-  const exists = categories.every((category) => {
-    if (previous === null && category.parentCategoryId !== null) {
-      return false;
-    }
-
-    if (previous !== null && category.parentCategoryId !== previous.id) {
-      return false;
-    }
-
-    previous = category;
-    return true;
-  });
-
-  if (!exists) {
-    return null;
-  } else {
-    if (categoriesInPath.length === path.length - 1) {
-      const threadWithPosts = await prisma.thread.findFirst({
+    // Try to find this segment as a category
+    const category: CategoryWithChildren | null =
+      await prisma.category.findFirst({
         where: {
-          name: path[path.length - 1],
-          categoryId: categoriesInPath[categoriesInPath.length - 1]?.id,
+          name: segmentName,
+          parentCategoryId: currentParentId,
         },
         include: {
-          posts: {
-            include: {
-              author: {
-                select: {
-                  name: true,
+          childCategories: true,
+        },
+      });
+
+    if (category) {
+      // Found the category, add it to the path and continue
+      categories.push(category);
+      currentParentId = category.id;
+    } else {
+      // Not found as a category, check if it's the last segment and could be a thread
+      if (i === path.length - 1) {
+        // Try to find it as a thread in the current category
+        const threadWithPosts = await prisma.thread.findFirst({
+          where: {
+            name: segmentName,
+            categoryId: currentParentId,
+          },
+          include: {
+            posts: {
+              include: {
+                author: {
+                  select: {
+                    name: true,
+                  },
                 },
               },
             },
           },
-        },
-      });
-      if (!threadWithPosts) {
-        //found categories but last bit in path was not a thread
-        return null;
-      } else {
-        //categories and thread
-        return { categories: categories, threadWithPosts: threadWithPosts };
+        });
+
+        if (threadWithPosts) {
+          // Found as a thread
+          await prisma.$disconnect();
+          return { categories: categories, threadWithPosts: threadWithPosts };
+        }
       }
+
+      // Path segment not found as category or thread
+      await prisma.$disconnect();
+      return null;
     }
-    //only categories, no thread
-    return { categories: categories, threadWithPosts: null };
   }
+
+  // All segments were categories, no thread
+  await prisma.$disconnect();
+  return { categories: categories, threadWithPosts: null };
 };
 
 const getRootCategory = async (): Promise<CategoryWithChildren> => {
@@ -242,6 +308,7 @@ const getRootCategory = async (): Promise<CategoryWithChildren> => {
       childCategories: true,
     },
   });
+  await prisma.$disconnect();
   if (!rootCategory) {
     throw new Error('Root category not found');
   }
@@ -253,7 +320,6 @@ export const getServerSideProps = async ({
 }: {
   query: { slug: string[] };
 }) => {
-  //console.log(query);
   if (query.slug) {
     // going to a category or thread
 
@@ -268,28 +334,27 @@ export const getServerSideProps = async ({
     if (!objsFromSlug || !categoriesInPath) {
       return { notFound: true };
     }
-    //console.log("lastCategory: ",lastCategory)
+
     return {
       props: {
         initialCategoryId:
           categoriesInPath[categoriesInPath.length - 1]?.id || 1,
         categoriesInPath: superjson.stringify(categoriesInPath),
-        thread: superjson.stringify(objsFromSlug?.threadWithPosts),
+        thread: objsFromSlug?.threadWithPosts
+          ? superjson.stringify(objsFromSlug.threadWithPosts)
+          : null,
       },
     };
   } else {
     // going to the root category
-    const rootCategory = {
-      id: 1,
-      name: env.FORUM_ROOT_NAME,
-      parentCategoryId: null,
-      childCategories: [] as Category[],
-    } as CategoryWithChildren;
+    // Fetch the actual root category from the database instead of hardcoding id: 1
+    const rootCategory = await getRootCategory();
     const categoriesInPath = [rootCategory] as CategoryWithChildren[];
     return {
       props: {
-        initialCategoryId: 1,
+        initialCategoryId: rootCategory.id,
         categoriesInPath: superjson.stringify(categoriesInPath),
+        thread: null,
       },
     };
   }

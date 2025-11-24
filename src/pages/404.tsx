@@ -12,10 +12,8 @@ const FourOhFour: NextPage = () => {
         <p className="text-white">
           Koska se oli niin UG, että vain muutama tietää sen osoitteen!
         </p>
-        <Link href="/">
-          <p className="pt-6 text-white" role="button">
-            ← Takaisin
-          </p>
+        <Link href="/" className="pt-6 text-white">
+          ← Takaisin
         </Link>
       </main>
     </>

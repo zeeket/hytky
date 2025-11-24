@@ -7,6 +7,9 @@
 
 # testing
 /coverage
+/coverage-jest
+/.nyc_output
+*.lcov
 
 # database
 /prisma/db.sqlite
