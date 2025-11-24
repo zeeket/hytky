@@ -1,20 +1,17 @@
 FROM --platform=linux/amd64 node:lts-alpine
+
 RUN apk add --no-cache libc6-compat openssl openssl-dev
+
 WORKDIR /app
-RUN yarn global add pnpm typescript ts-node
+
+# Copy only what Prisma needs to run migrations
+COPY prisma ./prisma
+
+# Install Prisma CLI globally so we avoid a full project install
+RUN npm install -g prisma@6.19.0
 
 ARG DATABASE_URL=${DATABASE_URL}
 ENV DATABASE_URL=${DATABASE_URL}
 ENV NODE_ENV=development
 
-WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-COPY prisma ./prisma
-RUN \
- if [ -f pnpm-lock.yaml ]; \
- then \
-  pnpm i; \
- else \
-  echo "Lockfile not found." && exit 1; \
- fi
- CMD ["pnpx", "prisma", "migrate", "deploy"]
+CMD ["prisma", "migrate", "deploy", "--schema", "/app/prisma/schema.prisma"]
