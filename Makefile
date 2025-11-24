@@ -114,6 +114,30 @@ test-e2e:
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo "Full HTML report available at: coverage/index.html"
 
+# Run e2e tests with all browsers (chromium, firefox, webkit). Usage: 'make test-all'.
+test-all:
+	@echo "Checking dev environment status..."
+	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
+		echo "Dev environment not running. Starting it now..."; \
+		docker compose -f docker/docker-compose.dev.yml up -d; \
+		echo "Waiting for services to be ready..."; \
+		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
+		echo "Dev environment is ready!"; \
+	else \
+		echo "Dev environment already running."; \
+	fi
+	@echo ""
+	@rm -rf .nyc_output coverage
+	@pnpm exec playwright test --project=chromium --project=firefox --project=webkit
+	@echo ""
+	@echo "Coverage Summary:"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@echo ""
+	@node tests/scripts/uncovered-lines.js
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "Full HTML report available at: coverage/index.html"
+
 # Start a production-like environment locally. Usage: 'make prod'.
 prod:
 	docker compose -f docker/docker-compose.prod.yml up --force-recreate

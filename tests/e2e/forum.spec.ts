@@ -705,11 +705,10 @@ test.describe.serial('Thread Menu', () => {
 
     await page.locator('button:has-text("Luo uusi kategoria")').click();
     await page.locator('input#name').fill(menuTestSubcategoryName);
-    await page.locator('button.bg-red-600:has-text("Luo")').click();
-    await expect(
-      page.locator('h4:has-text("Luo uusi kategoria")')
-    ).not.toBeVisible();
-    await page.waitForLoadState('networkidle');
+    await Promise.all([
+      page.waitForURL(/\/forum\/.+/),
+      page.locator('button.bg-red-600:has-text("Luo")').click(),
+    ]);
 
     // Create move target category at root level
     await page.goto('/forum');
@@ -958,18 +957,7 @@ test.describe.serial('Thread Menu', () => {
       page.locator('h4:has-text("Luo uusi lanka")')
     ).not.toBeVisible();
 
-    // Navigate to the thread
-    await page.goto('/forum');
-    await page.waitForLoadState('networkidle');
-    await page
-      .locator(`ul button:has-text("${menuTestCategoryName}")`)
-      .first()
-      .click();
-    await page.waitForLoadState('networkidle');
-    await page
-      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
-      .first()
-      .click();
+    // Wait for thread to appear in the list and click it
     await page.waitForLoadState('networkidle');
     await page
       .locator(`ul button:has-text("${deleteTestThreadName}")`)
