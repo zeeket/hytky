@@ -709,6 +709,7 @@ test.describe.serial('Thread Menu', () => {
     await expect(
       page.locator('h4:has-text("Luo uusi kategoria")')
     ).not.toBeVisible();
+    await page.waitForLoadState('networkidle');
 
     // Create move target category at root level
     await page.goto('/forum');
