@@ -51,7 +51,7 @@ data "cloudinit_config" "config" {
 }
 
 resource "digitalocean_droplet" "webserver" {
-  image     = "ubuntu-20-04-x64"
+  image     = "ubuntu-22-04-x64"
   name      = "webserver"
   region    = "fra1"
   size      = "s-1vcpu-1gb"
