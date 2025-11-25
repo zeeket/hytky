@@ -201,8 +201,16 @@ jobs:
       contents: write
 
     steps:
+      - name: Generate token for GitHub App
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.HYTKY_COVERAGE_BOT_APP_ID }}
+          private-key: ${{ secrets.HYTKY_COVERAGE_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
+          token: ${{ steps.generate-token.outputs.token }}
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
 
       - uses: actions/setup-node@v4
