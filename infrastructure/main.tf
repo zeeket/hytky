@@ -108,6 +108,6 @@ resource "digitalocean_record" "dkim" {
 resource "digitalocean_record" "dmarc" {
   domain = digitalocean_domain.hytky.name
   type   = "TXT"
-  name   = "_dmarc.hytky.org"
+  name   = "_dmarc"
   value  = "v=DMARC1; p=quarantine; rua=mailto:postmaster@hytky.org; pct=100; adkim=s; aspf=s"
 }
