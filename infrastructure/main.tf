@@ -104,3 +104,10 @@ resource "digitalocean_record" "dkim" {
   name   = "google._domainkey"
   value  = "v=DKIM1; k=rsa; p=${var.DKIM}"
 }
+
+resource "digitalocean_record" "dmarc" {
+  domain = digitalocean_domain.hytky.name
+  type   = "TXT"
+  name   = "_dmarc.hytky.org"
+  value  = "v=DMARC1; p=quarantine; rua=mailto:postmaster@hytky.org; pct=100; adkim=s; aspf=s"
+}
