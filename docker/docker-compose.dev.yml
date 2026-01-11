@@ -36,3 +36,13 @@ services:
     env_file:
       - ../.hytkybot.env
     restart: always
+  gcalservice:
+    platform: 'linux/amd64'
+    build:
+      context: ../gcalservice
+      dockerfile: Dockerfile
+    env_file:
+      - ../.gcalservice.env
+    depends_on:
+      - dev
+    restart: always

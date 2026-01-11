@@ -61,3 +61,12 @@ services:
     env_file:
       - ../.hytkybot.env
     restart: always
+
+  gcalservice:
+    platform: 'linux/amd64'
+    image: 'ghcr.io/zeeket/gcalservice:latest'
+    env_file:
+      - ../.gcalservice.env
+    depends_on:
+      - hytky
+    restart: always
