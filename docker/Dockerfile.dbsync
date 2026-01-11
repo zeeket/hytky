@@ -4,14 +4,23 @@ RUN apk add --no-cache libc6-compat openssl openssl-dev
 
 WORKDIR /app
 
+# Install pnpm globally
+RUN npm install -g pnpm@latest
+
 # Copy only what Prisma needs to run migrations
 COPY prisma ./prisma
 
-# Install Prisma CLI globally so we avoid a full project install
-RUN npm install -g prisma@6.19.0
+# Create a minimal package.json for installing dependencies
+RUN echo '{"name":"dbsync","version":"1.0.0"}' > package.json
+
+# Install Prisma and dependencies needed for seeding
+RUN pnpm add prisma@6.19.0 @prisma/client@6.19.0 ts-node@^10.9.2 typescript@^5.7.0
+
+# Generate Prisma Client
+RUN pnpm exec prisma generate
 
 ARG DATABASE_URL=${DATABASE_URL}
 ENV DATABASE_URL=${DATABASE_URL}
 ENV NODE_ENV=development
 
-CMD ["prisma", "migrate", "deploy", "--schema", "/app/prisma/schema.prisma"]
+CMD ["pnpm", "exec", "prisma", "migrate", "deploy", "--schema", "/app/prisma/schema.prisma"]
