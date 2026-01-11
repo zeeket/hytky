@@ -6,9 +6,12 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  fmt:
-    name: Format Check
+  tofu-fmt:
+    name: Tofu Format Check
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,9 +26,9 @@ jobs:
       - name: Run Tofu
         run: tofu fmt -check
 
-  apply:
-    name: Apply Change
-    needs: fmt
+  tofu-apply:
+    name: Tofu Apply Change
+    needs: tofu-fmt
     runs-on: ubuntu-latest
     defaults:
       run:

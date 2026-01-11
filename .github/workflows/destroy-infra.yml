@@ -2,9 +2,12 @@ name: destroy-infra
 
 on: [workflow_dispatch]
 
+permissions:
+  contents: read
+
 jobs:
-  destroy:
-    name: Destroy infrastructure
+  tofu-destroy:
+    name: Tofu Destroy Infrastructure
     runs-on: ubuntu-latest
     defaults:
       run:
