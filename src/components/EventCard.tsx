@@ -6,9 +6,10 @@ type Event = RouterOutputs['events']['getUpcoming'][number];
 export type EventCardProps = {
   event: Event;
   locale: string;
+  locationLabel: string;
 };
 
-export const EventCard = ({ event, locale }: EventCardProps) => {
+export const EventCard = ({ event, locale, locationLabel }: EventCardProps) => {
   const dateTimeStr = formatEventTimeRange(
     event.startTime.toISOString(),
     event.endTime.toISOString(),
@@ -28,7 +29,7 @@ export const EventCard = ({ event, locale }: EventCardProps) => {
       )}
       {event.location && (
         <div className="flex items-center text-sm text-gray-400">
-          <span className="mr-2 font-semibold">Location:</span>
+          <span className="mr-2 font-semibold">{locationLabel}</span>
           <span>{event.location}</span>
         </div>
       )}

@@ -15,6 +15,7 @@ interface EventsContent {
   error: string;
   checkBackSoon: string;
   backLink: string;
+  location: string;
 }
 
 const fiContentTyped = fiContent as EventsContent;
@@ -53,7 +54,7 @@ const EventsPage: NextPage = () => {
         {events && events.length > 0 && (
           <ul className="text-left">
             {events.map((event) => (
-              <EventCard key={event.id} event={event} locale={locale || 'en'} />
+              <EventCard key={event.id} event={event} locale={locale || 'en'} locationLabel={content.location} />
             ))}
           </ul>
         )}

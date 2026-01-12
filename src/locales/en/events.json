@@ -3,5 +3,6 @@
   "loading": "Loading events...",
   "error": "Failed to load events. Please try again later.",
   "checkBackSoon": "No upcoming events. Check back soon!",
-  "backLink": "← Back"
+  "backLink": "← Back",
+  "location": "Location:"
 }

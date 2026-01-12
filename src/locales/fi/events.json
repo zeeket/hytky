@@ -3,5 +3,6 @@
   "loading": "Ladataan tapahtumia...",
   "error": "Tapahtumien lataus epäonnistui. Yritä myöhemmin uudelleen.",
   "checkBackSoon": "Ei tulevia tapahtumia. Tarkista pian uudelleen!",
-  "backLink": "← Takaisin"
+  "backLink": "← Takaisin",
+  "location": "Sijainti:"
 }
