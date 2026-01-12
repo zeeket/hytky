@@ -60,6 +60,10 @@ jobs:
           TF_VAR_DOMAIN: ${{ secrets.DOMAIN }}
           TF_VAR_CERTBOT_EMAIL: ${{ secrets.CERTBOT_EMAIL }}
           TF_VAR_ROOT_PASSWORD: ${{ secrets.ROOT_PASSWORD }}
+          TF_VAR_CALENDAR_GOOGLE_CLIENT_ID: ${{ secrets.CALENDAR_GOOGLE_CLIENT_ID }}
+          TF_VAR_CALENDAR_GOOGLE_CLIENT_SECRET: ${{ secrets.CALENDAR_GOOGLE_CLIENT_SECRET }}
+          TF_VAR_CALENDAR_GOOGLE_REFRESH_TOKEN: ${{ secrets.CALENDAR_GOOGLE_REFRESH_TOKEN }}
+          TF_VAR_CALENDAR_GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         id: plan
         run: tofu plan -no-color -input=false -out plan

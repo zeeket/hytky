@@ -18,6 +18,14 @@ locals {
       PORT                = "3000"
     }
   })
+  gcalservice_dotenv = templatefile("${path.module}/templates/.env.tftpl", {
+    config = {
+      GOOGLE_CLIENT_ID     = var.CALENDAR_GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET = var.CALENDAR_GOOGLE_CLIENT_SECRET,
+      GOOGLE_REFRESH_TOKEN = var.CALENDAR_GOOGLE_REFRESH_TOKEN,
+      GOOGLE_CALENDAR_ID   = var.CALENDAR_GOOGLE_CALENDAR_ID
+    }
+  })
   REPO_URL = "${var.GITHUB_SERVER_URL}/${var.GITHUB_REPOSITORY}.git"
 }
 
@@ -41,10 +49,11 @@ data "cloudinit_config" "config" {
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/templates/cloud-config.yml.tftpl",
       {
-        pub_key         = var.pub_key,
-        dotenv          = local.dotenv,
-        hytkybot_dotenv = local.hytkybot_dotenv
-        ROOT_PASSWORD   = var.ROOT_PASSWORD
+        pub_key            = var.pub_key,
+        dotenv             = local.dotenv,
+        hytkybot_dotenv    = local.hytkybot_dotenv
+        gcalservice_dotenv = local.gcalservice_dotenv
+        ROOT_PASSWORD      = var.ROOT_PASSWORD
       }
     )
   }

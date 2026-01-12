@@ -100,3 +100,27 @@ variable "DKIM" {
   type        = string
   sensitive   = true
 }
+
+variable "CALENDAR_GOOGLE_CLIENT_ID" {
+  description = "Google Calendar API Client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "CALENDAR_GOOGLE_CLIENT_SECRET" {
+  description = "Google Calendar API Client Secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "CALENDAR_GOOGLE_REFRESH_TOKEN" {
+  description = "Google Calendar API Refresh Token"
+  type        = string
+  sensitive   = true
+}
+
+variable "CALENDAR_GOOGLE_CALENDAR_ID" {
+  description = "Google Calendar ID"
+  type        = string
+  sensitive   = true
+}
