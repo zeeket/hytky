@@ -33,17 +33,23 @@ export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
       events: (response.data.items as CalendarEvent[]) || [],
       nextSyncToken: response.data.nextSyncToken ?? undefined,
     };
-  } catch (error: any) {
-    console.error('[GOOGLE] API error:', error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[GOOGLE] API error:', message);
 
-    if (error.code === 410) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code === 410
+    ) {
       console.warn('[GOOGLE] Sync token expired, performing full sync');
       return syncEvents();
     }
 
     return {
       events: [],
-      error: error.message || 'Unknown error',
+      error: message,
     };
   }
 };

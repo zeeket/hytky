@@ -37,7 +37,7 @@ test.describe('Events Page', () => {
       // Clean ALL events (including real ones from Google Calendar)
       await cleanTestEvents(request, true);
       // Wait for database to commit
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     });
 
     test.afterEach(async ({ request }) => {
@@ -45,7 +45,10 @@ test.describe('Events Page', () => {
       await cleanTestEvents(request, true);
     });
 
-    test('should display empty state message when no events', async ({ page, request }) => {
+    test('should display empty state message when no events', async ({
+      page,
+      request,
+    }) => {
       // Ensure all events are deleted
       await cleanTestEvents(request, true);
 
@@ -58,8 +61,10 @@ test.describe('Events Page', () => {
 
       // Should show empty state message (language-agnostic check)
       // English: "Check back soon" / Finnish: "Tarkista pian uudelleen"
-      const bodyText = await page.locator('body').textContent() || '';
-      const hasEmptyMessage = bodyText.includes('Check back soon') || bodyText.includes('Tarkista pian uudelleen');
+      const bodyText = (await page.locator('body').textContent()) || '';
+      const hasEmptyMessage =
+        bodyText.includes('Check back soon') ||
+        bodyText.includes('Tarkista pian uudelleen');
       expect(hasEmptyMessage).toBeTruthy();
 
       // Should NOT show event list
@@ -72,13 +77,13 @@ test.describe('Events Page', () => {
     test.beforeEach(async ({ request }) => {
       // Clean ALL events and seed a test event
       await cleanTestEvents(request, true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       await createTestEvent(request, {
         daysFromNow: 1,
         durationHours: 1,
       });
       // Wait for database to commit and sync
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
 
     test.afterEach(async ({ request }) => {
@@ -86,7 +91,9 @@ test.describe('Events Page', () => {
       await cleanTestEvents(request, true);
     });
 
-    test('should display upcoming events when events exist', async ({ page }) => {
+    test('should display upcoming events when events exist', async ({
+      page,
+    }) => {
       await page.goto('/events');
       await page.waitForLoadState('networkidle');
       await page.waitForTimeout(3000);
@@ -100,8 +107,10 @@ test.describe('Events Page', () => {
       await expect(page.locator('text=/Tomorrow Event/i')).toBeVisible();
 
       // Should NOT show empty state message
-      const bodyText = await page.locator('body').textContent() || '';
-      const hasEmptyMessage = bodyText.includes('Check back soon') || bodyText.includes('Tarkista pian uudelleen');
+      const bodyText = (await page.locator('body').textContent()) || '';
+      const hasEmptyMessage =
+        bodyText.includes('Check back soon') ||
+        bodyText.includes('Tarkista pian uudelleen');
       expect(hasEmptyMessage).toBeFalsy();
     });
 
@@ -115,8 +124,9 @@ test.describe('Events Page', () => {
 
       // Should show "Location:" label (language-agnostic)
       // English: "Location:" / Finnish: "Sijainti:" or similar
-      const bodyText = await page.locator('body').textContent() || '';
-      const hasLocation = bodyText.includes('Location:') || bodyText.includes('Test Location');
+      const bodyText = (await page.locator('body').textContent()) || '';
+      const hasLocation =
+        bodyText.includes('Location:') || bodyText.includes('Test Location');
       expect(hasLocation).toBeTruthy();
     });
   });

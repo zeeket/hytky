@@ -16,10 +16,14 @@ const question = (prompt: string): Promise<string> => {
 
 const setupOAuth = async () => {
   console.log('\n🔐 Google Calendar OAuth 2.0 Setup\n');
-  console.log('This will generate a refresh token for accessing Google Calendar API.\n');
+  console.log(
+    'This will generate a refresh token for accessing Google Calendar API.\n'
+  );
 
   const clientId = await question('Enter your Google OAuth Client ID: ');
-  const clientSecret = await question('Enter your Google OAuth Client Secret: ');
+  const clientSecret = await question(
+    'Enter your Google OAuth Client Secret: '
+  );
 
   const oauth2Client = new google.auth.OAuth2(
     clientId.trim(),
@@ -37,8 +41,12 @@ const setupOAuth = async () => {
   console.log('Visit this URL in your browser:\n');
   console.log(authUrl);
   console.log('\n');
-  console.log('After authorizing, you will be redirected to a page that cannot load.');
-  console.log('Copy the ENTIRE URL from your browser address bar and paste it below.\n');
+  console.log(
+    'After authorizing, you will be redirected to a page that cannot load.'
+  );
+  console.log(
+    'Copy the ENTIRE URL from your browser address bar and paste it below.\n'
+  );
 
   const redirectUrl = await question('Paste the full redirect URL here: ');
 
@@ -48,7 +56,9 @@ const setupOAuth = async () => {
 
   if (!code) {
     console.error('\n❌ Error: Could not find authorization code in URL.');
-    console.error('Make sure you copied the entire URL from the address bar.\n');
+    console.error(
+      'Make sure you copied the entire URL from the address bar.\n'
+    );
     process.exit(1);
   }
 
@@ -57,8 +67,12 @@ const setupOAuth = async () => {
 
     if (!tokens.refresh_token) {
       console.error('\n❌ Error: No refresh token received.');
-      console.error('This may happen if you have already authorized this app before.');
-      console.error('Try revoking access at: https://myaccount.google.com/permissions');
+      console.error(
+        'This may happen if you have already authorized this app before.'
+      );
+      console.error(
+        'Try revoking access at: https://myaccount.google.com/permissions'
+      );
       console.error('Then run this script again.\n');
       process.exit(1);
     }
@@ -70,8 +84,9 @@ const setupOAuth = async () => {
     console.log(`GOOGLE_CLIENT_SECRET=${clientSecret.trim()}`);
     console.log(`GOOGLE_REFRESH_TOKEN=${tokens.refresh_token}`);
     console.log('\n');
-  } catch (error: any) {
-    console.error('\n❌ Error getting tokens:', error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('\n❌ Error getting tokens:', message);
     process.exit(1);
   } finally {
     rl.close();

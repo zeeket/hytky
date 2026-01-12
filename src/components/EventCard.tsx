@@ -21,7 +21,7 @@ export const EventCard = ({ event, locale, locationLabel }: EventCardProps) => {
   return (
     <li className="mb-4 rounded border border-gray-700 bg-gradient-to-r from-[#15162c] to-[#1a1b2e] p-4">
       <div className="mb-2 text-sm text-gray-400">{dateTimeStr}</div>
-      <h3 className="mb-2 text-xl font-semibold text-oldschool-orange">
+      <h3 className="text-oldschool-orange mb-2 text-xl font-semibold">
         {event.title}
       </h3>
       {event.description && (

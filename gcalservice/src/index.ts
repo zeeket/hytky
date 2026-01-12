@@ -7,17 +7,18 @@ const app = express();
 app.use(express.json());
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({ status: 'healthy', service: 'gcalservice' });
 });
 
 // Manual sync trigger (for testing/debugging)
-app.post('/sync', async (req, res) => {
+app.post('/sync', async (_req, res) => {
   try {
     await performSync();
     res.json({ success: true });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ success: false, error: message });
   }
 });
 

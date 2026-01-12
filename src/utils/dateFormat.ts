@@ -15,12 +15,7 @@ export const formatEventDate = (
     return format(date, 'PP', { locale: localeObj });
   }
 
-  return formatInTimeZone(
-    date,
-    timezone,
-    'PPp',
-    { locale: localeObj }
-  );
+  return formatInTimeZone(date, timezone, 'PPp', { locale: localeObj });
 };
 
 export const formatEventTimeRange = (
@@ -35,12 +30,9 @@ export const formatEventTimeRange = (
   }
 
   const startFormatted = formatEventDate(start, timezone, locale, false);
-  const endTime = formatInTimeZone(
-    parseISO(end),
-    timezone,
-    'p',
-    { locale: locale === 'fi' ? fi : enUS }
-  );
+  const endTime = formatInTimeZone(parseISO(end), timezone, 'p', {
+    locale: locale === 'fi' ? fi : enUS,
+  });
 
   return `${startFormatted} - ${endTime}`;
 };

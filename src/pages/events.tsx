@@ -26,7 +26,11 @@ const EventsPage: NextPage = () => {
   const content: EventsContent =
     locale === 'fi' ? fiContentTyped : enContentTyped;
 
-  const { data: events, isLoading, error } = api.events.getUpcoming.useQuery({
+  const {
+    data: events,
+    isLoading,
+    error,
+  } = api.events.getUpcoming.useQuery({
     limit: 20,
     includeAllDay: true,
   });
@@ -43,9 +47,7 @@ const EventsPage: NextPage = () => {
           <p className="text-center text-gray-400">{content.loading}</p>
         )}
 
-        {error && (
-          <p className="text-center text-red-400">{content.error}</p>
-        )}
+        {error && <p className="text-center text-red-400">{content.error}</p>}
 
         {events && events.length === 0 && (
           <p className="text-center text-gray-400">{content.checkBackSoon}</p>
@@ -54,7 +56,12 @@ const EventsPage: NextPage = () => {
         {events && events.length > 0 && (
           <ul className="text-left">
             {events.map((event) => (
-              <EventCard key={event.id} event={event} locale={locale || 'en'} locationLabel={content.location} />
+              <EventCard
+                key={event.id}
+                event={event}
+                locale={locale || 'en'}
+                locationLabel={content.location}
+              />
             ))}
           </ul>
         )}

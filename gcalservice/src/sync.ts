@@ -14,14 +14,20 @@ export const performSync = async (): Promise<void> => {
       result?: { data?: { syncToken?: string } };
     };
     const currentSyncToken = syncState?.result?.data?.syncToken;
-    console.log('[SYNC] Current sync token:', currentSyncToken || 'none (full sync)');
+    console.log(
+      '[SYNC] Current sync token:',
+      currentSyncToken || 'none (full sync)'
+    );
 
     // 2. Fetch events from Google Calendar
     console.log('[SYNC] Fetching events from Google Calendar...');
     const { events, nextSyncToken, error } = await syncEvents(currentSyncToken);
 
     if (error) {
-      console.error('[SYNC] Error fetching events from Google Calendar:', error);
+      console.error(
+        '[SYNC] Error fetching events from Google Calendar:',
+        error
+      );
       // Post error to main app
       const errorUrl = `${env.MAIN_APP_URL}/api/trpc/events.recordSyncError?batch=1`;
       console.log('[SYNC] Recording error to:', errorUrl);
@@ -95,7 +101,8 @@ export const performSync = async (): Promise<void> => {
     }
 
     console.log('[SYNC] Successfully synced', syncPayload.length, 'events');
-  } catch (error: any) {
-    console.error('[SYNC] Error:', error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[SYNC] Error:', message);
   }
 };

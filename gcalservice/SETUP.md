@@ -56,6 +56,7 @@ npm run setup-oauth
 ### 2.3 Follow the Interactive Prompts
 
 The script will:
+
 1. Ask for your **Client ID** and **Client Secret**
 2. Generate an authorization URL
 3. Open this URL in your browser (or copy/paste it)
@@ -66,6 +67,7 @@ The script will:
 8. Display your **refresh token**
 
 **Example output:**
+
 ```
 ✅ Success! Your refresh token:
 
@@ -83,6 +85,7 @@ GOOGLE_REFRESH_TOKEN=1//0xxxxx-xxxxxxxxxxxxxxxxxxxx
 ### 3.1 Create .gcalservice.env
 
 Copy the example file:
+
 ```bash
 cp .gcalservice.env.example .gcalservice.env
 ```
@@ -90,6 +93,7 @@ cp .gcalservice.env.example .gcalservice.env
 ### 3.2 Fill in the Values
 
 Edit `.gcalservice.env`:
+
 ```bash
 # From Step 1.3
 GOOGLE_CLIENT_ID=xxxxx.apps.googleusercontent.com
@@ -111,11 +115,13 @@ NODE_ENV=production
 ## Step 4: Verify Setup
 
 Test the configuration:
+
 ```bash
 npm run dev
 ```
 
 You should see:
+
 ```
 gcalservice running on port 3002
 Sync interval: 15 minutes
@@ -129,6 +135,7 @@ Sync interval: 15 minutes
 ### "No refresh token received"
 
 This happens if you've already authorized the app. Fix:
+
 1. Go to: https://myaccount.google.com/permissions
 2. Find "HYTKY Calendar Sync"
 3. Click **Remove access**
@@ -137,6 +144,7 @@ This happens if you've already authorized the app. Fix:
 ### "Access denied"
 
 Make sure:
+
 - You added yourself as a test user (if External app)
 - You used the correct Google account
 - The calendar is shared with your account
@@ -158,12 +166,14 @@ The refresh token may have expired or been revoked. Re-run `npm run setup-oauth`
 ## What's Next?
 
 Once configured, the gcalservice will:
+
 1. Automatically refresh access tokens as needed
 2. Sync events every 15 minutes (configurable)
 3. Store events in the PostgreSQL database
 4. Display them on the `/events` page
 
 Continue with the main setup by running:
+
 ```bash
 # Back to project root
 cd ..
