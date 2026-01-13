@@ -49,19 +49,27 @@ Commit the following to source control:
 
 ### Testing Calendar Sync
 
-To manually trigger a calendar sync (useful for testing):
+**Automatic syncs happen:**
+
+- On gcalservice startup (after verifying main app is healthy)
+- Every 15 minutes (configurable via `SYNC_INTERVAL_MINUTES` in `.gcalservice.env`)
+
+**To manually trigger a calendar sync:**
 
 1. **Using Make (recommended):**
+
    ```bash
    make sync-calendar
    ```
 
 2. **Using curl directly (if port 3002 is exposed):**
+
    ```bash
    curl -X POST http://localhost:3002/sync
    ```
 
 3. **From within Docker network:**
+
    ```bash
    docker compose -f docker/docker-compose.dev.yml exec gcalservice curl -X POST http://localhost:3002/sync
    ```
@@ -72,9 +80,43 @@ To manually trigger a calendar sync (useful for testing):
    ```
 
 The sync will:
+
 - Fetch events from Google Calendar
 - Send them to the main app via the authenticated API
 - Update the sync state in the database
+
+#### Debugging Calendar Sync Issues
+
+The calendar sync system includes comprehensive debug logging. If syncs are failing:
+
+1. **View gcalservice logs in real-time:**
+
+   ```bash
+   docker compose -f docker/docker-compose.dev.yml logs -f gcalservice
+   ```
+
+2. **Look for these log prefixes:**
+   - `[STARTUP]` - Service startup and health checks
+   - `[CRON]` - Scheduled sync triggers (every 15 minutes)
+   - `[SYNC]` - Sync process steps and errors
+   - `[GOOGLE]` - Google Calendar API interactions
+   - `[API]` - Manual sync triggers
+
+3. **Common issues and solutions:**
+   - **Main app not ready**: Look for `[STARTUP] Main app is healthy!` in logs
+     - If missing, the main app may not be responding
+     - Check main app logs: `docker compose -f docker/docker-compose.dev.yml logs -f dev`
+   - **Authentication failures**: Look for `UNAUTHORIZED` errors
+     - Verify `INTERNAL_API_SECRET` matches in both `.env` and `.gcalservice.env`
+   - **Google API errors**: Check `[GOOGLE]` logs for error codes
+     - 410 error: Sync token expired (automatically handled with full sync)
+     - 401/403 error: Check Google OAuth credentials in `.gcalservice.env`
+   - **Network issues**: Verify `MAIN_APP_URL=http://dev:80` in `.gcalservice.env`
+
+4. **Verify sync is running:**
+   - Check for `[CRON] Scheduled sync triggered` messages every 15 minutes
+   - If missing, the cron job may not be starting
+   - Look for `[CRON] Periodic sync scheduled successfully` at startup
 
 ## Deployment
 

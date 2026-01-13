@@ -1,4 +1,4 @@
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { enUS, fi } from 'date-fns/locale';
 
@@ -12,7 +12,7 @@ export const formatEventDate = (
   const localeObj = locale === 'fi' ? fi : enUS;
 
   if (allDay) {
-    return format(date, 'PP', { locale: localeObj });
+    return formatInTimeZone(date, timezone, 'PP', { locale: localeObj });
   }
 
   return formatInTimeZone(date, timezone, 'PPp', { locale: localeObj });

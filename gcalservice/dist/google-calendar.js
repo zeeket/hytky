@@ -1,25 +1,19 @@
 import { google } from 'googleapis';
 import { env } from './config.js';
-import type { CalendarEvent, SyncResult } from './types.js';
-
 export const createCalendarClient = () => {
   const oauth2Client = new google.auth.OAuth2(
     env.GOOGLE_CLIENT_ID,
     env.GOOGLE_CLIENT_SECRET,
     'http://localhost'
   );
-
   oauth2Client.setCredentials({
     refresh_token: env.GOOGLE_REFRESH_TOKEN,
   });
-
   return google.calendar({ version: 'v3', auth: oauth2Client });
 };
-
-export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
+export const syncEvents = async (syncToken) => {
   console.log('[GOOGLE] Creating calendar client...');
   const calendar = createCalendarClient();
-
   try {
     console.log('[GOOGLE] Requesting events from Google Calendar API');
     console.log('[GOOGLE] Calendar ID:', env.GOOGLE_CALENDAR_ID);
@@ -27,7 +21,6 @@ export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
       '[GOOGLE] Sync token:',
       syncToken ? 'using existing' : 'none (full sync)'
     );
-
     const requestParams = {
       calendarId: env.GOOGLE_CALENDAR_ID,
       syncToken: syncToken,
@@ -36,29 +29,24 @@ export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
       orderBy: syncToken ? undefined : 'startTime',
       timeMin: syncToken ? undefined : new Date().toISOString(),
     };
-
     console.log(
       '[GOOGLE] Request params:',
       JSON.stringify(requestParams, null, 2)
     );
-
     const response = await calendar.events.list(requestParams);
-
     console.log('[GOOGLE] ✓ API request successful');
     console.log('[GOOGLE] Events received:', response.data.items?.length || 0);
     console.log(
       '[GOOGLE] Next sync token:',
       response.data.nextSyncToken ? 'provided' : 'none'
     );
-
     return {
-      events: (response.data.items as CalendarEvent[]) || [],
+      events: response.data.items || [],
       nextSyncToken: response.data.nextSyncToken ?? undefined,
     };
-  } catch (error: unknown) {
+  } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('[GOOGLE] ❌ API error:', message);
-
     // Log additional error details
     if (typeof error === 'object' && error !== null) {
       if ('code' in error) {
@@ -68,7 +56,6 @@ export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
         console.error('[GOOGLE] Error details:', JSON.stringify(error.errors));
       }
     }
-
     // Handle sync token expiration (410 error)
     if (
       typeof error === 'object' &&
@@ -81,7 +68,6 @@ export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
       );
       return syncEvents();
     }
-
     return {
       events: [],
       error: message,

@@ -1,4 +1,3 @@
-import { TRPCError } from '@trpc/server';
 import { appRouter } from '~/server/api/root';
 
 /**
@@ -23,7 +22,7 @@ describe('eventsRouter', () => {
         headers: {
           authorization: authHeader,
         },
-      } as any,
+      } as { headers: { authorization?: string } },
     };
     return appRouter.createCaller(ctx);
   };
@@ -57,7 +56,9 @@ describe('eventsRouter', () => {
     });
 
     it('should return sync state with valid secret', async () => {
-      const caller = createInternalServiceCaller(`Bearer ${INTERNAL_API_SECRET}`);
+      const caller = createInternalServiceCaller(
+        `Bearer ${INTERNAL_API_SECRET}`
+      );
 
       const result = await caller.events.getSyncState();
 
@@ -84,7 +85,9 @@ describe('eventsRouter', () => {
         },
       });
 
-      const caller = createInternalServiceCaller(`Bearer ${INTERNAL_API_SECRET}`);
+      const caller = createInternalServiceCaller(
+        `Bearer ${INTERNAL_API_SECRET}`
+      );
       const result = await caller.events.getSyncState();
 
       expect(result).toBeDefined();
@@ -123,7 +126,9 @@ describe('eventsRouter', () => {
     });
 
     it('should sync events with valid secret', async () => {
-      const caller = createInternalServiceCaller(`Bearer ${INTERNAL_API_SECRET}`);
+      const caller = createInternalServiceCaller(
+        `Bearer ${INTERNAL_API_SECRET}`
+      );
 
       const result = await caller.events.syncFromCalendar({
         events: [
@@ -158,7 +163,9 @@ describe('eventsRouter', () => {
     });
 
     it('should update sync state', async () => {
-      const caller = createInternalServiceCaller(`Bearer ${INTERNAL_API_SECRET}`);
+      const caller = createInternalServiceCaller(
+        `Bearer ${INTERNAL_API_SECRET}`
+      );
 
       await caller.events.syncFromCalendar({
         events: [],
@@ -177,7 +184,9 @@ describe('eventsRouter', () => {
     });
 
     it('should mark cancelled events as deleted', async () => {
-      const caller = createInternalServiceCaller(`Bearer ${INTERNAL_API_SECRET}`);
+      const caller = createInternalServiceCaller(
+        `Bearer ${INTERNAL_API_SECRET}`
+      );
 
       await caller.events.syncFromCalendar({
         events: [
@@ -217,7 +226,9 @@ describe('eventsRouter', () => {
         },
       });
 
-      const caller = createInternalServiceCaller(`Bearer ${INTERNAL_API_SECRET}`);
+      const caller = createInternalServiceCaller(
+        `Bearer ${INTERNAL_API_SECRET}`
+      );
 
       // Update the event
       await caller.events.syncFromCalendar({
@@ -274,7 +285,9 @@ describe('eventsRouter', () => {
     });
 
     it('should record sync error with valid secret', async () => {
-      const caller = createInternalServiceCaller(`Bearer ${INTERNAL_API_SECRET}`);
+      const caller = createInternalServiceCaller(
+        `Bearer ${INTERNAL_API_SECRET}`
+      );
 
       const result = await caller.events.recordSyncError({
         error: 'Test sync error',
@@ -292,7 +305,9 @@ describe('eventsRouter', () => {
     });
 
     it('should increment error count on multiple errors', async () => {
-      const caller = createInternalServiceCaller(`Bearer ${INTERNAL_API_SECRET}`);
+      const caller = createInternalServiceCaller(
+        `Bearer ${INTERNAL_API_SECRET}`
+      );
 
       await caller.events.recordSyncError({ error: 'Error 1' });
       await caller.events.recordSyncError({ error: 'Error 2' });
@@ -345,10 +360,15 @@ describe('eventsRouter', () => {
         ],
       });
 
-      const result = await caller.events.getUpcoming({ limit: 10, includeAllDay: true });
+      const result = await caller.events.getUpcoming({
+        limit: 10,
+        includeAllDay: true,
+      });
 
       expect(result.length).toBeGreaterThanOrEqual(2);
-      expect(result.every((e) => new Date(e.startTime) > new Date())).toBe(true);
+      expect(result.every((e) => new Date(e.startTime) > new Date())).toBe(
+        true
+      );
       expect(result.some((e) => e.title === 'Future Event 1')).toBe(true);
       expect(result.some((e) => e.title === 'Future Event 2')).toBe(true);
       expect(result.some((e) => e.title === 'Past Event')).toBe(false);
