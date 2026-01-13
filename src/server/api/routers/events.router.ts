@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from '../trpc';
+import { createTRPCRouter, publicProcedure, internalProcedure } from '../trpc';
 
 const syncEventSchema = z.object({
   calendarId: z.string(),
@@ -40,7 +40,8 @@ export const eventsRouter = createTRPCRouter({
     }),
 
   // Internal mutation: Sync events from gcalservice
-  syncFromCalendar: publicProcedure
+  // Requires internal API secret authentication
+  syncFromCalendar: internalProcedure
     .input(
       z.object({
         events: z.array(syncEventSchema),
@@ -100,7 +101,8 @@ export const eventsRouter = createTRPCRouter({
     }),
 
   // Internal query: Get sync state for gcalservice
-  getSyncState: publicProcedure.query(async ({ ctx }) => {
+  // Requires internal API secret authentication
+  getSyncState: internalProcedure.query(async ({ ctx }) => {
     const syncState = await ctx.prisma.syncState.findUnique({
       where: { calendarId: process.env.GOOGLE_CALENDAR_ID || 'default' },
     });
@@ -109,7 +111,8 @@ export const eventsRouter = createTRPCRouter({
   }),
 
   // Internal mutation: Record sync errors
-  recordSyncError: publicProcedure
+  // Requires internal API secret authentication
+  recordSyncError: internalProcedure
     .input(z.object({ error: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.syncState.upsert({

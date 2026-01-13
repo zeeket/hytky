@@ -31,7 +31,12 @@ The forum login is designed to be exclusive to members of certain Telegram group
 2. `cd hytky`
 3. `cp .env.example .env` and put your secret values in the `.env` file.
 4. `cp .hytkybot.env.example .hytkybot.env` and put your secret values in the `.hytkybot.env` file.
-5. `make dev` for hot reloading **or** `make prod` for a production-like environment.
+5. Generate an `INTERNAL_API_SECRET` for service-to-service authentication:
+   ```bash
+   make generate-internal-api-secret
+   ```
+   Add this value to both `.env` (as `INTERNAL_API_SECRET`) and `.gcalservice.env` (if using the calendar service).
+6. `make dev` for hot reloading **or** `make prod` for a production-like environment.
    - Production environments should be seeded manually with `make seed`
 
 ### Making changes to the database
@@ -41,6 +46,35 @@ Commit the following to source control:
 
 - The entire migration history folder
 - The schema.prisma file
+
+### Testing Calendar Sync
+
+To manually trigger a calendar sync (useful for testing):
+
+1. **Using Make (recommended):**
+   ```bash
+   make sync-calendar
+   ```
+
+2. **Using curl directly (if port 3002 is exposed):**
+   ```bash
+   curl -X POST http://localhost:3002/sync
+   ```
+
+3. **From within Docker network:**
+   ```bash
+   docker compose -f docker/docker-compose.dev.yml exec gcalservice curl -X POST http://localhost:3002/sync
+   ```
+
+4. **Check health status:**
+   ```bash
+   curl http://localhost:3002/health
+   ```
+
+The sync will:
+- Fetch events from Google Calendar
+- Send them to the main app via the authenticated API
+- Update the sync state in the database
 
 ## Deployment
 

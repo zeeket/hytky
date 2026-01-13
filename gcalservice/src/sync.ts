@@ -8,7 +8,12 @@ export const performSync = async (): Promise<void> => {
   try {
     // 1. Fetch current sync state from main app
     const syncStateUrl = `${env.MAIN_APP_URL}/api/trpc/events.getSyncState`;
-    const syncStateResponse = await fetch(syncStateUrl, { method: 'GET' });
+    const syncStateResponse = await fetch(syncStateUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${env.INTERNAL_API_SECRET}`,
+      },
+    });
 
     const syncState = (await syncStateResponse.json()) as {
       result?: { data?: { syncToken?: string } };
@@ -33,7 +38,10 @@ export const performSync = async (): Promise<void> => {
       console.log('[SYNC] Recording error to:', errorUrl);
       await fetch(errorUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${env.INTERNAL_API_SECRET}`,
+        },
         body: JSON.stringify({
           '0': {
             json: { error },
@@ -86,7 +94,10 @@ export const performSync = async (): Promise<void> => {
 
     const syncResponse = await fetch(syncUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${env.INTERNAL_API_SECRET}`,
+      },
       body: JSON.stringify({
         '0': {
           json: syncInput,

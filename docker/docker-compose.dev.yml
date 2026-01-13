@@ -41,6 +41,8 @@ services:
     build:
       context: ../gcalservice
       dockerfile: Dockerfile
+    ports:
+      - '3002:3002'
     env_file:
       - ../.gcalservice.env
     depends_on:

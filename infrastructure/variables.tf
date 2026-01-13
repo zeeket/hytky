@@ -124,3 +124,9 @@ variable "CALENDAR_GOOGLE_CALENDAR_ID" {
   type        = string
   sensitive   = true
 }
+
+variable "INTERNAL_API_SECRET" {
+  description = "Internal API secret for service-to-service authentication"
+  type        = string
+  sensitive   = true
+}

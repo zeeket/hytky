@@ -8,6 +8,7 @@ const envSchema = z.object({
   GOOGLE_CALENDAR_ID: z.string(),
   SYNC_INTERVAL_MINUTES: z.string().default('15'),
   MAIN_APP_URL: z.string().url().default('http://hytky:3000'),
+  INTERNAL_API_SECRET: z.string(),
   NODE_ENV: z.enum(['development', 'production']).default('production'),
 });
 

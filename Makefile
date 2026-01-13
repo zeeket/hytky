@@ -1,4 +1,4 @@
-.PHONY: dev rmi prod rmip migrate baseline testconnect prepareprod startprod help
+.PHONY: dev rmi prod rmip migrate baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar help
 
 SHELL := /bin/bash
 MYPATH := $(shell pwd)
@@ -211,6 +211,18 @@ ifdef IP
 	ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/start-production-http.yml
 endif
 endif
+
+# Generate a secure INTERNAL_API_SECRET. Usage: 'make generate-internal-api-secret'.
+generate-internal-api-secret:
+	@echo "Generated INTERNAL_API_SECRET:"
+	@openssl rand -hex 32
+
+# Trigger a manual calendar sync. Usage: 'make sync-calendar'.
+sync-calendar:
+	@echo "Triggering calendar sync..."
+	@curl -X POST http://localhost:3002/sync -H "Content-Type: application/json" || \
+		(docker compose -f docker/docker-compose.dev.yml exec -T gcalservice curl -X POST http://localhost:3002/sync -H "Content-Type: application/json" || \
+		echo "Failed to trigger sync. Make sure gcalservice is running.")
 
 # Show this help. Usage: 'make help'.
 help:

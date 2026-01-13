@@ -23,6 +23,7 @@ const server = z.object({
   FORUM_ROOT_NAME: z.string(),
   HYTKYBOT_URL: z.string().url().default('http://hytkybot:3000'),
   GOOGLE_CALENDAR_ID: z.string().optional(),
+  INTERNAL_API_SECRET: z.string().min(1),
 });
 
 /**
@@ -51,6 +52,7 @@ const processEnv = {
   FORUM_ROOT_NAME: process.env.FORUM_ROOT_NAME,
   HYTKYBOT_URL: process.env.HYTKYBOT_URL,
   GOOGLE_CALENDAR_ID: process.env.GOOGLE_CALENDAR_ID,
+  INTERNAL_API_SECRET: process.env.INTERNAL_API_SECRET,
 };
 
 // Don't touch the part below

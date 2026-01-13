@@ -22,6 +22,7 @@ import { prisma } from '~/server/db';
 
 type CreateContextOptions = {
   session: Session | null;
+  req?: CreateNextContextOptions['req'];
 };
 
 /**
@@ -38,6 +39,7 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    req: opts.req,
   };
 };
 
@@ -55,6 +57,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    req,
   });
 };
 
@@ -118,3 +121,40 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+/** Reusable middleware that enforces internal API secret authentication. */
+const enforceInternalServiceAuth = t.middleware(({ ctx, next }) => {
+  const apiSecret = process.env.INTERNAL_API_SECRET;
+
+  if (!apiSecret) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Internal API secret not configured',
+    });
+  }
+
+  // Get the API secret from the Authorization header
+  const authHeader = ctx.req?.headers?.authorization || ctx.req?.headers?.Authorization;
+
+  const providedSecret = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null;
+
+  if (!providedSecret || providedSecret !== apiSecret) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'Invalid or missing internal API secret',
+    });
+  }
+
+  return next();
+});
+
+/**
+ * Internal service procedure
+ *
+ * For use by internal services (like gcalservice) that need to authenticate
+ * using a shared API secret rather than user session authentication.
+ * Requires the Authorization header: "Bearer <INTERNAL_API_SECRET>"
+ */
+export const internalProcedure = t.procedure.use(enforceInternalServiceAuth);
