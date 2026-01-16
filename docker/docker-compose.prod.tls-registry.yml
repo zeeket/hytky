@@ -12,7 +12,8 @@ services:
       - nginx-secrets:/etc/letsencrypt
       - ./nginx-conf/user_conf.d:/etc/nginx/user_conf.d
     depends_on:
-      - hytky
+      hytky:
+        condition: service_healthy
 
   hytky:
     image: 'ghcr.io/zeeket/hytky/hytky:latest'
@@ -25,6 +26,12 @@ services:
         condition: service_healthy
       dbsync:
         condition: service_completed_successfully
+    healthcheck:
+      test: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
 
   postgres:
@@ -67,7 +74,8 @@ services:
     env_file:
       - ../.gcalservice.env
     depends_on:
-      - hytky
+      hytky:
+        condition: service_healthy
     restart: always
 
   watchtower:
