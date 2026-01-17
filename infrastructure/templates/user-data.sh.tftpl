@@ -24,6 +24,7 @@ rmdir /opt/secrets
 
 %{ if DOMAIN != "" }
 echo "NEXTAUTH_URL=https://${DOMAIN}" | tee -a /opt/webapp/.env
+echo "CERTBOT_EMAIL=${CERTBOT_EMAIL}" | tee -a /opt/webapp/.env
 sed -i 's/sub.yourdomain.org/'"${DOMAIN} www.${DOMAIN}"'/g' /opt/webapp/docker/nginx-conf/user_conf.d/tls.conf
 export CERTBOT_EMAIL=${CERTBOT_EMAIL}
 docker compose --env-file /opt/webapp/.env -f /opt/webapp/docker/docker-compose.prod.tls-registry.yml up -d 
