@@ -67,22 +67,24 @@ export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
         JSON.stringify(requestParams, null, 2)
       );
 
-      const response = (await calendar.events.list(requestParams)) as CalendarListResponse;
+      const response = (await calendar.events.list(
+        requestParams
+      )) as CalendarListResponse;
 
-      const pageEvents = ((response.data?.items as CalendarEvent[]) || []);
+      const pageEvents = (response.data?.items as CalendarEvent[]) || [];
       allEvents.push(...pageEvents);
 
       console.log(
         `[GOOGLE] ✓ Page ${pageNumber} successful: ${pageEvents.length} events`
       );
-      console.log(
-        `[GOOGLE] Total events so far: ${allEvents.length}`
-      );
+      console.log(`[GOOGLE] Total events so far: ${allEvents.length}`);
 
       // Check for next page
       pageToken = response.data?.nextPageToken ?? undefined;
       if (pageToken) {
-        console.log(`[GOOGLE] More pages available, fetching page ${pageNumber + 1}...`);
+        console.log(
+          `[GOOGLE] More pages available, fetching page ${pageNumber + 1}...`
+        );
         pageNumber++;
       } else {
         // Only set nextSyncToken on the final page
@@ -94,7 +96,9 @@ export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
       }
     } while (pageToken);
 
-    console.log(`[GOOGLE] ✓ All pages fetched. Total events: ${allEvents.length}`);
+    console.log(
+      `[GOOGLE] ✓ All pages fetched. Total events: ${allEvents.length}`
+    );
 
     return {
       events: allEvents,
