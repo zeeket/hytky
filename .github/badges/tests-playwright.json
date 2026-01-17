@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
   "label": "Playwright",
-  "message": "pending",
-  "color": "lightgrey"
+  "message": "150/150 passing",
+  "color": "brightgreen"
 }
