@@ -1,4 +1,4 @@
-.PHONY: dev rmi prod rmip migrate baseline testconnect prepareprod startprod help
+.PHONY: dev rmi prod rmip migrate baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar help
 
 SHELL := /bin/bash
 MYPATH := $(shell pwd)
@@ -150,10 +150,14 @@ regprod:
 rmip:
 	docker compose -f docker/docker-compose.prod.yml down --rmi=local
 
-# Create a databse migration. Use when making changes to the prisma/schema.prisma file. Usage: 'make migrate'.
+# Create a databse migration. Use when making changes to the prisma/schema.prisma file. Usage: 'make migrate' or 'make migrate NAME=add_feature'.
 migrate:
 	docker build -f docker/Dockerfile.dbsync --platform linux/amd64 -t hytky-dbsync .
-	docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -it --entrypoint "pnpx" hytky-dbsync prisma migrate dev
+	@if [ -t 0 ]; then \
+		docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -it hytky-dbsync pnpm exec prisma migrate dev $(if $(NAME),--name $(NAME),); \
+	else \
+		docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -i hytky-dbsync pnpm exec prisma migrate dev $(if $(NAME),--name $(NAME),); \
+	fi
 
 # Create a baseline migration. You should probably never use this. Usage: 'make baseline'.
 baseline:
@@ -211,6 +215,18 @@ ifdef IP
 	ansible-playbook -i $(IP), --user=root --private-key=$(SSH_KEY) ansible/start-production-http.yml
 endif
 endif
+
+# Generate a secure INTERNAL_API_SECRET. Usage: 'make generate-internal-api-secret'.
+generate-internal-api-secret:
+	@echo "Generated INTERNAL_API_SECRET:"
+	@openssl rand -hex 32
+
+# Trigger a manual calendar sync. Usage: 'make sync-calendar'.
+sync-calendar:
+	@echo "Triggering calendar sync..."
+	@curl -X POST http://localhost:3002/sync -H "Content-Type: application/json" || \
+		(docker compose -f docker/docker-compose.dev.yml exec -T gcalservice curl -X POST http://localhost:3002/sync -H "Content-Type: application/json" || \
+		echo "Failed to trigger sync. Make sure gcalservice is running.")
 
 # Show this help. Usage: 'make help'.
 help:

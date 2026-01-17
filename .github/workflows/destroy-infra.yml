@@ -35,6 +35,7 @@ jobs:
           TF_VAR_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           TF_VAR_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           TF_VAR_NEXT_PUBLIC_TG_BOT_NAME: ${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}
+          TF_VAR_NEXT_PUBLIC_TG_INFO_CHANNEL: ${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}
           TF_VAR_TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TF_VAR_FORUM_ROOT_NAME: ${{ secrets.FORUM_ROOT_NAME }}
           TF_VAR_TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
@@ -44,4 +45,9 @@ jobs:
           TF_VAR_DOMAIN: ${{ secrets.DOMAIN }}
           TF_VAR_CERTBOT_EMAIL: ${{ secrets.CERTBOT_EMAIL }}
           TF_VAR_ROOT_PASSWORD: ${{ secrets.ROOT_PASSWORD }}
+          TF_VAR_CALENDAR_GOOGLE_CLIENT_ID: ${{ secrets.CALENDAR_GOOGLE_CLIENT_ID }}
+          TF_VAR_CALENDAR_GOOGLE_CLIENT_SECRET: ${{ secrets.CALENDAR_GOOGLE_CLIENT_SECRET }}
+          TF_VAR_CALENDAR_GOOGLE_REFRESH_TOKEN: ${{ secrets.CALENDAR_GOOGLE_REFRESH_TOKEN }}
+          TF_VAR_CALENDAR_GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
+          TF_VAR_INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}

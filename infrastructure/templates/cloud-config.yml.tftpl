@@ -17,3 +17,6 @@ write_files:
   - path: /opt/secrets/.hytkybot.env
     content: |
       ${indent(6, hytkybot_dotenv)}
+  - path: /opt/secrets/.gcalservice.env
+    content: |
+      ${indent(6, gcalservice_dotenv)}

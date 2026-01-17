@@ -1,11 +1,8 @@
 {
   "title": "Upcoming events",
-  "openingCarnival": "Opening Carnival",
-  "newcomersNight": "Newcomers Night",
-  "checkBackSoon": "Check back soon",
+  "loading": "Loading events...",
+  "error": "Failed to load events. Please try again later.",
+  "checkBackSoon": "No upcoming events. Check back soon!",
   "backLink": "← Back",
-  "beforeConeheadLink": "23.11.2024 ➖ 19:30 ➖ Free Party Lecture by ",
-  "conehead": "Conehead",
-  "afterConeheadLink": " @ ",
-  "clubroom": "HYTKY Clubroom"
+  "location": "Location:"
 }

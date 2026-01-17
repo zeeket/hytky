@@ -7,7 +7,8 @@ locals {
       NEXT_PUBLIC_TG_BOT_NAME     = var.NEXT_PUBLIC_TG_BOT_NAME,
       NEXT_PUBLIC_TG_INFO_CHANNEL = var.NEXT_PUBLIC_TG_INFO_CHANNEL,
       TG_BOT_TOKEN                = var.TG_BOT_TOKEN,
-      FORUM_ROOT_NAME             = var.FORUM_ROOT_NAME
+      FORUM_ROOT_NAME             = var.FORUM_ROOT_NAME,
+      INTERNAL_API_SECRET         = var.INTERNAL_API_SECRET
     }
   })
   hytkybot_dotenv = templatefile("${path.module}/templates/.env.tftpl", {
@@ -16,6 +17,15 @@ locals {
       TG_ACTIVE_GROUP_IDS = var.TG_ACTIVE_GROUP_IDS
       TG_ADMIN_GROUP_IDS  = var.TG_ADMIN_GROUP_IDS
       PORT                = "3000"
+    }
+  })
+  gcalservice_dotenv = templatefile("${path.module}/templates/.env.tftpl", {
+    config = {
+      GOOGLE_CLIENT_ID     = var.CALENDAR_GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET = var.CALENDAR_GOOGLE_CLIENT_SECRET,
+      GOOGLE_REFRESH_TOKEN = var.CALENDAR_GOOGLE_REFRESH_TOKEN,
+      GOOGLE_CALENDAR_ID   = var.CALENDAR_GOOGLE_CALENDAR_ID,
+      INTERNAL_API_SECRET  = var.INTERNAL_API_SECRET
     }
   })
   REPO_URL = "${var.GITHUB_SERVER_URL}/${var.GITHUB_REPOSITORY}.git"
@@ -41,10 +51,11 @@ data "cloudinit_config" "config" {
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/templates/cloud-config.yml.tftpl",
       {
-        pub_key         = var.pub_key,
-        dotenv          = local.dotenv,
-        hytkybot_dotenv = local.hytkybot_dotenv
-        ROOT_PASSWORD   = var.ROOT_PASSWORD
+        pub_key            = var.pub_key,
+        dotenv             = local.dotenv,
+        hytkybot_dotenv    = local.hytkybot_dotenv
+        gcalservice_dotenv = local.gcalservice_dotenv
+        ROOT_PASSWORD      = var.ROOT_PASSWORD
       }
     )
   }

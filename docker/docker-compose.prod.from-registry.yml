@@ -8,7 +8,8 @@ services:
     volumes:
       - ./nginx-conf:/etc/nginx/conf.d
     depends_on:
-      - hytky
+      hytky:
+        condition: service_healthy
 
   hytky:
     image: 'ghcr.io/zeeket/hytky/hytky:latest'
@@ -21,6 +22,16 @@ services:
         condition: service_healthy
       dbsync:
         condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: always
 
   postgres:
@@ -55,6 +66,16 @@ services:
     image: 'ghcr.io/zeeket/hytkybot/hytkybot:latest'
     env_file:
       - ../.hytkybot.env
+    restart: always
+
+  gcalservice:
+    platform: 'linux/amd64'
+    image: 'ghcr.io/zeeket/gcalservice:latest'
+    env_file:
+      - ../.gcalservice.env
+    depends_on:
+      hytky:
+        condition: service_healthy
     restart: always
 
   watchtower:

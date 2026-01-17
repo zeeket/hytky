@@ -88,3 +88,34 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Event {
+  id          String    @id @default(cuid())
+  calendarId  String    @unique
+  title       String    @db.VarChar(500)
+  description String?   @db.Text
+  location    String?   @db.VarChar(500)
+  startTime   DateTime
+  endTime     DateTime
+  timezone    String    @default("UTC") @db.VarChar(100)
+  allDay      Boolean   @default(false)
+  status      String    @default("confirmed") @db.VarChar(50)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([startTime, deletedAt])
+  @@index([status, deletedAt])
+}
+
+model SyncState {
+  id            String   @id @default(cuid())
+  calendarId    String   @unique
+  syncToken     String?  @db.Text
+  lastSyncAt    DateTime @default(now())
+  lastSuccessAt DateTime @default(now())
+  errorCount    Int      @default(0)
+  lastError     String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

@@ -23,6 +23,7 @@ export default tseslint.config(
       '**/playwright/.cache/**',
       '**/build/**',
       '**/out/**',
+      '**/dist/**',
       '**/*.tsbuildinfo',
       '**/tests/**/*.spec.ts',
       '**/tests/**/*.spec.tsx',

@@ -49,6 +49,7 @@ jobs:
           echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
           echo "FORUM_ROOT_NAME=${{ secrets.FORUM_ROOT_NAME }}" >> .env
           echo "HYTKYBOT_URL=http://localhost:3001" >> .env
+          echo "INTERNAL_API_SECRET=${{ secrets.INTERNAL_API_SECRET }}" >> .env
 
       - name: Run Prisma migrations
         run: pnpm exec prisma migrate deploy
@@ -150,6 +151,7 @@ jobs:
           echo "FORUM_ROOT_NAME=${{ secrets.FORUM_ROOT_NAME }}" >> .env
           echo "HYTKYBOT_URL=http://localhost:3001" >> .env
           echo "PLAYWRIGHT_BASE_URL=http://localhost:3000" >> .env
+          echo "INTERNAL_API_SECRET=${{ secrets.INTERNAL_API_SECRET }}" >> .env
 
       - name: Create .hytkybot.env file
         run: |
