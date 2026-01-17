@@ -421,9 +421,9 @@ describe('eventsRouter', () => {
       const futureEvent = result.find((e) => e.title === 'Future Event');
       expect(ongoingEvent).toBeDefined();
       expect(futureEvent).toBeDefined();
-      expect(
-        new Date(ongoingEvent!.startTime).getTime()
-      ).toBeLessThanOrEqual(new Date(futureEvent!.startTime).getTime());
+      expect(new Date(ongoingEvent!.startTime).getTime()).toBeLessThanOrEqual(
+        new Date(futureEvent!.startTime).getTime()
+      );
     });
 
     it('should not include events that have ended', async () => {
