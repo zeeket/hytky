@@ -41,6 +41,24 @@ export default async function handler(
     return res.status(200).json({ events, count: events.length });
   }
 
+  if (req.method === 'PATCH') {
+    // Soft-delete all events (hide them without permanent deletion)
+    const result = await prisma.event.updateMany({
+      where: { deletedAt: null },
+      data: { deletedAt: new Date() },
+    });
+    return res.status(200).json({ hidden: result.count });
+  }
+
+  if (req.method === 'PUT') {
+    // Restore all soft-deleted events (unhide them)
+    const result = await prisma.event.updateMany({
+      where: { deletedAt: { not: null } },
+      data: { deletedAt: null },
+    });
+    return res.status(200).json({ restored: result.count });
+  }
+
   if (req.method === 'POST') {
     // Create a test event
     const { daysFromNow = 1, durationHours = 1 } = req.body;

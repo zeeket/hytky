@@ -11,6 +11,23 @@ async function cleanTestEvents(request: APIRequestContext, deleteAll = false) {
 }
 
 /**
+ * Helper to soft-delete (hide) all events via API
+ * Events are hidden from the UI but not permanently deleted
+ */
+async function hideAllEvents(request: APIRequestContext) {
+  const response = await request.patch('/api/test/events');
+  return response.json();
+}
+
+/**
+ * Helper to restore all soft-deleted (hidden) events via API
+ */
+async function restoreAllEvents(request: APIRequestContext) {
+  const response = await request.put('/api/test/events');
+  return response.json();
+}
+
+/**
  * Helper to create a test event via API
  */
 async function createTestEvent(request: APIRequestContext, options = {}) {
@@ -20,7 +37,7 @@ async function createTestEvent(request: APIRequestContext, options = {}) {
   return response.json();
 }
 
-test.describe('Events Page', () => {
+test.describe.serial('Events Page', () => {
   test('should display page title', async ({ page }) => {
     await page.goto('/events');
     await page.waitForLoadState('networkidle');
@@ -33,29 +50,33 @@ test.describe('Events Page', () => {
   });
 
   test.describe.serial('Empty State', () => {
-    test.beforeEach(async ({ request }) => {
-      // Clean ALL events (including real ones from Google Calendar)
-      await cleanTestEvents(request, true);
-      // Wait for database to commit
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    });
-
     test.afterEach(async ({ request }) => {
-      // Clean up all events after test
-      await cleanTestEvents(request, true);
+      // Restore any soft-deleted events and clean up test events
+      await restoreAllEvents(request);
+      await cleanTestEvents(request, false);
     });
 
     test('should display empty state message when no events', async ({
       page,
       request,
     }) => {
-      // Ensure all events are deleted
-      await cleanTestEvents(request, true);
+      // First, clean up any leftover test events from previous runs
+      await cleanTestEvents(request, false);
 
-      // Wait a bit for database to sync
-      await page.waitForTimeout(500);
+      // Soft-delete (hide) all remaining events so the page shows empty state
+      const hideResult = await hideAllEvents(request);
+      expect(hideResult.hidden).toBeGreaterThanOrEqual(0);
 
-      await page.goto('/events');
+      // Verify no visible events remain (events with deletedAt: null)
+      const verifyResponse = await request.get('/api/test/events');
+      const { events } = await verifyResponse.json();
+      const visibleEvents = events.filter(
+        (e: { deletedAt: string | null }) => e.deletedAt === null
+      );
+      expect(visibleEvents).toHaveLength(0);
+
+      // Use cache-busting param to ensure fresh page load
+      await page.goto(`/events?_t=${Date.now()}`);
       await page.waitForLoadState('networkidle');
       await page.waitForTimeout(2000);
 

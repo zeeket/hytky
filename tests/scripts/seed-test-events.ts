@@ -19,7 +19,7 @@ export async function seedTestEvents() {
 
   const events = [
     {
-      googleEventId: 'test-event-1',
+      calendarId: 'test-event-1',
       title: `${TEST_EVENT_PREFIX} Tomorrow Event`,
       description: 'A test event happening tomorrow',
       location: 'Test Location 1',
@@ -32,7 +32,7 @@ export async function seedTestEvents() {
       updatedAt: now,
     },
     {
-      googleEventId: 'test-event-2',
+      calendarId: 'test-event-2',
       title: `${TEST_EVENT_PREFIX} Next Week Event`,
       description: 'A test event happening next week',
       location: 'Test Location 2',
@@ -45,7 +45,7 @@ export async function seedTestEvents() {
       updatedAt: now,
     },
     {
-      googleEventId: 'test-event-3',
+      calendarId: 'test-event-3',
       title: `${TEST_EVENT_PREFIX} All Day Event`,
       description: 'An all-day test event',
       location: null,
@@ -61,7 +61,7 @@ export async function seedTestEvents() {
 
   for (const event of events) {
     await prisma.event.upsert({
-      where: { googleEventId: event.googleEventId },
+      where: { calendarId: event.calendarId },
       update: event,
       create: event,
     });

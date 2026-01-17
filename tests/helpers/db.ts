@@ -42,11 +42,11 @@ export async function createTestEvent(overrides?: {
   eventDate.setDate(eventDate.getDate() + (overrides?.daysFromNow ?? 1));
   eventDate.setHours(15, 0, 0, 0);
 
-  const googleEventId = `test-event-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+  const calendarId = `test-event-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
   return testPrisma.event.create({
     data: {
-      googleEventId,
+      calendarId,
       title: overrides?.title ?? `${TEST_EVENT_PREFIX} Test Event`,
       description: overrides?.description ?? 'A test event for E2E testing',
       location: overrides?.location ?? 'Test Location',
