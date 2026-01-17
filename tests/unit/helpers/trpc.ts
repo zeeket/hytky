@@ -25,6 +25,7 @@ export const createTestCaller = (session: Session | null = null) => {
   const ctx = {
     session,
     prisma: jestPrisma.client,
+    req: undefined,
   };
   return appRouter.createCaller(ctx);
 };

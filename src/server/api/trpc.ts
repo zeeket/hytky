@@ -134,8 +134,11 @@ const enforceInternalServiceAuth = t.middleware(({ ctx, next }) => {
   }
 
   // Get the API secret from the Authorization header
-  const authHeader =
+  const rawAuthHeader =
     ctx.req?.headers?.authorization || ctx.req?.headers?.Authorization;
+  const authHeader = Array.isArray(rawAuthHeader)
+    ? rawAuthHeader[0]
+    : rawAuthHeader;
 
   const providedSecret = authHeader?.startsWith('Bearer ')
     ? authHeader.slice(7)
