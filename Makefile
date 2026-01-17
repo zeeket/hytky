@@ -150,10 +150,14 @@ regprod:
 rmip:
 	docker compose -f docker/docker-compose.prod.yml down --rmi=local
 
-# Create a databse migration. Use when making changes to the prisma/schema.prisma file. Usage: 'make migrate'.
+# Create a databse migration. Use when making changes to the prisma/schema.prisma file. Usage: 'make migrate' or 'make migrate NAME=add_feature'.
 migrate:
 	docker build -f docker/Dockerfile.dbsync --platform linux/amd64 -t hytky-dbsync .
-	docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -it --entrypoint "pnpx" hytky-dbsync prisma migrate dev
+	@if [ -t 0 ]; then \
+		docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -it hytky-dbsync pnpm exec prisma migrate dev $(if $(NAME),--name $(NAME),); \
+	else \
+		docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -i hytky-dbsync pnpm exec prisma migrate dev $(if $(NAME),--name $(NAME),); \
+	fi
 
 # Create a baseline migration. You should probably never use this. Usage: 'make baseline'.
 baseline:
