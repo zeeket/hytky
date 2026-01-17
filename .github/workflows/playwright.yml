@@ -231,7 +231,13 @@ jobs:
           name: playwright-coverage-report
           path: coverage
 
-      - name: Generate coverage badges
+      - name: Download Playwright report (for test counts)
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+
+      - name: Generate coverage and test count badges
         run: node tests/scripts/generate-coverage-badges.cjs
 
       - name: Commit badges

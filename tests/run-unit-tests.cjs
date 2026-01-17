@@ -29,7 +29,12 @@ if (process.env.DATABASE_URL?.includes('postgres:5432')) {
 }
 
 // Run Jest with all arguments passed to this script
-const jestArgs = process.argv.slice(2);
+// Add JSON output for badge generation
+const jestArgs = [
+  ...process.argv.slice(2),
+  '--json',
+  '--outputFile=coverage-jest/test-results.json',
+];
 const jest = spawn('jest', jestArgs, {
   stdio: 'inherit',
   env: process.env,

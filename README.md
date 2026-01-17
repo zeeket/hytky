@@ -3,8 +3,8 @@
 [![Prettier](https://github.com/zeeket/hytky/actions/workflows/prettier-check.yml/badge.svg)](https://github.com/zeeket/hytky/actions/workflows/prettier-check.yml)
 [![ESLint](https://github.com/zeeket/hytky/actions/workflows/next-lint-check.yml/badge.svg)](https://github.com/zeeket/hytky/actions/workflows/next-lint-check.yml)
 
-[![Playwright Tests](https://img.shields.io/badge/Playwright-34%2F34%20tests%20passing-brightgreen)](https://github.com/zeeket/hytky/actions/workflows/playwright.yml)
-[![Jest Tests](https://img.shields.io/badge/Jest-34%2F34%20tests%20passing-brightgreen)](https://github.com/zeeket/hytky/actions/workflows/playwright.yml)
+[![Playwright Tests](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/tests-playwright.json)](https://github.com/zeeket/hytky/actions/workflows/playwright.yml)
+[![Jest Tests](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/tests-jest.json)](https://github.com/zeeket/hytky/actions/workflows/playwright.yml)
 
 [![Combined Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-combined.json)](.github/badges/coverage-combined.json)
 [![Jest Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-jest.json)](.github/badges/coverage-jest.json)
