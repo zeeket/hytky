@@ -7,7 +7,7 @@ users:
 chpasswd:
   expire: false
   users:
-  - {name: root, password:${ROOT_PASSWORD}, type: text}
+  - {name: root, password: ${ROOT_PASSWORD}, type: text}
   - {name: dettmann, type: RANDOM }
 ssh_pwauth: false
 write_files:
