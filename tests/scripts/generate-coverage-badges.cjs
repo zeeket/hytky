@@ -274,7 +274,11 @@ console.log('\n=== Test Count Badges ===');
 
 // Generate Jest test count badge
 if (jestTests !== null) {
-  const jestTestBadge = createTestBadge('Jest', jestTests.passed, jestTests.total);
+  const jestTestBadge = createTestBadge(
+    'Jest',
+    jestTests.passed,
+    jestTests.total
+  );
   fs.writeFileSync(
     path.join(BADGES_DIR, 'tests-jest.json'),
     JSON.stringify(jestTestBadge, null, 2)
