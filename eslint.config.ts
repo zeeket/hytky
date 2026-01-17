@@ -30,6 +30,7 @@ export default tseslint.config(
       '**/tests/scripts/**',
       'src/middleware.js',
       'next-env.d.ts',
+      'gcalservice/**',
     ],
   },
   // Base ESLint recommended rules
