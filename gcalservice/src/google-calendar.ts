@@ -28,32 +28,77 @@ export const syncEvents = async (syncToken?: string): Promise<SyncResult> => {
       syncToken ? 'using existing' : 'none (full sync)'
     );
 
-    const requestParams = {
-      calendarId: env.GOOGLE_CALENDAR_ID,
-      syncToken: syncToken,
-      maxResults: 2500,
-      singleEvents: true,
-      orderBy: syncToken ? undefined : 'startTime',
-      timeMin: syncToken ? undefined : new Date().toISOString(),
+    const allEvents: CalendarEvent[] = [];
+    let pageToken: string | undefined = undefined;
+    let nextSyncToken: string | undefined = undefined;
+    let pageNumber = 1;
+
+    type CalendarListParams = {
+      calendarId: string;
+      syncToken?: string;
+      pageToken?: string;
+      maxResults: number;
+      singleEvents: boolean;
+      orderBy?: string;
+      timeMin?: string;
     };
 
-    console.log(
-      '[GOOGLE] Request params:',
-      JSON.stringify(requestParams, null, 2)
-    );
+    type CalendarListResponse = {
+      data?: {
+        items?: CalendarEvent[];
+        nextPageToken?: string;
+        nextSyncToken?: string;
+      };
+    };
 
-    const response = await calendar.events.list(requestParams);
+    do {
+      const requestParams: CalendarListParams = {
+        calendarId: env.GOOGLE_CALENDAR_ID,
+        syncToken: syncToken,
+        pageToken: pageToken,
+        maxResults: 2500,
+        singleEvents: true,
+        orderBy: syncToken ? undefined : 'startTime',
+        timeMin: syncToken ? undefined : new Date().toISOString(),
+      };
 
-    console.log('[GOOGLE] ✓ API request successful');
-    console.log('[GOOGLE] Events received:', response.data.items?.length || 0);
-    console.log(
-      '[GOOGLE] Next sync token:',
-      response.data.nextSyncToken ? 'provided' : 'none'
-    );
+      console.log(
+        `[GOOGLE] Request params (page ${pageNumber}):`,
+        JSON.stringify(requestParams, null, 2)
+      );
+
+      const response = (await calendar.events.list(requestParams)) as CalendarListResponse;
+
+      const pageEvents = ((response.data?.items as CalendarEvent[]) || []);
+      allEvents.push(...pageEvents);
+
+      console.log(
+        `[GOOGLE] ✓ Page ${pageNumber} successful: ${pageEvents.length} events`
+      );
+      console.log(
+        `[GOOGLE] Total events so far: ${allEvents.length}`
+      );
+
+      // Check for next page
+      pageToken = response.data?.nextPageToken ?? undefined;
+      if (pageToken) {
+        console.log(`[GOOGLE] More pages available, fetching page ${pageNumber + 1}...`);
+        pageNumber++;
+      } else {
+        // Only set nextSyncToken on the final page
+        nextSyncToken = response.data?.nextSyncToken ?? undefined;
+        console.log(
+          '[GOOGLE] Final page reached. Next sync token:',
+          nextSyncToken ? 'provided' : 'none'
+        );
+      }
+    } while (pageToken);
+
+    console.log(`[GOOGLE] ✓ All pages fetched. Total events: ${allEvents.length}`);
 
     return {
-      events: (response.data.items as CalendarEvent[]) || [],
-      nextSyncToken: response.data.nextSyncToken ?? undefined,
+      events: allEvents,
+      nextSyncToken,
     };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';

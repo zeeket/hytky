@@ -69,3 +69,4 @@ public/hytkylogo.png
 
 #gcal
 .gcalservice.env
+gcalservice/dist/
