@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
   "label": "server coverage",
-  "message": "79.7%",
-  "color": "yellowgreen"
+  "message": "83.5%",
+  "color": "green"
 }
