@@ -1,3 +1,4 @@
+import superjson from 'superjson';
 import { env } from './config.js';
 import { syncEvents } from './google-calendar.js';
 import type { SyncEventPayload } from './types.js';
@@ -33,10 +34,37 @@ export const performSync = async (): Promise<void> => {
       );
     }
 
-    const syncState = (await syncStateResponse.json()) as {
-      result?: { data?: { syncToken?: string } };
+    const responseBody = (await syncStateResponse.json()) as {
+      result?: {
+        data?: unknown;
+      };
     };
-    const currentSyncToken = syncState?.result?.data?.syncToken;
+
+    // tRPC with superjson wraps responses in { json: ..., meta: ... }
+    // The structure is: { result: { data: { json: <actual data>, meta: {...} } } }
+    let syncStateData: { syncToken?: string | null } | null = null;
+
+    if (responseBody?.result?.data) {
+      const data = responseBody.result.data;
+
+      // Check if it's superjson-wrapped (has both json and meta)
+      if (
+        data &&
+        typeof data === 'object' &&
+        'json' in data &&
+        'meta' in data
+      ) {
+        // Deserialize superjson-wrapped data
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const deserialized = superjson.deserialize(data as any);
+        syncStateData = deserialized as { syncToken?: string | null } | null;
+      } else {
+        // Plain JSON (shouldn't happen with superjson, but handle gracefully)
+        syncStateData = data as { syncToken?: string | null } | null;
+      }
+    }
+
+    const currentSyncToken = syncStateData?.syncToken ?? undefined;
     console.log(
       '[SYNC] Current sync token:',
       currentSyncToken || 'none (full sync)'
