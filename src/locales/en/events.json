@@ -4,5 +4,7 @@
   "error": "Failed to load events. Please try again later.",
   "checkBackSoon": "No upcoming events. Check back soon!",
   "backLink": "← Back",
-  "location": "Location:"
+  "location": "Location:",
+  "happeningNow": "Happening now",
+  "estimatedUntilEnd": "Estimated {time} until end"
 }

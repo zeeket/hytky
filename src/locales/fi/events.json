@@ -4,5 +4,7 @@
   "error": "Tapahtumien lataus epäonnistui. Yritä myöhemmin uudelleen.",
   "checkBackSoon": "Ei tulevia tapahtumia. Tarkista pian uudelleen!",
   "backLink": "← Takaisin",
-  "location": "Sijainti:"
+  "location": "Sijainti:",
+  "happeningNow": "Käynnissä nyt",
+  "estimatedUntilEnd": "Arvioitu {time} loppuun"
 }

@@ -61,19 +61,35 @@ export default async function handler(
 
   if (req.method === 'POST') {
     // Create a test event
-    const { daysFromNow = 1, durationHours = 1 } = req.body;
+    const {
+      daysFromNow = 1,
+      durationHours = 1,
+      hoursFromNow = null,
+      title = null,
+    } = req.body;
 
     const now = new Date();
-    const eventDate = new Date(now);
-    eventDate.setDate(eventDate.getDate() + daysFromNow);
-    eventDate.setHours(15, 0, 0, 0);
+    let eventDate: Date;
+    let eventTitle: string;
+
+    if (hoursFromNow !== null) {
+      // Create an ongoing event (hoursFromNow can be negative to start in the past)
+      eventDate = new Date(now.getTime() + hoursFromNow * 3600000);
+      eventTitle = title || `${TEST_EVENT_PREFIX} Ongoing Event`;
+    } else {
+      // Create a future event
+      eventDate = new Date(now);
+      eventDate.setDate(eventDate.getDate() + daysFromNow);
+      eventDate.setHours(15, 0, 0, 0);
+      eventTitle = title || `${TEST_EVENT_PREFIX} Tomorrow Event`;
+    }
 
     const calendarId = `test-event-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
     const event = await prisma.event.create({
       data: {
         calendarId,
-        title: `${TEST_EVENT_PREFIX} Tomorrow Event`,
+        title: eventTitle,
         description: 'A test event for E2E testing',
         location: 'Test Location',
         startTime: eventDate,

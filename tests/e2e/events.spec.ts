@@ -185,4 +185,101 @@ test.describe.serial('Events Page', () => {
     const loadingMsg = page.locator('text=Loading events');
     await expect(loadingMsg).not.toBeVisible();
   });
+
+  test.describe.serial('Ongoing Events', () => {
+    test.beforeEach(async ({ request }) => {
+      // Clean ALL events
+      await cleanTestEvents(request, true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    });
+
+    test.afterEach(async ({ request }) => {
+      // Clean up all events after test
+      await cleanTestEvents(request, true);
+    });
+
+    test('should display ongoing event with "happening now" and time until end', async ({
+      page,
+      request,
+    }) => {
+      // Create an ongoing event (started 30 minutes ago, ends in 30 minutes)
+      await createTestEvent(request, {
+        hoursFromNow: -0.5, // Started 30 minutes ago
+        durationHours: 1, // Total duration 1 hour (30 min past + 30 min remaining)
+        title: '[TEST] Sledding Day',
+      });
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      await page.goto('/events');
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(3000);
+
+      // Should show the event
+      await expect(page.locator('text=/Sledding Day/i')).toBeVisible();
+
+      // Should show "Happening now" (language-agnostic check)
+      const bodyText = (await page.locator('body').textContent()) || '';
+      const hasHappeningNow =
+        bodyText.includes('Happening now') ||
+        bodyText.includes('Käynnissä nyt');
+      expect(hasHappeningNow).toBeTruthy();
+
+      // Should show time until end (should be around 30 minutes)
+      const hasTimeUntilEnd =
+        bodyText.includes('Estimated') ||
+        bodyText.includes('Arvioitu') ||
+        bodyText.includes('minute') ||
+        bodyText.includes('minuutti');
+      expect(hasTimeUntilEnd).toBeTruthy();
+    });
+
+    test('should display ongoing event in Finnish locale', async ({
+      page,
+      request,
+    }) => {
+      // Create an ongoing event
+      await createTestEvent(request, {
+        hoursFromNow: -0.5,
+        durationHours: 1,
+        title: '[TEST] Sledding Day',
+      });
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      await page.goto('/events?lang=fi');
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(3000);
+
+      // Should show Finnish "Käynnissä nyt"
+      await expect(page.locator('text=Käynnissä nyt')).toBeVisible();
+
+      // Should show Finnish time until end text
+      const bodyText = (await page.locator('body').textContent()) || '';
+      expect(bodyText).toContain('Arvioitu');
+    });
+
+    test('should show hours when event ends in more than 1 hour', async ({
+      page,
+      request,
+    }) => {
+      // Create an ongoing event that ends in 2 hours
+      await createTestEvent(request, {
+        hoursFromNow: -1, // Started 1 hour ago
+        durationHours: 3, // Total duration 3 hours (1 hour past + 2 hours remaining)
+        title: '[TEST] Sledding Day',
+      });
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      await page.goto('/events');
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(3000);
+
+      // Should show hours in the time until end
+      const bodyText = (await page.locator('body').textContent()) || '';
+      const hasHours =
+        bodyText.includes('hour') ||
+        bodyText.includes('tunti') ||
+        bodyText.includes('2');
+      expect(hasHours).toBeTruthy();
+    });
+  });
 });

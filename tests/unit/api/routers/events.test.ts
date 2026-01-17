@@ -366,12 +366,93 @@ describe('eventsRouter', () => {
       });
 
       expect(result.length).toBeGreaterThanOrEqual(2);
-      expect(result.every((e) => new Date(e.startTime) > new Date())).toBe(
-        true
-      );
+      // Should include upcoming events (startTime >= now)
       expect(result.some((e) => e.title === 'Future Event 1')).toBe(true);
       expect(result.some((e) => e.title === 'Future Event 2')).toBe(true);
+      // Should NOT include past events (endTime < now)
       expect(result.some((e) => e.title === 'Past Event')).toBe(false);
+    });
+
+    it('should include ongoing events (started but not ended)', async () => {
+      const caller = createInternalServiceCaller();
+      const now = new Date();
+
+      // Create an ongoing event (started 1 hour ago, ends in 1 hour)
+      const ongoingStart = new Date(now.getTime() - 3600000); // -1 hour
+      const ongoingEnd = new Date(now.getTime() + 3600000); // +1 hour
+
+      await prisma.event.create({
+        data: {
+          calendarId: 'ongoing-event',
+          title: 'Ongoing Event',
+          startTime: ongoingStart,
+          endTime: ongoingEnd,
+          timezone: 'UTC',
+          allDay: false,
+          status: 'confirmed',
+        },
+      });
+
+      // Create a future event
+      await prisma.event.create({
+        data: {
+          calendarId: 'future-event',
+          title: 'Future Event',
+          startTime: new Date(now.getTime() + 86400000), // +1 day
+          endTime: new Date(now.getTime() + 90000000),
+          timezone: 'UTC',
+          allDay: false,
+          status: 'confirmed',
+        },
+      });
+
+      const result = await caller.events.getUpcoming({
+        limit: 10,
+        includeAllDay: true,
+      });
+
+      // Should include the ongoing event
+      expect(result.some((e) => e.title === 'Ongoing Event')).toBe(true);
+      // Should include the future event
+      expect(result.some((e) => e.title === 'Future Event')).toBe(true);
+
+      // Ongoing event should come first (ordered by startTime ASC)
+      const ongoingEvent = result.find((e) => e.title === 'Ongoing Event');
+      const futureEvent = result.find((e) => e.title === 'Future Event');
+      expect(ongoingEvent).toBeDefined();
+      expect(futureEvent).toBeDefined();
+      expect(
+        new Date(ongoingEvent!.startTime).getTime()
+      ).toBeLessThanOrEqual(new Date(futureEvent!.startTime).getTime());
+    });
+
+    it('should not include events that have ended', async () => {
+      const caller = createInternalServiceCaller();
+      const now = new Date();
+
+      // Create an event that has ended (ended 1 hour ago)
+      const endedStart = new Date(now.getTime() - 7200000); // -2 hours
+      const endedEnd = new Date(now.getTime() - 3600000); // -1 hour
+
+      await prisma.event.create({
+        data: {
+          calendarId: 'ended-event',
+          title: 'Ended Event',
+          startTime: endedStart,
+          endTime: endedEnd,
+          timezone: 'UTC',
+          allDay: false,
+          status: 'confirmed',
+        },
+      });
+
+      const result = await caller.events.getUpcoming({
+        limit: 10,
+        includeAllDay: true,
+      });
+
+      // Should NOT include the ended event
+      expect(result.some((e) => e.title === 'Ended Event')).toBe(false);
     });
   });
 });

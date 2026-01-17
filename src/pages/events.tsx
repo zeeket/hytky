@@ -16,6 +16,8 @@ interface EventsContent {
   checkBackSoon: string;
   backLink: string;
   location: string;
+  happeningNow: string;
+  estimatedUntilEnd: string;
 }
 
 const fiContentTyped = fiContent as EventsContent;
@@ -61,6 +63,8 @@ const EventsPage: NextPage = () => {
                 event={event}
                 locale={locale || 'en'}
                 locationLabel={content.location}
+                happeningNowLabel={content.happeningNow}
+                estimatedUntilEndLabel={content.estimatedUntilEnd}
               />
             ))}
           </ul>

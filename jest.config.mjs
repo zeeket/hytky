@@ -73,7 +73,7 @@ export default {
 
   // Don't transform node_modules except specific ESM packages
   transformIgnorePatterns: [
-    'node_modules/(?!(superjson|jose|openid-client|oauth4webapi|@panva)/)',
+    'node_modules/(?!(superjson|jose|openid-client|oauth4webapi|@panva|date-fns|date-fns-tz)/)',
   ],
 
   // Increase timeout for database operations

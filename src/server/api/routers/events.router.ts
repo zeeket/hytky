@@ -14,7 +14,7 @@ const syncEventSchema = z.object({
 });
 
 export const eventsRouter = createTRPCRouter({
-  // Public query: Get upcoming events
+  // Public query: Get upcoming events (including ongoing events)
   getUpcoming: publicProcedure
     .input(
       z.object({
@@ -27,12 +27,27 @@ export const eventsRouter = createTRPCRouter({
 
       const events = await ctx.prisma.event.findMany({
         where: {
-          startTime: { gte: now },
+          // Include events that have started but not ended (ongoing events)
+          // OR events that haven't started yet (upcoming events)
+          OR: [
+            {
+              // Ongoing events: started but not ended
+              startTime: { lte: now },
+              endTime: { gte: now },
+            },
+            {
+              // Upcoming events: not started yet
+              startTime: { gte: now },
+            },
+          ],
           deletedAt: null,
           status: { in: ['confirmed', 'tentative'] },
           ...(input.includeAllDay ? {} : { allDay: false }),
         },
-        orderBy: { startTime: 'asc' },
+        orderBy: [
+          // Order by: ongoing events first (startTime ASC), then upcoming events
+          { startTime: 'asc' },
+        ],
         take: input.limit,
       });
 
