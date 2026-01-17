@@ -67,6 +67,12 @@ resource "digitalocean_droplet" "webserver" {
   region    = "fra1"
   size      = "s-1vcpu-1gb"
   user_data = data.cloudinit_config.config.rendered
+
+  timeouts {
+    create = "10m"
+    delete = "10m"
+    update = "10m"
+  }
 }
 
 resource "digitalocean_domain" "hytky" {
