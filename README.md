@@ -10,7 +10,9 @@
 [![Jest Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-jest.json)](.github/badges/coverage-jest.json)
 [![Playwright Test Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/zeeket/hytky/main/.github/badges/coverage-playwright.json)](.github/badges/coverage-playwright.json)
 
-Site and forum for a student organization centered around electronic music culture. This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+> Site and forum for a student organization centered around electronic music culture.
+
+This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 The forum login is designed to be exclusive to members of certain Telegram groups. A Telegram user's membership status in the groups is checked with [HYTKYbot](https://github.com/zeeket/HYTKYbot).
 
 ## Running
@@ -29,14 +31,18 @@ The forum login is designed to be exclusive to members of certain Telegram group
 
 1. `git clone <this repo>`
 2. `cd hytky`
-3. `cp .env.example .env` and put your secret values in the `.env` file.
-4. `cp .hytkybot.env.example .hytkybot.env` and put your secret values in the `.hytkybot.env` file.
-5. Generate an `INTERNAL_API_SECRET` for service-to-service authentication:
+3. Duplicate the sample environment variable files and populate them with your secrets:
+    ```
+    cp .env.example .env
+    cp .hytkybot.env.example .hytkybot.env
+    cp .gcalservice.env.example .gcalservice.env
+    ```
+4. Generate an `INTERNAL_API_SECRET` for service-to-service authentication:
    ```bash
    make generate-internal-api-secret
    ```
    Add this value to both `.env` (as `INTERNAL_API_SECRET`) and `.gcalservice.env` (if using the calendar service).
-6. `make dev` for hot reloading **or** `make prod` for a production-like environment.
+5. **All set!** :rocket: Use `make dev` for hot reloading **or** `make prod` for a production-like environment. :tada:
    - Production environments should be seeded manually with `make seed`
 
 ### Making changes to the database
@@ -45,7 +51,7 @@ In a development environment, use the `make migrate` command to generate and app
 Commit the following to source control:
 
 - The entire migration history folder
-- The schema.prisma file
+- The `schema.prisma` file
 
 ### Testing Calendar Sync
 
