@@ -9,9 +9,10 @@ SSH_KEY = $(HOME)/.ssh/id_rsa
 dev:
 	docker compose -f docker/docker-compose.dev.yml up --force-recreate
 
-# Remove local development images and volumes. Usage: 'make rmi'.
+# Remove local development images, volumes, and build artifacts. Usage: 'make rmi'.
 rmi:
 	docker compose -f docker/docker-compose.dev.yml down --rmi=local
+	rm -rf .next
 
 # Run the linter check. Usage: 'make lint'.
 lint:

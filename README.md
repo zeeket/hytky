@@ -32,11 +32,11 @@ The forum login is designed to be exclusive to members of certain Telegram group
 1. `git clone <this repo>`
 2. `cd hytky`
 3. Duplicate the sample environment variable files and populate them with your secrets:
-    ```
-    cp .env.example .env
-    cp .hytkybot.env.example .hytkybot.env
-    cp .gcalservice.env.example .gcalservice.env
-    ```
+   ```
+   cp .env.example .env
+   cp .hytkybot.env.example .hytkybot.env
+   cp .gcalservice.env.example .gcalservice.env
+   ```
 4. Generate an `INTERNAL_API_SECRET` for service-to-service authentication:
    ```bash
    make generate-internal-api-secret
