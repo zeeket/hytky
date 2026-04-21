@@ -174,7 +174,7 @@ jobs:
 
       - name: Generate coverage report with c8
         if: always()
-        run: pnpm exec c8 report --config tests/.c8rc.ci.json
+        run: pnpm exec c8 report --config tests/e2e/.c8rc.ci.json
 
       - name: Upload Playwright coverage
         uses: actions/upload-artifact@v4

@@ -10,8 +10,8 @@
     "lint": "pnpm exec eslint .",
     "start": "next start",
     "test": "playwright test",
-    "test:unit": "node tests/run-unit-tests.cjs",
-    "test:unit:coverage": "node tests/run-unit-tests.cjs --coverage",
+    "test:unit": "node tests/unit/run-unit-tests.cjs",
+    "test:unit:coverage": "node tests/unit/run-unit-tests.cjs --coverage",
     "test:e2e": "playwright test",
     "test:all": "pnpm test:unit && pnpm test:e2e"
   },

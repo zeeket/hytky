@@ -78,7 +78,7 @@ test:
 	@echo ""
 	@echo "E2E Coverage Summary:"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@pnpm exec c8 report --config tests/e2e/.c8rc.json 2>/dev/null || echo "No coverage data collected"
 	@echo ""
 	@node tests/scripts/uncovered-lines.js
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -109,7 +109,7 @@ test-e2e:
 	@echo ""
 	@echo "Coverage Summary:"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@pnpm exec c8 report --config tests/e2e/.c8rc.json 2>/dev/null || echo "No coverage data collected"
 	@echo ""
 	@node tests/scripts/uncovered-lines.js
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -133,7 +133,7 @@ test-all:
 	@echo ""
 	@echo "Coverage Summary:"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@pnpm exec c8 report --config tests/.c8rc.json 2>/dev/null || echo "No coverage data collected"
+	@pnpm exec c8 report --config tests/e2e/.c8rc.json 2>/dev/null || echo "No coverage data collected"
 	@echo ""
 	@node tests/scripts/uncovered-lines.js
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

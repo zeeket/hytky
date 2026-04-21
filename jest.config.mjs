@@ -48,10 +48,10 @@ export default {
   // Module path aliases (matching tsconfig.json)
   moduleNameMapper: {
     '^~/(.*)$': '<rootDir>/src/$1',
-    '^next-auth$': '<rootDir>/tests/__mocks__/next-auth.ts',
-    '^next-auth/(.*)$': '<rootDir>/tests/__mocks__/next-auth.ts',
+    '^next-auth$': '<rootDir>/tests/unit/__mocks__/next-auth.ts',
+    '^next-auth/(.*)$': '<rootDir>/tests/unit/__mocks__/next-auth.ts',
     '^@next-auth/prisma-adapter$':
-      '<rootDir>/tests/__mocks__/@next-auth/prisma-adapter.ts',
+      '<rootDir>/tests/unit/__mocks__/@next-auth/prisma-adapter.ts',
   },
 
   // Coverage configuration
@@ -69,7 +69,7 @@ export default {
   ],
 
   // Setup files - run after the test environment is set up
-  setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/tests/unit/jest.setup.ts'],
 
   // Don't transform node_modules except specific ESM packages
   transformIgnorePatterns: [

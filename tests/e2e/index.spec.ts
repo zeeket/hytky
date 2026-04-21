@@ -7,6 +7,17 @@ test('has title', async ({ page }) => {
   await expect(page).toHaveTitle(/HYTKY/);
 });
 
+test('has theme-color meta tag matching page background', async ({ page }) => {
+  await page.goto('/');
+
+  // The background gradient starts at #000000 — theme-color must match.
+  const themeColor = await page.$eval(
+    'meta[name="theme-color"]',
+    (el) => el.getAttribute('content')
+  );
+  expect(themeColor).toBe('#000000');
+});
+
 /**
  * Telegram Login Widget Integration Test
  *

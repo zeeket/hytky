@@ -18,6 +18,7 @@ const Layout = ({
         />
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <meta name="theme-color" content="#000000" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
         {children}
