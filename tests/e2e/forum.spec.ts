@@ -958,11 +958,11 @@ test.describe.serial('Thread Menu', () => {
     ).not.toBeVisible();
 
     // Wait for thread to appear in the list and click it
-    await page.waitForLoadState('networkidle');
-    await page
+    const deleteThreadButton = page
       .locator(`ul button:has-text("${deleteTestThreadName}")`)
-      .first()
-      .click();
+      .first();
+    await expect(deleteThreadButton).toBeVisible({ timeout: 10000 });
+    await deleteThreadButton.click();
     await page.waitForLoadState('networkidle');
 
     // Set up dialog handler to accept confirmation
