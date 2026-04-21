@@ -29,7 +29,7 @@
     "csstype": "^3.1.3",
     "date-fns": "^3.6.0",
     "date-fns-tz": "^3.2.0",
-    "next": "15.5.10",
+    "next": "15.5.15",
     "next-auth": "^4.24.12",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -42,10 +42,10 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.35.0",
-    "@estruyf/github-actions-reporter": "^1.10.0",
+    "@estruyf/github-actions-reporter": "^1.11.0",
     "@next/env": "^15.5.3",
     "@playwright/test": "^1.55.1",
-    "@quramy/jest-prisma": "^1.8.1",
+    "@quramy/jest-prisma": "^1.8.2",
     "@svgr/webpack": "^8.1.0",
     "@swc/core": "^1.15.0",
     "@swc/jest": "^0.2.39",
@@ -64,7 +64,7 @@
     "baseline-browser-mapping": "^2.10.7",
     "c8": "^10.1.3",
     "eslint": "^9.39.1",
-    "eslint-config-next": "15.5.3",
+    "eslint-config-next": "15.5.15",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
@@ -88,7 +88,15 @@
   },
   "pnpm": {
     "overrides": {
-      "glob": ">=11.1.0"
+      "glob": ">=11.1.0",
+      "undici": ">=6.24.0",
+      "effect": ">=3.20.0",
+      "defu": ">=6.1.5",
+      "picomatch": ">=4.0.4",
+      "brace-expansion@1": "^1.1.13",
+      "brace-expansion@2": "^2.0.3",
+      "brace-expansion@5": "^5.0.5",
+      "@tootallnate/once": ">=3.0.1"
     }
   }
 }
