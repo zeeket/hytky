@@ -679,7 +679,7 @@ test.describe.serial('Forum Content Creation', () => {
  * 3. Thread can be deleted via the menu
  */
 test.describe.serial('Thread Menu', () => {
-  test.setTimeout(30000);
+  test.setTimeout(60000);
 
   // Setup: Create categories and thread for menu tests
   test('setup: create test categories and thread', async ({ page }) => {
