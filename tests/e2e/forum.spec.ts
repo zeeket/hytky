@@ -963,7 +963,13 @@ test.describe.serial('Thread Menu', () => {
       .first();
     await expect(deleteThreadButton).toBeVisible({ timeout: 10000 });
     await deleteThreadButton.click();
-    await page.waitForLoadState('networkidle');
+
+    // Wait for thread page to load — hamburger visible means SSR + session resolved
+    await expect(
+      page.locator('[data-testid="thread-menu-button"]')
+    ).toBeVisible({
+      timeout: 10000,
+    });
 
     // Set up dialog handler to accept confirmation
     page.on('dialog', (dialog) => dialog.accept());
