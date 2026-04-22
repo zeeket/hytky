@@ -51,3 +51,21 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy to Production
+    needs: build-and-push
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - name: Pull and restart updated containers
+        uses: appleboy/ssh-action@v1
+        with:
+          host: hytky.org
+          username: dettmann
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/webapp/docker
+            docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml pull
+            docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml up -d --remove-orphans

@@ -30,6 +30,7 @@ jobs:
     name: Tofu Apply Change
     needs: tofu-fmt
     runs-on: ubuntu-latest
+    environment: Production
     defaults:
       run:
         working-directory: 'infrastructure'
@@ -73,5 +74,6 @@ jobs:
           TF_VAR_CALENDAR_GOOGLE_REFRESH_TOKEN: ${{ secrets.CALENDAR_GOOGLE_REFRESH_TOKEN }}
           TF_VAR_CALENDAR_GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
           TF_VAR_INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET }}
+          TF_VAR_deploy_key: ${{ secrets.DEPLOY_PUB_KEY }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: tofu apply -input=false -auto-approve

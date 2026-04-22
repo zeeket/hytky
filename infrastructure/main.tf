@@ -52,6 +52,7 @@ data "cloudinit_config" "config" {
     content = templatefile("${path.module}/templates/cloud-config.yml.tftpl",
       {
         pub_key            = var.pub_key,
+        deploy_key         = var.deploy_key,
         dotenv             = local.dotenv,
         hytkybot_dotenv    = local.hytkybot_dotenv
         gcalservice_dotenv = local.gcalservice_dotenv

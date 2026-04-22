@@ -22,6 +22,11 @@ variable "pub_key" {
   type        = string
 }
 
+variable "deploy_key" {
+  description = "SSH public key for GitHub Actions deployments"
+  type        = string
+}
+
 variable "GITHUB_SERVER_URL" {
   description = "Github Server URL"
   type        = string

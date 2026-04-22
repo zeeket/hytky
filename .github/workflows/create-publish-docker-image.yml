@@ -11,6 +11,7 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    environment: Production
     permissions:
       contents: read
       packages: write
@@ -53,3 +54,20 @@ jobs:
           secrets: | # pass insensitive buildtime variables to docker
             "NEXT_PUBLIC_TG_BOT_NAME=${{ vars.NEXT_PUBLIC_TG_BOT_NAME }}"
             "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ vars.NEXT_PUBLIC_TG_INFO_CHANNEL }}"
+
+  deploy:
+    name: Deploy to Production
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - name: Pull and restart updated containers
+        uses: appleboy/ssh-action@v1
+        with:
+          host: hytky.org
+          username: dettmann
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/webapp/docker
+            docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml pull
+            docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml up -d --remove-orphans

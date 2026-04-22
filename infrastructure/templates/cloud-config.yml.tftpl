@@ -1,9 +1,10 @@
 users:
   - name: dettmann
     shell: /bin/bash
-    groups: sudo
+    groups: sudo, docker
     ssh_authorized_keys:
       - ${pub_key}
+      - ${deploy_key}
 chpasswd:
   expire: false
   users:
