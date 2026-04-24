@@ -77,4 +77,3 @@ services:
       hytky:
         condition: service_healthy
     restart: always
-
