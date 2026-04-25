@@ -957,11 +957,27 @@ test.describe.serial('Thread Menu', () => {
       page.locator('h4:has-text("Luo uusi lanka")')
     ).not.toBeVisible();
 
-    // Wait for thread to appear in the list and click it
+    // Wait for thread to appear in the list and for the list to settle after the
+    // invalidate()-triggered refetch (webkit times out if the DOM is still re-rendering)
     const deleteThreadButton = page
       .locator(`ul button:has-text("${deleteTestThreadName}")`)
       .first();
     await expect(deleteThreadButton).toBeVisible({ timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
+
+    // Debug: capture page state and URL before clicking the thread
+    console.log('[debug] pre-click URL:', page.url());
+    const visibleThreadButtons = await page
+      .locator('ul button.text-white')
+      .count();
+    console.log(
+      '[debug] visible thread/category buttons in list:',
+      visibleThreadButtons
+    );
+    await page.screenshot({
+      path: `test-results/debug-delete-test-pre-click-${Date.now()}.png`,
+    });
+
     await deleteThreadButton.click();
 
     // Wait for thread page to load — hamburger visible means SSR + session resolved
