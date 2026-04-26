@@ -932,25 +932,27 @@ test.describe.serial('Thread Menu', () => {
     // First, create a new thread specifically for deletion test
     const deleteTestThreadName = `Delete Test Thread ${timestamp}`;
 
-    // Navigate to subcategory using the same button-click pattern that works in tests
-    // 2-5 above. Constructing the URL from category names fails when concurrent browser
-    // setups (chromium + firefox) create duplicate-named categories in the shared DB —
-    // findFirst may return the wrong category's ID, producing a 404.
+    // Navigate to subcategory via button clicks. waitForLoadState('networkidle') alone
+    // is not enough: it can resolve before the client-side router.push() in ForumRow
+    // completes, leaving page.url() returning the wrong URL. waitForURL waits for the
+    // navigation itself to finish (default waitUntil: 'load').
     await page.goto('/forum');
     await page.waitForLoadState('networkidle');
     await page
       .locator(`ul button:has-text("${menuTestCategoryName}")`)
       .first()
       .click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForURL((url) =>
+      url.href.includes(encodeURIComponent(menuTestCategoryName))
+    );
     await page
       .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
       .first()
       .click();
+    await page.waitForURL((url) =>
+      url.href.includes(encodeURIComponent(menuTestSubcategoryName))
+    );
     await page.waitForLoadState('networkidle');
-
-    // Capture the URL the browser actually landed on for the reload step below.
-    const subcategoryUrl = page.url();
 
     // Create thread for deletion
     await page.locator('button:has-text("Luo uusi lanka")').click();
@@ -962,11 +964,11 @@ test.describe.serial('Thread Menu', () => {
       page.locator('h4:has-text("Luo uusi lanka")')
     ).not.toBeVisible();
 
-    // Reload the page to get a stable DOM. After thread creation, React Query's
+    // Reload to get a stable DOM. After thread creation, React Query's
     // invalidate() + refetchOnMount:true + staleTime:0 in dev Strict Mode causes
     // continuous DOM churn — the thread button keeps detaching/re-attaching and
     // webkit's click action times out. A fresh SSR load has no ongoing refetch cycle.
-    await page.goto(subcategoryUrl);
+    await page.reload();
     await page.waitForLoadState('networkidle');
 
     const deleteThreadButton = page
