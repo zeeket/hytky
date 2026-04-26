@@ -932,12 +932,25 @@ test.describe.serial('Thread Menu', () => {
     // First, create a new thread specifically for deletion test
     const deleteTestThreadName = `Delete Test Thread ${timestamp}`;
 
-    // Navigate directly to the subcategory via goto to avoid webkit router.push()
-    // failures. ForumRow uses router.push() and swallows errors with .catch(), so a
-    // failed navigation leaves the page on the parent category URL silently.
-    const subcategoryUrl = `/forum/${encodeURIComponent(menuTestCategoryName)}/${encodeURIComponent(menuTestSubcategoryName)}`;
-    await page.goto(subcategoryUrl);
+    // Navigate to subcategory using the same button-click pattern that works in tests
+    // 2-5 above. Constructing the URL from category names fails when concurrent browser
+    // setups (chromium + firefox) create duplicate-named categories in the shared DB —
+    // findFirst may return the wrong category's ID, producing a 404.
+    await page.goto('/forum');
     await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestCategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+    await page
+      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
+      .first()
+      .click();
+    await page.waitForLoadState('networkidle');
+
+    // Capture the URL the browser actually landed on for the reload step below.
+    const subcategoryUrl = page.url();
 
     // Create thread for deletion
     await page.locator('button:has-text("Luo uusi lanka")').click();
