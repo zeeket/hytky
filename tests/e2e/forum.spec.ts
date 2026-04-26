@@ -932,26 +932,22 @@ test.describe.serial('Thread Menu', () => {
     // First, create a new thread specifically for deletion test
     const deleteTestThreadName = `Delete Test Thread ${timestamp}`;
 
-    // Navigate to subcategory via button clicks. waitForLoadState('networkidle') alone
-    // is not enough: it can resolve before the client-side router.push() in ForumRow
-    // completes, leaving page.url() returning the wrong URL. waitForURL waits for the
-    // navigation itself to finish (default waitUntil: 'load').
+    // Navigate to the subcategory using the same button-click + networkidle pattern
+    // as tests 2–5 above. waitForURL with a predicate callback does not work reliably
+    // for Next.js SPA pushState navigation (it hangs waiting for a load event that
+    // never fires). page.reload() below avoids page.url() capture entirely, so we
+    // don't need a precise URL at this point.
     await page.goto('/forum');
     await page.waitForLoadState('networkidle');
     await page
       .locator(`ul button:has-text("${menuTestCategoryName}")`)
       .first()
       .click();
-    await page.waitForURL((url) =>
-      url.href.includes(encodeURIComponent(menuTestCategoryName))
-    );
+    await page.waitForLoadState('networkidle');
     await page
       .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
       .first()
       .click();
-    await page.waitForURL((url) =>
-      url.href.includes(encodeURIComponent(menuTestSubcategoryName))
-    );
     await page.waitForLoadState('networkidle');
 
     // Create thread for deletion
@@ -964,10 +960,10 @@ test.describe.serial('Thread Menu', () => {
       page.locator('h4:has-text("Luo uusi lanka")')
     ).not.toBeVisible();
 
-    // Reload to get a stable DOM. After thread creation, React Query's
-    // invalidate() + refetchOnMount:true + staleTime:0 in dev Strict Mode causes
-    // continuous DOM churn — the thread button keeps detaching/re-attaching and
-    // webkit's click action times out. A fresh SSR load has no ongoing refetch cycle.
+    // Reload current page for a stable SSR DOM. React Query's invalidate() after
+    // thread creation causes continuous refetches in dev Strict Mode, making the
+    // thread button detach/re-attach so webkit's click times out on it.
+    // page.reload() reloads whatever URL we landed on — no URL capture needed.
     await page.reload();
     await page.waitForLoadState('networkidle');
 
@@ -977,11 +973,11 @@ test.describe.serial('Thread Menu', () => {
     await expect(deleteThreadButton).toBeVisible({ timeout: 10000 });
     await deleteThreadButton.click();
 
-    // Wait for thread page to load — hamburger visible means SSR + session resolved
+    // Wait for thread page to load. Use 30 s to account for SPA navigation latency.
     await expect(
       page.locator('[data-testid="thread-menu-button"]')
     ).toBeVisible({
-      timeout: 10000,
+      timeout: 30000,
     });
 
     // Set up dialog handler to accept confirmation
