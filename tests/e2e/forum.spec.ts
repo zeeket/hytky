@@ -932,19 +932,11 @@ test.describe.serial('Thread Menu', () => {
     // First, create a new thread specifically for deletion test
     const deleteTestThreadName = `Delete Test Thread ${timestamp}`;
 
-    await page.goto('/forum');
-    await page.waitForLoadState('networkidle');
-
-    // Navigate to subcategory
-    await page
-      .locator(`ul button:has-text("${menuTestCategoryName}")`)
-      .first()
-      .click();
-    await page.waitForLoadState('networkidle');
-    await page
-      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
-      .first()
-      .click();
+    // Navigate directly to the subcategory via goto to avoid webkit router.push()
+    // failures. ForumRow uses router.push() and swallows errors with .catch(), so a
+    // failed navigation leaves the page on the parent category URL silently.
+    const subcategoryUrl = `/forum/${encodeURIComponent(menuTestCategoryName)}/${encodeURIComponent(menuTestSubcategoryName)}`;
+    await page.goto(subcategoryUrl);
     await page.waitForLoadState('networkidle');
 
     // Create thread for deletion
@@ -957,13 +949,11 @@ test.describe.serial('Thread Menu', () => {
       page.locator('h4:has-text("Luo uusi lanka")')
     ).not.toBeVisible();
 
-    // Reload the page to get a stable DOM before clicking the thread.
-    // After thread creation, React Query's invalidate() triggers continuous background
-    // refetches (refetchOnMount:true + staleTime:0 in dev/Strict Mode). The DOM nodes
-    // for the thread list keep being detached and re-attached as React re-renders,
-    // which causes Playwright's click to time out in webkit. A page reload gives us a
-    // clean SSR load with the thread already in the DB — no ongoing refetch cycle.
-    await page.reload();
+    // Reload the page to get a stable DOM. After thread creation, React Query's
+    // invalidate() + refetchOnMount:true + staleTime:0 in dev Strict Mode causes
+    // continuous DOM churn — the thread button keeps detaching/re-attaching and
+    // webkit's click action times out. A fresh SSR load has no ongoing refetch cycle.
+    await page.goto(subcategoryUrl);
     await page.waitForLoadState('networkidle');
 
     const deleteThreadButton = page
