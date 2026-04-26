@@ -957,27 +957,19 @@ test.describe.serial('Thread Menu', () => {
       page.locator('h4:has-text("Luo uusi lanka")')
     ).not.toBeVisible();
 
-    // Wait for thread to appear in the list and for the list to settle after the
-    // invalidate()-triggered refetch (webkit times out if the DOM is still re-rendering)
+    // Reload the page to get a stable DOM before clicking the thread.
+    // After thread creation, React Query's invalidate() triggers continuous background
+    // refetches (refetchOnMount:true + staleTime:0 in dev/Strict Mode). The DOM nodes
+    // for the thread list keep being detached and re-attached as React re-renders,
+    // which causes Playwright's click to time out in webkit. A page reload gives us a
+    // clean SSR load with the thread already in the DB — no ongoing refetch cycle.
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+
     const deleteThreadButton = page
       .locator(`ul button:has-text("${deleteTestThreadName}")`)
       .first();
     await expect(deleteThreadButton).toBeVisible({ timeout: 10000 });
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
-
-    // Debug: capture page state and URL before clicking the thread
-    console.log('[debug] pre-click URL:', page.url());
-    const visibleThreadButtons = await page
-      .locator('ul button.text-white')
-      .count();
-    console.log(
-      '[debug] visible thread/category buttons in list:',
-      visibleThreadButtons
-    );
-    await page.screenshot({
-      path: `test-results/debug-delete-test-pre-click-${Date.now()}.png`,
-    });
-
     await deleteThreadButton.click();
 
     // Wait for thread page to load — hamburger visible means SSR + session resolved
