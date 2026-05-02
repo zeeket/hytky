@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { assertNotArchiveCategory } from './archive-utils';
 
 export const categoryRouter = createTRPCRouter({
   getRootCategory: protectedProcedure.query(({ ctx }) => {
@@ -45,6 +46,7 @@ export const categoryRouter = createTRPCRouter({
   createCategory: protectedProcedure
     .input(z.object({ name: z.string(), parentCategoryId: z.number() }))
     .mutation(async ({ input, ctx }) => {
+      await assertNotArchiveCategory(ctx.prisma, input.parentCategoryId);
       const newCategory = await ctx.prisma.category.create({
         data: {
           name: input.name,

@@ -1,4 +1,4 @@
-.PHONY: dev rmi prod rmip migrate baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar help
+.PHONY: dev rmi prod rmip migrate migrate-reset baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar help
 
 SHELL := /bin/bash
 MYPATH := $(shell pwd)
@@ -158,6 +158,15 @@ migrate:
 		docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -it hytky-dbsync pnpm exec prisma migrate dev $(if $(NAME),--name $(NAME),); \
 	else \
 		docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -i hytky-dbsync pnpm exec prisma migrate dev $(if $(NAME),--name $(NAME),); \
+	fi
+
+# Reset the dev database and re-apply all migrations. DESTROYS ALL DATA. Usage: 'make migrate-reset'.
+migrate-reset:
+	docker build -f docker/Dockerfile.dbsync --platform linux/amd64 -t hytky-dbsync .
+	@if [ -t 0 ]; then \
+		docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -it hytky-dbsync pnpm exec prisma migrate reset; \
+	else \
+		docker run --env-file ./.env --network docker_default -v $(MYPATH)/prisma:/app/prisma --platform linux/amd64 -i hytky-dbsync pnpm exec prisma migrate reset --force; \
 	fi
 
 # Create a baseline migration. You should probably never use this. Usage: 'make baseline'.

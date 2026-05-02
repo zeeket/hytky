@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { assertNotArchiveCategory } from './archive-utils';
 
 export const threadRouter = createTRPCRouter({
   getThreadById: protectedProcedure
@@ -35,7 +36,8 @@ export const threadRouter = createTRPCRouter({
         firstPostContent: z.string(),
       })
     )
-    .mutation(({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
+      await assertNotArchiveCategory(ctx.prisma, input.categoryId);
       return ctx.prisma.thread
         .create({
           data: {
@@ -94,7 +96,6 @@ export const threadRouter = createTRPCRouter({
         throw new Error('You can only move your own threads');
       }
 
-      // Verify target category exists
       const targetCategory = await ctx.prisma.category.findUnique({
         where: { id: input.targetCategoryId },
       });
@@ -102,6 +103,8 @@ export const threadRouter = createTRPCRouter({
       if (!targetCategory) {
         throw new Error('Target category not found');
       }
+
+      await assertNotArchiveCategory(ctx.prisma, input.targetCategoryId);
 
       return ctx.prisma.thread.update({
         where: { id: input.threadId },

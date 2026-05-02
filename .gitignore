@@ -54,9 +54,12 @@ combined.log
 error.log
 
 # app backups
-prisma/eventArchive.json 
+prisma/eventArchive.json
 prisma/forumArchive.json
 prisma/forumBackup.json
+
+# one-time archive import script (references local dump path)
+prisma/archive-import.mjs
 
 # app images
 public/hytkylogo.png

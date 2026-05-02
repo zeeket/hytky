@@ -93,6 +93,9 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
   };
 
   const isThreadAuthor = threadObj && session?.user?.id === threadObj.authorId;
+  // isArchive is added via migration; cast until Prisma client is regenerated
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isInArchive = propsObj.some((cat) => (cat as any).isArchive === true);
 
   const allCategoriesWithChildrenQuery = api.category.getAllCategories.useQuery(
     undefined,
@@ -165,13 +168,18 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                       )}
                     </div>
                   </div>
-                  <ol>
+                  <ol className="flex w-full max-w-2xl flex-col gap-3">
                     {threadObj.posts.map((post: PostWithAuthor) => (
-                      <li key={post.id} className="text-white">
-                        <div className="flex flex-row space-x-4 divide-x">
-                          <p className="text-white"> {post.author.name} </p>
-                          <p className="pl-4">{post.content}</p>
-                        </div>
+                      <li
+                        key={post.id}
+                        className="rounded border border-gray-600 p-4"
+                      >
+                        <p className="mb-2 text-xs font-medium text-gray-400">
+                          {post.author.name}
+                        </p>
+                        <p className="whitespace-pre-wrap text-white">
+                          {post.content}
+                        </p>
                       </li>
                     ))}
                   </ol>
@@ -189,36 +197,38 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
             </ul>
           </div>
         )}
-        {currentThreadId ? (
-          <CreatePostBox threadId={currentThreadId} router={router} />
-        ) : (
-          <div className="flex h-60 items-center justify-center">
-            <button
-              className="rounded-md bg-purple-600 px-6 py-3 text-purple-100"
-              type="button"
-              onClick={() => setShowCreateCategoryModal(true)}
-            >
-              Luo uusi kategoria
-            </button>
-            <CreateCategoryModal
-              showCreateCategoryModal={showCreateCategoryModal}
-              setShowCreateCategoryModal={setShowCreateCategoryModal}
-              parentCategory={currentCategoryId}
-            />
-            <button
-              className="rounded-md bg-gray-200 px-6 py-3"
-              type="button"
-              onClick={() => setShowCreateThreadModal(true)}
-            >
-              Luo uusi lanka
-            </button>
-            <CreateThreadModal
-              showCreateThreadModal={showCreateThreadModal}
-              setShowCreateThreadModal={setShowCreateThreadModal}
-              parentCategory={currentCategoryId}
-            />
-          </div>
-        )}
+        {currentThreadId
+          ? !isInArchive && (
+              <CreatePostBox threadId={currentThreadId} router={router} />
+            )
+          : !isInArchive && (
+              <div className="flex h-60 items-center justify-center">
+                <button
+                  className="rounded-md bg-purple-600 px-6 py-3 text-purple-100"
+                  type="button"
+                  onClick={() => setShowCreateCategoryModal(true)}
+                >
+                  Luo uusi kategoria
+                </button>
+                <CreateCategoryModal
+                  showCreateCategoryModal={showCreateCategoryModal}
+                  setShowCreateCategoryModal={setShowCreateCategoryModal}
+                  parentCategory={currentCategoryId}
+                />
+                <button
+                  className="rounded-md bg-gray-200 px-6 py-3"
+                  type="button"
+                  onClick={() => setShowCreateThreadModal(true)}
+                >
+                  Luo uusi lanka
+                </button>
+                <CreateThreadModal
+                  showCreateThreadModal={showCreateThreadModal}
+                  setShowCreateThreadModal={setShowCreateThreadModal}
+                  parentCategory={currentCategoryId}
+                />
+              </div>
+            )}
       </main>
     </>
   );
@@ -323,8 +333,7 @@ export const getServerSideProps = async ({
   if (query.slug) {
     // going to a category or thread
 
-    if (query.slug.length > 4) {
-      // we don't support more than 3 levels of categories (+1 thread)
+    if (query.slug.length > 6) {
       return { notFound: true };
     }
 

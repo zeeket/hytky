@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { assertNotArchiveCategory } from './archive-utils';
 
 export const postRouter = createTRPCRouter({
   getPostById: protectedProcedure
@@ -30,6 +31,11 @@ export const postRouter = createTRPCRouter({
   createPost: protectedProcedure
     .input(z.object({ content: z.string().min(1), threadId: z.number() }))
     .mutation(async ({ input, ctx }) => {
+      const thread = await ctx.prisma.thread.findUniqueOrThrow({
+        where: { id: input.threadId },
+        select: { categoryId: true },
+      });
+      await assertNotArchiveCategory(ctx.prisma, thread.categoryId);
       const newPost = await ctx.prisma.post.create({
         data: {
           content: input.content,
