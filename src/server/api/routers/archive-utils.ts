@@ -7,10 +7,9 @@ export async function assertNotArchiveCategory(
 ): Promise<void> {
   let currentId: number | null = categoryId;
   while (currentId !== null) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cat = (await prisma.category.findUnique({
       where: { id: currentId },
-      // isArchive is added via migration — cast until client is regenerated
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       select: { isArchive: true, parentCategoryId: true } as any,
     })) as { isArchive: boolean; parentCategoryId: number | null } | null;
     if (!cat) return;
