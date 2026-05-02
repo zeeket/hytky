@@ -929,28 +929,15 @@ test.describe.serial('Thread Menu', () => {
   });
 
   test('can delete thread via hamburger menu', async ({ page }) => {
-    // First, create a new thread specifically for deletion test
-    const deleteTestThreadName = `Delete Test Thread ${timestamp}`;
+    // Use Date.now() per invocation so retries get unique names and don't
+    // collide with threads left behind by previous attempts.
+    const deleteTestThreadName = `Delete Test Thread ${Date.now()}`;
 
-    // Navigate to the subcategory using the same button-click + networkidle pattern
-    // as tests 2–5 above. waitForURL with a predicate callback does not work reliably
-    // for Next.js SPA pushState navigation (it hangs waiting for a load event that
-    // never fires). page.reload() below avoids page.url() capture entirely, so we
-    // don't need a precise URL at this point.
+    // Create thread at forum root — avoids all SPA navigation races that plagued
+    // subcategory navigation (waitForLoadState resolving early, pushState vs. load
+    // event mismatch, React Query double-mount in Strict Mode).
     await page.goto('/forum');
     await page.waitForLoadState('networkidle');
-    await page
-      .locator(`ul button:has-text("${menuTestCategoryName}")`)
-      .first()
-      .click();
-    await page.waitForLoadState('networkidle');
-    await page
-      .locator(`ul button:has-text("${menuTestSubcategoryName}")`)
-      .first()
-      .click();
-    await page.waitForLoadState('networkidle');
-
-    // Create thread for deletion
     await page.locator('button:has-text("Luo uusi lanka")').click();
     const inputs = await page.locator('input#name').all();
     await inputs[0].fill(deleteTestThreadName);
@@ -960,37 +947,28 @@ test.describe.serial('Thread Menu', () => {
       page.locator('h4:has-text("Luo uusi lanka")')
     ).not.toBeVisible();
 
-    // Reload current page for a stable SSR DOM. React Query's invalidate() after
-    // thread creation causes continuous refetches in dev Strict Mode, making the
-    // thread button detach/re-attach so webkit's click times out on it.
-    // page.reload() reloads whatever URL we landed on — no URL capture needed.
-    await page.reload();
+    // Navigate directly to the thread via SSR. categoryPathExists() finds no
+    // category with this name under root, then falls through to findFirst on
+    // threads in the root category — returns the thread page reliably.
+    await page.goto(`/forum/${encodeURIComponent(deleteTestThreadName)}`);
     await page.waitForLoadState('networkidle');
 
-    const deleteThreadButton = page
-      .locator(`ul button:has-text("${deleteTestThreadName}")`)
-      .first();
-    await expect(deleteThreadButton).toBeVisible({ timeout: 10000 });
-    await deleteThreadButton.click();
-
-    // Wait for thread page to load. Use 30 s to account for SPA navigation latency.
+    await expect(
+      page.locator(`h2:has-text("Lanka: ${deleteTestThreadName}")`)
+    ).toBeVisible({ timeout: 10000 });
     await expect(
       page.locator('[data-testid="thread-menu-button"]')
-    ).toBeVisible({
-      timeout: 30000,
-    });
+    ).toBeVisible({ timeout: 10000 });
 
-    // Set up dialog handler to accept confirmation
+    // Set up dialog handler before clicking delete
     page.on('dialog', (dialog) => dialog.accept());
 
-    // Open menu and click delete
     await page.locator('[data-testid="thread-menu-button"]').click();
     await page.locator('[data-testid="delete-thread-button"]').click();
 
-    // Wait for navigation back to parent category
+    // onSuccess navigates to /forum (thread was in root, parentPath = '')
     await page.waitForLoadState('networkidle');
 
-    // Verify thread is deleted
     await expect(
       page.locator(`ul button:has-text("${deleteTestThreadName}")`)
     ).not.toBeVisible();
