@@ -73,6 +73,7 @@ jobs:
           source: docker/docker-compose.prod.tls-registry.yml
           target: /opt/webapp/docker/
           strip_components: 1
+          overwrite: true
 
       - name: Pull and restart updated containers
         uses: appleboy/ssh-action@v1
