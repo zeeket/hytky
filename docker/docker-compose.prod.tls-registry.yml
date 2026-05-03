@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: jonasal/nginx-certbot:4.2.1-nginx1.23.4-alpine
+    image: jonasal/nginx-certbot:v6.2.0-alpine
     container_name: nginx
     restart: unless-stopped
     ports:

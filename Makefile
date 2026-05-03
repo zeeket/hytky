@@ -1,4 +1,4 @@
-.PHONY: dev rmi prod rmip migrate migrate-reset baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar help
+.PHONY: dev rmi prod rmip migrate migrate-reset baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar logs help
 
 SHELL := /bin/bash
 MYPATH := $(shell pwd)
@@ -237,6 +237,10 @@ sync-calendar:
 	@curl -X POST http://localhost:3002/sync -H "Content-Type: application/json" || \
 		(docker compose -f docker/docker-compose.dev.yml exec -T gcalservice curl -X POST http://localhost:3002/sync -H "Content-Type: application/json" || \
 		echo "Failed to trigger sync. Make sure gcalservice is running.")
+
+# Show live logs of all containers on production. Usage: 'make logs'.
+logs:
+	ssh -t -i $(SSH_KEY) dettmann@hytky.org "cd /opt/webapp && docker compose --env-file .env -f docker/docker-compose.prod.tls-registry.yml logs -f"
 
 # Show this help. Usage: 'make help'.
 help:
