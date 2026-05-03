@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apt update
-apt install -y ca-certificates curl git make
+apt install -y ca-certificates curl git make dnsutils
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 chmod a+r /etc/apt/keyrings/docker.asc
@@ -28,6 +28,18 @@ echo "NEXTAUTH_URL=https://${DOMAIN}" | tee -a /opt/webapp/.env
 echo "CERTBOT_EMAIL=${CERTBOT_EMAIL}" | tee -a /opt/webapp/.env
 sed -i 's/sub.yourdomain.org/'"${DOMAIN} www.${DOMAIN}"'/g' /opt/webapp/docker/nginx-conf/user_conf.d/tls.conf
 export CERTBOT_EMAIL=${CERTBOT_EMAIL}
+
+# Wait for DNS to resolve the domain to this server's IP before starting nginx-certbot.
+# Let's Encrypt uses multi-perspective validation — if certbot runs before DNS propagates,
+# secondary validators still hit the old server and the HTTP-01 challenge fails.
+SERVER_IP=$(ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1 | head -n1)
+echo "Waiting for DNS: ${DOMAIN} -> $SERVER_IP"
+until [ "$(dig +short ${DOMAIN} | tail -1)" = "$SERVER_IP" ]; do
+  echo "DNS not ready, retrying in 30s..."
+  sleep 30
+done
+echo "DNS ready, starting services."
+
 docker compose --env-file /opt/webapp/.env -f /opt/webapp/docker/docker-compose.prod.tls-registry.yml up -d 
 %{ else }
 IP=$(ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1 | awk -F. '$1>=1 && $1<=126 || $1>=128 && $1<=191' | head -n 1)

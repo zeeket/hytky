@@ -74,6 +74,13 @@ resource "digitalocean_droplet" "webserver" {
     delete = "10m"
     update = "10m"
   }
+
+  lifecycle {
+    # user_data only runs on first boot — changing templates does not re-provision a live server.
+    # Rebuilds must be triggered explicitly (terraform taint / destroy+apply).
+    # Config changes are applied via the deploy workflow's sudo git pull.
+    ignore_changes = [user_data]
+  }
 }
 
 resource "digitalocean_domain" "hytky" {
