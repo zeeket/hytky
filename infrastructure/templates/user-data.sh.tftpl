@@ -15,6 +15,7 @@ apt update
 apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 git clone ${REPO_URL} /opt/webapp
+chown -R dettmann:dettmann /opt/webapp
 
 # Move hidden files from /opt/secrets to /opt/webapp
 shopt -s dotglob

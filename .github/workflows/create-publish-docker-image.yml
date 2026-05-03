@@ -61,20 +61,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Copy compose file to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: hytky.org
-          username: dettmann
-          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          source: docker/docker-compose.prod.tls-registry.yml
-          target: /opt/webapp/docker/
-          strip_components: 1
-          overwrite: true
-
       - name: Pull and restart updated containers
         uses: appleboy/ssh-action@v1
         with:
@@ -82,6 +68,7 @@ jobs:
           username: dettmann
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           script: |
+            sudo git -C /opt/webapp pull
             cd /opt/webapp/docker
             docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml pull
             docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml up -d --remove-orphans
