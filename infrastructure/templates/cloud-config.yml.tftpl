@@ -2,6 +2,7 @@ users:
   - name: dettmann
     shell: /bin/bash
     groups: sudo, docker
+    sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_authorized_keys:
       - ${pub_key}
       - ${deploy_key}
