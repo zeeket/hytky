@@ -73,3 +73,4 @@ jobs:
             cd /opt/webapp/docker
             docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml pull
             docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml up -d --remove-orphans
+            docker exec nginx nginx -s reload
