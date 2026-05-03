@@ -77,3 +77,30 @@ jobs:
           TF_VAR_deploy_key: ${{ secrets.DEPLOY_PUB_KEY }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: tofu apply -input=false -auto-approve
+
+      - name: Verify web access
+        run: |
+          echo "Checking https://hytky.org/api/health ..."
+          for i in $(seq 1 6); do
+            if curl -sf --max-time 10 https://hytky.org/api/health; then
+              echo "Web: OK"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+          echo "Web health check failed after all retries"
+          exit 1
+
+      - name: Verify SSH access
+        env:
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+        run: |
+          echo "$DEPLOY_SSH_PRIVATE_KEY" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          ssh -i /tmp/deploy_key \
+            -o StrictHostKeyChecking=no \
+            -o ConnectTimeout=15 \
+            dettmann@hytky.org \
+            "echo 'SSH: OK'"
+          rm -f /tmp/deploy_key

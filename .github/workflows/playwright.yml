@@ -3,8 +3,20 @@ name: Tests
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'infrastructure/**'
+      - 'ansible/**'
+      - 'docs/**'
+      - '**.md'
+      - '.github/**'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'infrastructure/**'
+      - 'ansible/**'
+      - 'docs/**'
+      - '**.md'
+      - '.github/**'
 
 jobs:
   unit-tests:
