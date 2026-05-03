@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
 
       - name: Get current branch and exit if not main
         run: |
@@ -32,7 +32,7 @@ jobs:
           fi
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4.1.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -40,12 +40,12 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7.1.0
         with:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -62,12 +62,13 @@ jobs:
     environment: Production
     steps:
       - name: Pull and restart updated containers
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: hytky.org
           username: dettmann
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           script: |
+            until curl -sf https://hytky.org/api/health; do sleep 10; done
             sudo git -C /opt/webapp pull
             cd /opt/webapp/docker
             docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml pull

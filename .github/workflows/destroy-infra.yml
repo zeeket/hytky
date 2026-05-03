@@ -14,10 +14,10 @@ jobs:
         working-directory: 'infrastructure'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
 
       - name: Setup Tofu
-        uses: opentofu/setup-opentofu@v1
+        uses: opentofu/setup-opentofu@v2.0.0
 
       - name: Init
         run: tofu init
