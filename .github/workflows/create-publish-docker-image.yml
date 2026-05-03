@@ -63,13 +63,18 @@ jobs:
     steps:
       - name: Pull and restart updated containers
         uses: appleboy/ssh-action@v1.2.5
+        env:
+          DOMAIN: ${{ secrets.DOMAIN }}
         with:
           host: hytky.org
           username: dettmann
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          envs: DOMAIN
           script: |
             until curl -sf https://hytky.org/api/health; do sleep 10; done
+            sudo git -C /opt/webapp checkout docker/nginx-conf/user_conf.d/tls.conf
             sudo git -C /opt/webapp pull
+            sudo sed -i "s/sub.yourdomain.org/$DOMAIN www.$DOMAIN/g" /opt/webapp/docker/nginx-conf/user_conf.d/tls.conf
             cd /opt/webapp/docker
             docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml pull
             docker compose --env-file /opt/webapp/.env -f docker-compose.prod.tls-registry.yml up -d --remove-orphans
