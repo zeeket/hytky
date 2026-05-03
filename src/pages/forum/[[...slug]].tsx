@@ -244,6 +244,10 @@ const categoryPathExists = async (
   const prisma = new PrismaClient();
 
   const rootCategory = await getRootCategory();
+  if (!rootCategory) {
+    await prisma.$disconnect();
+    return null;
+  }
   const categories: CategoryWithChildren[] = [rootCategory];
 
   let currentParentId: number | null = rootCategory.id;
@@ -308,7 +312,7 @@ const categoryPathExists = async (
   return { categories: categories, threadWithPosts: null };
 };
 
-const getRootCategory = async (): Promise<CategoryWithChildren> => {
+const getRootCategory = async (): Promise<CategoryWithChildren | null> => {
   const prisma = new PrismaClient();
   const rootCategory = await prisma.category.findFirst({
     where: {
@@ -319,9 +323,6 @@ const getRootCategory = async (): Promise<CategoryWithChildren> => {
     },
   });
   await prisma.$disconnect();
-  if (!rootCategory) {
-    throw new Error('Root category not found');
-  }
   return rootCategory;
 };
 
@@ -358,6 +359,9 @@ export const getServerSideProps = async ({
     // going to the root category
     // Fetch the actual root category from the database instead of hardcoding id: 1
     const rootCategory = await getRootCategory();
+    if (!rootCategory) {
+      return { notFound: true };
+    }
     const categoriesInPath = [rootCategory] as CategoryWithChildren[];
     return {
       props: {

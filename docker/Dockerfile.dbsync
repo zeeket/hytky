@@ -21,6 +21,6 @@ RUN pnpm exec prisma generate
 
 ARG DATABASE_URL=${DATABASE_URL}
 ENV DATABASE_URL=${DATABASE_URL}
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 
-CMD ["pnpm", "exec", "prisma", "migrate", "deploy", "--schema", "/app/prisma/schema.prisma"]
+CMD sh -c "pnpm exec prisma migrate deploy --schema /app/prisma/schema.prisma && pnpm exec ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"

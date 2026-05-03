@@ -35,7 +35,7 @@ services:
     restart: always
 
   postgres:
-    image: 'postgres:alpine'
+    image: 'postgres:18-alpine'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
