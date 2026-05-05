@@ -2,6 +2,7 @@ import { type Thread } from '@prisma/client';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import { PrismaClient } from '@prisma/client';
+import { format } from 'date-fns';
 import { api } from '~/utils/api';
 import CreateCategoryModal from '../../components/CreateCategoryModal';
 import CreateThreadModal from '../../components/CreateThreadModal';
@@ -18,6 +19,7 @@ import { AccountDropdown } from '~/components/AccountDropdown';
 import { ForumRow } from '~/components/ForumRow';
 import CreatePostBox from '~/components/CreatePostBox';
 import { ThreadMenu } from '~/components/ThreadMenu';
+import { SearchBox } from '~/components/SearchBox';
 
 interface ForumProps {
   initialCategoryId: number;
@@ -138,6 +140,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
           </h1>
         </div>
         <AccountDropdown />
+        <SearchBox />
 
         {allCategoriesWithChildrenQuery.isLoading ||
         !allCategoriesWithChildrenQuery.data ||
@@ -174,9 +177,14 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                         key={post.id}
                         className="rounded border border-gray-600 p-4"
                       >
-                        <p className="mb-2 text-xs font-medium text-gray-400">
-                          {post.author.name}
-                        </p>
+                        <div className="mb-2 flex items-baseline gap-2">
+                          <span className="text-xs font-medium text-gray-400">
+                            {post.author.name}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {format(new Date(post.createdAt), 'd.M.yyyy HH:mm')}
+                          </span>
+                        </div>
                         <p className="whitespace-pre-wrap text-white">
                           {post.content}
                         </p>

@@ -4,6 +4,7 @@ import { categoryRouter } from '~/server/api/routers/category.router';
 import { threadRouter } from '~/server/api/routers/thread.router';
 import { postRouter } from '~/server/api/routers/post.router';
 import { eventsRouter } from '~/server/api/routers/events.router';
+import { searchRouter } from '~/server/api/routers/search.router';
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   thread: threadRouter,
   post: postRouter,
   events: eventsRouter,
+  search: searchRouter,
 });
 
 // export type definition of API
