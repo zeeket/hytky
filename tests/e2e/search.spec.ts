@@ -310,7 +310,9 @@ test.describe.serial('Search', () => {
     await expect(result).toBeVisible({ timeout: 5000 });
     await result.click();
 
-    await page.waitForLoadState('networkidle');
+    // Wait for the router.push to actually complete (SPA nav has no network
+    // requests, so networkidle resolves before pushState finishes).
+    await page.waitForURL(new RegExp(encodeURIComponent(searchCategoryName)));
 
     // Navigate back and check the input is cleared
     await page.goto('/forum');

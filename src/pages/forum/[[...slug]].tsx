@@ -1,5 +1,6 @@
 import { type Thread } from '@prisma/client';
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import { useState } from 'react';
 import { PrismaClient } from '@prisma/client';
 import { format } from 'date-fns';
@@ -133,110 +134,119 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
 
   return (
     <>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#000000] to-[#15162c]">
-        <div>
-          <h1 className="text-oldschool-orange pb-2 text-5xl font-extrabold">
-            Foorumi
-          </h1>
+      <main className="flex min-h-screen w-full flex-col bg-gradient-to-b from-[#000000] to-[#15162c]">
+        <div className="relative flex flex-col items-center px-4 pt-6 pb-2">
+          <Link href="/forum">
+            <h1 className="forum-title cursor-pointer pb-2 text-5xl font-extrabold">
+              Foorumi
+            </h1>
+          </Link>
+          <SearchBox />
+          <div className="absolute top-6 right-4">
+            <AccountDropdown />
+          </div>
         </div>
-        <AccountDropdown />
-        <SearchBox />
 
-        {allCategoriesWithChildrenQuery.isLoading ||
-        !allCategoriesWithChildrenQuery.data ||
-        threadsOfCurrentCategoryQuery.isLoading ||
-        !threadsOfCurrentCategoryQuery.data ? (
-          <p className="text-white">Ladataan...</p>
-        ) : (
-          <div className="flex flex-col space-y-6">
-            <ForumPathBar router={router} categoriesInPath={propsObj} />
-            <ul className="flex flex-col">
-              {currentThreadId && threadObj && (
-                <div>
-                  <div className="flex items-center justify-between pb-8">
-                    <div className="flex items-center">
-                      <h2 className="text-xl text-white">
-                        Lanka: {threadObj.name}
-                      </h2>
-                      {isThreadAuthor && (
-                        <ThreadMenu
-                          threadId={currentThreadId}
-                          currentCategoryId={currentCategoryId}
-                          categories={allCategoriesWithChildren}
-                          onDelete={handleDeleteThread}
-                          onMove={handleMoveThread}
-                          isDeleting={deleteThreadMutation.isLoading}
-                          isMoving={moveThreadMutation.isLoading}
-                        />
-                      )}
+        <div className="flex flex-1 flex-col items-center pt-4">
+          {allCategoriesWithChildrenQuery.isLoading ||
+          !allCategoriesWithChildrenQuery.data ||
+          threadsOfCurrentCategoryQuery.isLoading ||
+          !threadsOfCurrentCategoryQuery.data ? (
+            <p className="text-white">Ladataan...</p>
+          ) : (
+            <div className="flex flex-col space-y-6">
+              <ForumPathBar router={router} categoriesInPath={propsObj} />
+              <ul className="flex flex-col">
+                {currentThreadId && threadObj && (
+                  <div>
+                    <div className="flex items-center justify-between pb-8">
+                      <div className="flex items-center">
+                        <h2 className="text-xl text-white">
+                          Lanka: {threadObj.name}
+                        </h2>
+                        {isThreadAuthor && (
+                          <ThreadMenu
+                            threadId={currentThreadId}
+                            currentCategoryId={currentCategoryId}
+                            categories={allCategoriesWithChildren}
+                            onDelete={handleDeleteThread}
+                            onMove={handleMoveThread}
+                            isDeleting={deleteThreadMutation.isLoading}
+                            isMoving={moveThreadMutation.isLoading}
+                          />
+                        )}
+                      </div>
                     </div>
+                    <ol className="flex w-full max-w-2xl flex-col gap-3">
+                      {threadObj.posts.map((post: PostWithAuthor) => (
+                        <li
+                          key={post.id}
+                          className="rounded border border-gray-600 p-4"
+                        >
+                          <div className="mb-2 flex items-baseline gap-2">
+                            <span className="text-xs font-medium text-gray-400">
+                              {post.author.name}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {format(
+                                new Date(post.createdAt),
+                                'd.M.yyyy HH:mm'
+                              )}
+                            </span>
+                          </div>
+                          <p className="whitespace-pre-wrap text-white">
+                            {post.content}
+                          </p>
+                        </li>
+                      ))}
+                    </ol>
                   </div>
-                  <ol className="flex w-full max-w-2xl flex-col gap-3">
-                    {threadObj.posts.map((post: PostWithAuthor) => (
-                      <li
-                        key={post.id}
-                        className="rounded border border-gray-600 p-4"
-                      >
-                        <div className="mb-2 flex items-baseline gap-2">
-                          <span className="text-xs font-medium text-gray-400">
-                            {post.author.name}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {format(new Date(post.createdAt), 'd.M.yyyy HH:mm')}
-                          </span>
-                        </div>
-                        <p className="whitespace-pre-wrap text-white">
-                          {post.content}
-                        </p>
+                )}
+
+                {!currentThreadId &&
+                  rowsOfCurrentCategory.map(
+                    (row: CategoryWithChildren | Thread) => (
+                      <li key={row.id} className="text-white">
+                        <ForumRow content={row} router={router} />
                       </li>
-                    ))}
-                  </ol>
+                    )
+                  )}
+              </ul>
+            </div>
+          )}
+          {currentThreadId
+            ? !isInArchive && (
+                <CreatePostBox threadId={currentThreadId} router={router} />
+              )
+            : !isInArchive && (
+                <div className="flex h-60 items-center justify-center">
+                  <button
+                    className="rounded-md bg-purple-600 px-6 py-3 text-purple-100"
+                    type="button"
+                    onClick={() => setShowCreateCategoryModal(true)}
+                  >
+                    Luo uusi kategoria
+                  </button>
+                  <CreateCategoryModal
+                    showCreateCategoryModal={showCreateCategoryModal}
+                    setShowCreateCategoryModal={setShowCreateCategoryModal}
+                    parentCategory={currentCategoryId}
+                  />
+                  <button
+                    className="rounded-md bg-gray-200 px-6 py-3"
+                    type="button"
+                    onClick={() => setShowCreateThreadModal(true)}
+                  >
+                    Luo uusi lanka
+                  </button>
+                  <CreateThreadModal
+                    showCreateThreadModal={showCreateThreadModal}
+                    setShowCreateThreadModal={setShowCreateThreadModal}
+                    parentCategory={currentCategoryId}
+                  />
                 </div>
               )}
-
-              {!currentThreadId &&
-                rowsOfCurrentCategory.map(
-                  (row: CategoryWithChildren | Thread) => (
-                    <li key={row.id} className="text-white">
-                      <ForumRow content={row} router={router} />
-                    </li>
-                  )
-                )}
-            </ul>
-          </div>
-        )}
-        {currentThreadId
-          ? !isInArchive && (
-              <CreatePostBox threadId={currentThreadId} router={router} />
-            )
-          : !isInArchive && (
-              <div className="flex h-60 items-center justify-center">
-                <button
-                  className="rounded-md bg-purple-600 px-6 py-3 text-purple-100"
-                  type="button"
-                  onClick={() => setShowCreateCategoryModal(true)}
-                >
-                  Luo uusi kategoria
-                </button>
-                <CreateCategoryModal
-                  showCreateCategoryModal={showCreateCategoryModal}
-                  setShowCreateCategoryModal={setShowCreateCategoryModal}
-                  parentCategory={currentCategoryId}
-                />
-                <button
-                  className="rounded-md bg-gray-200 px-6 py-3"
-                  type="button"
-                  onClick={() => setShowCreateThreadModal(true)}
-                >
-                  Luo uusi lanka
-                </button>
-                <CreateThreadModal
-                  showCreateThreadModal={showCreateThreadModal}
-                  setShowCreateThreadModal={setShowCreateThreadModal}
-                  parentCategory={currentCategoryId}
-                />
-              </div>
-            )}
+        </div>
       </main>
     </>
   );

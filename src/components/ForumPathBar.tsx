@@ -9,22 +9,18 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
   };
 
   return (
-    <div className="flex flex-row gap-2">
-      <span className="text-white">Olet tässä: </span>
+    <div className="flex flex-row flex-wrap items-center gap-x-1 gap-y-1 px-2">
+      <span className="shrink-0 text-white">Olet tässä: </span>
       {props.categoriesInPath.map((p, i) => {
-        // Build path from actual category names, not by slicing router.asPath
-        // This works correctly with any depth and handles URL encoding properly
-        // Skip the root category (index 0) and build path from categories 1 to i
         const categoryNamesUpToHere = props.categoriesInPath
           .slice(1, i + 1)
           .map((cat) => encodeURIComponent(cat.name));
-        // Handle root category (i=0) specially to avoid trailing slash
         const pathToThisCategory =
           categoryNamesUpToHere.length === 0
             ? '/forum'
             : `/forum/${categoryNamesUpToHere.join('/')}`;
         return (
-          <div key={i}>
+          <div key={i} className="flex shrink-0 items-center gap-x-1">
             <a
               href={pathToThisCategory}
               className="text-white underline decoration-transparent transition duration-300 ease-in-out hover:decoration-inherit"
@@ -35,7 +31,7 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
             >
               {p.name}
             </a>
-            <span className="text-white"> /</span>
+            <span className="text-white">/</span>
           </div>
         );
       })}

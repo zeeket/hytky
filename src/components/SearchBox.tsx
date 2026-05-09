@@ -137,7 +137,7 @@ export function SearchBox() {
   return (
     <div
       ref={containerRef}
-      className="relative my-3 w-80"
+      className="relative my-3 w-full max-w-80"
       data-testid="search-container"
     >
       <div className="relative flex items-center">

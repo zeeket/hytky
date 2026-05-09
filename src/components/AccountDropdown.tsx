@@ -6,7 +6,7 @@ export const AccountDropdown = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const { data: session } = useSession();
   return (
-    <div className="absolute top-8 right-8 inline-block text-left">
+    <div className="relative inline-block text-left">
       <UserCircleIcon
         className="text-oldschool-orange h-16 w-16"
         onClick={(e) => {

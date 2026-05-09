@@ -25,12 +25,18 @@ export const ForumRow = (props: ForumRowProps) => {
   };
 
   return (
-    <div className="flex flex-row space-x-2 divide-x">
-      {categoryInProp && <FolderIcon className="text-purple h-6 w-6" />}
-      {threadInProp && <DocumentTextIcon className="h-6 w-6 text-white" />}
+    <div className="group flex cursor-pointer flex-row divide-x px-3 py-1 hover:bg-white/5">
+      <div className="pr-2">
+        {categoryInProp && (
+          <FolderIcon className="text-purple group-hover:text-oldschool-orange h-6 w-6" />
+        )}
+        {threadInProp && (
+          <DocumentTextIcon className="group-hover:text-oldschool-orange h-6 w-6 text-white" />
+        )}
+      </div>
       <button
         type="button"
-        className="pl-2 text-left text-white"
+        className="group-hover:text-oldschool-orange pl-2 text-left text-white"
         onClick={() => {
           handleForumRowClick(props.content);
         }}

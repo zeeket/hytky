@@ -32,6 +32,7 @@ interface IndexContent {
   SignIn: string;
   SignOut: string;
   LoggedInAs: string;
+  GoToForum: string;
   Loading: string;
 }
 
@@ -143,31 +144,33 @@ export default Home;
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
-  const { data: secretMessage } = api.index.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined }
-  );
-
   const { locale } = useRouter();
   const content: IndexContent =
     locale === 'fi' ? fiContentTyped : enContentTyped;
 
   return (
-    <div className="flex flex-col items-center justify-center pt-2 pb-6">
-      <p className="text-center text-2xl text-white">
+    <div className="flex flex-col items-center justify-center gap-2 pt-2 pb-6">
+      {sessionData && (
+        <p className="text-center text-2xl text-white">
+          {content.LoggedInAs} {sessionData.user?.name}
+        </p>
+      )}
+      <div className="flex flex-col items-center gap-2">
         {sessionData && (
-          <span>
-            {content.LoggedInAs} {sessionData.user?.name}
-          </span>
+          <Link
+            className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+            href="/forum"
+          >
+            {content.GoToForum}
+          </Link>
         )}
-        {secretMessage && <span> - {secretMessage}</span>}
-      </p>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
-      >
-        {sessionData ? content.SignOut : content.SignIn}
-      </button>
+        <button
+          className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+          onClick={sessionData ? () => void signOut() : () => void signIn()}
+        >
+          {sessionData ? content.SignOut : content.SignIn}
+        </button>
+      </div>
     </div>
   );
 };
