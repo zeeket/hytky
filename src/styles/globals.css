@@ -1,5 +1,12 @@
 @import 'tailwindcss';
 
+@layer base {
+  html,
+  body {
+    background-color: #000000;
+  }
+}
+
 @theme {
   --color-oldschool-orange: #ffa500;
   --color-newschool-orange: #f98404;
