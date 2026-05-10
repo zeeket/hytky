@@ -17,6 +17,7 @@ import {
 import { ForumPathBar } from '~/components/ForumPathBar';
 import superjson from 'superjson';
 import { AccountDropdown } from '~/components/AccountDropdown';
+import { FolderPlusIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';
 import { ForumRow } from '~/components/ForumRow';
 import CreatePostBox from '~/components/CreatePostBox';
 import { ThreadMenu } from '~/components/ThreadMenu';
@@ -219,29 +220,31 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                 <CreatePostBox threadId={currentThreadId} router={router} />
               )
             : !isInArchive && (
-                <div className="flex h-60 items-center justify-center">
+                <div className="flex h-60 flex-col items-center justify-center gap-3">
                   <button
-                    className="rounded-md bg-purple-600 px-6 py-3 text-purple-100"
-                    type="button"
-                    onClick={() => setShowCreateCategoryModal(true)}
-                  >
-                    Luo uusi kategoria
-                  </button>
-                  <CreateCategoryModal
-                    showCreateCategoryModal={showCreateCategoryModal}
-                    setShowCreateCategoryModal={setShowCreateCategoryModal}
-                    parentCategory={currentCategoryId}
-                  />
-                  <button
-                    className="rounded-md bg-gray-200 px-6 py-3"
+                    className="flex items-center gap-2 rounded-md bg-gray-200 px-6 py-3"
                     type="button"
                     onClick={() => setShowCreateThreadModal(true)}
                   >
+                    <DocumentPlusIcon className="h-5 w-5 shrink-0" />
                     Luo uusi lanka
                   </button>
                   <CreateThreadModal
                     showCreateThreadModal={showCreateThreadModal}
                     setShowCreateThreadModal={setShowCreateThreadModal}
+                    parentCategory={currentCategoryId}
+                  />
+                  <button
+                    className="flex items-center gap-2 rounded-md bg-purple-600 px-6 py-3 text-purple-100"
+                    type="button"
+                    onClick={() => setShowCreateCategoryModal(true)}
+                  >
+                    <FolderPlusIcon className="h-5 w-5 shrink-0" />
+                    Luo uusi kategoria
+                  </button>
+                  <CreateCategoryModal
+                    showCreateCategoryModal={showCreateCategoryModal}
+                    setShowCreateCategoryModal={setShowCreateCategoryModal}
                     parentCategory={currentCategoryId}
                   />
                 </div>
