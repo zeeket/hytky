@@ -15,7 +15,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN \
  if [ -f pnpm-lock.yaml ]; \
  then \
-  yarn global add pnpm && pnpm add prisma@6.16.1 && pnpm i --ignore-scripts; \
+  yarn global add pnpm@10 && pnpm add prisma@6.16.1 && pnpm i --ignore-scripts; \
  else \
   echo "Lockfile not found." && exit 1; \
  fi
@@ -24,7 +24,7 @@ RUN \
 
 FROM --platform=linux/amd64 node:lts-alpine AS builder
 RUN apk add --no-cache libc6-compat openssl openssl-dev
-RUN yarn global add pnpm
+RUN yarn global add pnpm@10
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 WORKDIR /app
@@ -58,7 +58,7 @@ RUN --mount=type=secret,id=NEXT_PUBLIC_TG_BOT_NAME \
 
 FROM --platform=linux/amd64 node:lts-alpine AS runner
 RUN apk add --no-cache libc6-compat openssl openssl-dev
-RUN yarn global add pnpm
+RUN yarn global add pnpm@10
 WORKDIR /app
 
 ENV NODE_ENV production
