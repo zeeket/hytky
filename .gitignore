@@ -54,6 +54,7 @@ combined.log
 error.log
 
 # app backups
+backups/
 prisma/eventArchive.json
 prisma/forumArchive.json
 prisma/forumBackup.json

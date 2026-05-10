@@ -1,9 +1,12 @@
-.PHONY: dev rmi prod rmip migrate migrate-reset baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar logs help
+.PHONY: dev rmi prod rmip migrate migrate-reset baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar logs backup restore help
 
 SHELL := /bin/bash
 MYPATH := $(shell pwd)
 
 SSH_KEY = $(HOME)/.ssh/id_rsa
+PROD_HOST = dettmann@hytky.org
+PROD_COMPOSE = docker/docker-compose.prod.tls-registry.yml
+BACKUP_DIR = backups
 
 # Start the local development environment with hot-reloading. Usage: 'make dev'.
 dev:
@@ -238,9 +241,38 @@ sync-calendar:
 		(docker compose -f docker/docker-compose.dev.yml exec -T gcalservice curl -X POST http://localhost:3002/sync -H "Content-Type: application/json" || \
 		echo "Failed to trigger sync. Make sure gcalservice is running.")
 
+# Back up the production database to a local .sql.gz file. Usage: 'make backup'.
+backup:
+	@mkdir -p $(BACKUP_DIR)
+	@BACKUP_FILE="$(BACKUP_DIR)/hytky-$$(date +%Y%m%d-%H%M%S).sql.gz"; \
+	echo "Backing up production database..."; \
+	ssh -i $(SSH_KEY) $(PROD_HOST) \
+		"cd /opt/webapp && docker compose --env-file .env -f $(PROD_COMPOSE) exec -T postgres pg_dump -U postgres --clean postgres" \
+		| gzip > "$$BACKUP_FILE" && \
+	echo "Backup saved: $$BACKUP_FILE"
+
+# Restore a backup to production. Defaults to latest in backups/. Usage: 'make restore' or 'make restore FILE=backups/hytky-20240101-120000.sql.gz'.
+restore:
+	@if [ -z "$(FILE)" ]; then \
+		FILE=$$(ls -t $(BACKUP_DIR)/*.sql.gz 2>/dev/null | head -1); \
+		if [ -z "$$FILE" ]; then \
+			echo "No backup files found in $(BACKUP_DIR)/. Run 'make backup' first."; exit 1; \
+		fi; \
+		echo "Restoring from latest backup: $$FILE"; \
+	else \
+		FILE="$(FILE)"; \
+		echo "Restoring from: $$FILE"; \
+	fi; \
+	echo "WARNING: This will overwrite the production database. Press Ctrl+C to abort, Enter to continue."; \
+	read CONFIRM; \
+	gunzip -c "$$FILE" | \
+	ssh -i $(SSH_KEY) $(PROD_HOST) \
+		"cd /opt/webapp && docker compose --env-file .env -f $(PROD_COMPOSE) exec -T postgres psql -U postgres postgres" && \
+	echo "Restore complete."
+
 # Show live logs of all containers on production. Usage: 'make logs'.
 logs:
-	ssh -t -i $(SSH_KEY) dettmann@hytky.org "cd /opt/webapp && docker compose --env-file .env -f docker/docker-compose.prod.tls-registry.yml logs -f"
+	ssh -t -i $(SSH_KEY) $(PROD_HOST) "cd /opt/webapp && docker compose --env-file .env -f $(PROD_COMPOSE) logs -f"
 
 # Show this help. Usage: 'make help'.
 help:
