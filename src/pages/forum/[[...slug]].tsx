@@ -182,7 +182,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                       {threadObj.posts.map((post: PostWithAuthor) => (
                         <li
                           key={post.id}
-                          className="rounded border border-gray-600 p-4"
+                          className="min-w-0 rounded border border-gray-600 p-4"
                         >
                           <div className="mb-2 flex items-baseline gap-2">
                             <span className="text-xs font-medium text-gray-400">
@@ -195,7 +195,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                               )}
                             </span>
                           </div>
-                          <p className="whitespace-pre-wrap text-white">
+                          <p className="min-w-0 break-words whitespace-pre-wrap text-white">
                             {post.content}
                           </p>
                         </li>
