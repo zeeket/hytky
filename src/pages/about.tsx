@@ -36,20 +36,6 @@ const About: NextPage = () => {
           <p key={index}>{paragraph}</p>
         ))}
       </div>
-      <div className="line-through opacity-50">
-        <h3 className="text-oldschool-orange pt-6 font-extrabold sm:text-[3rem]">
-          {content.clubRoomTitle}
-        </h3>
-        <p className="mx-2 text-center text-2xl text-white">
-          {content.address}
-        </p>
-        <p className="text-1xl mx-2 text-center text-white">
-          {content.doorbell}
-        </p>
-      </div>
-      <h2 className="animate-pulse pt-6 text-center text-6xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-        GRANDE FINALE
-      </h2>
       <Link
         href="/"
         className="hover:bg-newschool-orange mt-8 h-12 w-40 rounded-lg bg-white/10 p-3 text-center text-white transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
