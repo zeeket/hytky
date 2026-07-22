@@ -155,9 +155,9 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
           !threadsOfCurrentCategoryQuery.data ? (
             <p className="text-white">Ladataan...</p>
           ) : (
-            <div className="flex flex-col space-y-6">
+            <div className="flex w-full min-w-0 flex-col space-y-6">
               <ForumPathBar router={router} categoriesInPath={propsObj} />
-              <ul className="flex flex-col">
+              <ul className="flex min-w-0 flex-col">
                 {currentThreadId && threadObj && (
                   <div>
                     <div className="flex items-center justify-between pb-8">
@@ -178,7 +178,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                         )}
                       </div>
                     </div>
-                    <ol className="flex w-full max-w-2xl flex-col gap-3">
+                    <ol className="flex w-full min-w-0 max-w-2xl flex-col gap-3">
                       {threadObj.posts.map((post: PostWithAuthor) => (
                         <li
                           key={post.id}

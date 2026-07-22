@@ -5,7 +5,7 @@ RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
 
 # Install pnpm globally
-RUN npm install -g pnpm@latest
+RUN npm install -g pnpm@10
 
 # Copy only what Prisma needs to run migrations
 COPY prisma ./prisma

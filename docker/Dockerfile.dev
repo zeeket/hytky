@@ -3,7 +3,7 @@
 FROM --platform=linux/amd64 node:lts-alpine
 RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
-RUN yarn global add pnpm ts-node
+RUN yarn global add pnpm@10 ts-node
 
 ##### ENV_VARS
 ARG DATABASE_URL=${DATABASE_URL}
