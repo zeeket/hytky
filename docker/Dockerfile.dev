@@ -3,7 +3,7 @@
 FROM --platform=linux/amd64 node:lts-alpine
 RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
-RUN yarn global add pnpm@10 ts-node
+RUN yarn global add pnpm@11 ts-node
 
 ##### ENV_VARS
 ARG DATABASE_URL=${DATABASE_URL}
@@ -17,6 +17,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY ../prisma ./
 COPY ../package.json ./
 COPY ../pnpm-lock.yaml ./
+COPY ../pnpm-workspace.yaml ./
 RUN pnpm install
 
 EXPOSE 80

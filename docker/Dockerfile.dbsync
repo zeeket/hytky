@@ -5,7 +5,7 @@ RUN apk add --no-cache libc6-compat openssl openssl-dev
 WORKDIR /app
 
 # Install pnpm globally
-RUN npm install -g pnpm@10
+RUN npm install -g pnpm@11
 
 # Copy only what Prisma needs to run migrations
 COPY prisma ./prisma
@@ -13,8 +13,10 @@ COPY prisma ./prisma
 # Create a minimal package.json for installing dependencies
 RUN echo '{"name":"dbsync","version":"1.0.0"}' > package.json
 
-# Install Prisma and dependencies needed for seeding
-RUN pnpm add prisma@6.19.0 @prisma/client@6.19.0 ts-node@^10.9.2 typescript@^5.7.0
+# Install Prisma and dependencies needed for seeding. --ignore-scripts skips
+# @prisma/client's postinstall (which would otherwise run `prisma generate`
+# itself and hit pnpm 11's build-script approval gate); we call it explicitly below.
+RUN pnpm add --ignore-scripts prisma@6.19.0 @prisma/client@6.19.0 ts-node@^10.9.2 typescript@^5.7.0
 
 # Generate Prisma Client
 RUN pnpm exec prisma generate
