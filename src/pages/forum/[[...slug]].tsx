@@ -155,12 +155,12 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
           !threadsOfCurrentCategoryQuery.data ? (
             <p className="text-white">Ladataan...</p>
           ) : (
-            <div className="flex w-full min-w-0 flex-col space-y-6">
+            <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col space-y-6">
               <ForumPathBar router={router} categoriesInPath={propsObj} />
               <ul className="flex min-w-0 flex-col">
                 {currentThreadId && threadObj && (
                   <div>
-                    <div className="flex items-center justify-between pb-8">
+                    <div className="flex items-center justify-between px-2 pb-8">
                       <div className="flex items-center">
                         <h2 className="text-xl text-white">
                           Lanka: {threadObj.name}
