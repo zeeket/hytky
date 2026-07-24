@@ -23,7 +23,7 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
           <div key={i} className="flex shrink-0 items-center gap-x-1">
             <a
               href={pathToThisCategory}
-              className="text-white underline decoration-transparent transition duration-300 ease-in-out hover:decoration-inherit"
+              className="hover:text-oldschool-orange rounded px-1 py-0.5 text-white underline decoration-transparent transition duration-300 ease-in-out hover:bg-white/5 hover:decoration-inherit"
               onClick={(e) => {
                 e.preventDefault();
                 handleForumPathBarClick(pathToThisCategory);

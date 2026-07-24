@@ -12,7 +12,7 @@ export const AccountDropdown = () => {
   return (
     <div className="relative inline-block text-left">
       <UserCircleIcon
-        className="text-oldschool-orange h-16 w-16"
+        className="user-icon-gradient h-16 w-16 cursor-pointer text-transparent"
         onClick={(e) => {
           e.preventDefault();
           setShowDropdown(!showDropdown);
