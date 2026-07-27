@@ -85,27 +85,5 @@
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
-  },
-  "pnpm": {
-    "overrides": {
-      "glob": ">=11.1.0",
-      "undici": ">=6.24.0",
-      "effect": ">=3.20.0",
-      "defu": ">=6.1.5",
-      "picomatch": ">=4.0.4",
-      "brace-expansion@1": "^1.1.13",
-      "brace-expansion@2": "^2.0.3",
-      "brace-expansion@5": "^5.0.5",
-      "@tootallnate/once": ">=3.0.1"
-    },
-    "ignoredBuiltDependencies": [
-      "@prisma/client",
-      "@prisma/engines",
-      "@swc/core",
-      "@tailwindcss/oxide",
-      "prisma",
-      "sharp",
-      "unrs-resolver"
-    ]
   }
 }
