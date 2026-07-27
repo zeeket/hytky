@@ -25,7 +25,15 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null
   );
+  const [menuPosition, setMenuPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const MENU_WIDTH = 192; // px, matches w-48
+  const VIEWPORT_MARGIN = 8; // px, minimum gap kept from the screen edge
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -38,6 +46,27 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Position the dropdown relative to the viewport (not just the button) so it
+  // never overflows the left or right edge of the screen, e.g. on narrow mobile
+  // viewports where the button can sit close to either edge.
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updateMenuPosition = () => {
+      if (!buttonRef.current) return;
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const left = Math.min(
+        Math.max(buttonRect.right - MENU_WIDTH, VIEWPORT_MARGIN),
+        window.innerWidth - MENU_WIDTH - VIEWPORT_MARGIN
+      );
+      setMenuPosition({ top: buttonRect.bottom + 8, left });
+    };
+
+    updateMenuPosition();
+    window.addEventListener('resize', updateMenuPosition);
+    return () => window.removeEventListener('resize', updateMenuPosition);
+  }, [isOpen]);
 
   // Filter out root category and current category from move options
   const availableCategories = categories.filter(
@@ -61,6 +90,7 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
     <div className="relative" ref={menuRef}>
       {/* Hamburger button */}
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="ml-2 rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white"
@@ -83,8 +113,11 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
       </button>
 
       {/* Dropdown menu */}
-      {isOpen && (
-        <div className="ring-opacity-5 absolute right-0 z-10 mt-2 w-48 rounded-md bg-gray-800 shadow-lg ring-1 ring-black">
+      {isOpen && menuPosition && (
+        <div
+          className="ring-opacity-5 fixed z-10 w-48 rounded-md bg-gray-800 shadow-lg ring-1 ring-black"
+          style={{ top: menuPosition.top, left: menuPosition.left }}
+        >
           <div className="py-1" role="menu">
             <button
               type="button"
