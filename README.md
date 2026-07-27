@@ -150,7 +150,8 @@ Replace 123.123.123.123 with your server's IP. Makefile asssumes you authenticat
 ### Continuous delivery
 
 To push a new image, `git tag` a commit on the main branch with a semantic version number (for example `v1.0.0`).
-Latest image should get picked up by [Watchtower](https://containrrr.dev/watchtower/).
+This triggers a GitHub Actions workflow that builds and pushes the image to GHCR, then SSHes into the production
+server to pull the new image and restart the containers via `docker compose` (see `.github/workflows/create-publish-docker-image.yml`).
 
 ## TODO
 
