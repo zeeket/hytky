@@ -9,7 +9,10 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
   };
 
   return (
-    <div className="flex flex-row flex-wrap items-center gap-x-1 gap-y-1 px-2">
+    <div
+      data-testid="forum-path-bar"
+      className="flex flex-row flex-wrap items-center gap-x-1 gap-y-1 px-2"
+    >
       <span className="shrink-0 text-white">Olet tässä: </span>
       {props.categoriesInPath.map((p, i) => {
         const categoryNamesUpToHere = props.categoriesInPath
@@ -35,6 +38,9 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
           </div>
         );
       })}
+      {props.threadName && (
+        <span className="shrink-0 text-white">{props.threadName}</span>
+      )}
     </div>
   );
 };
@@ -42,4 +48,5 @@ export const ForumPathBar = (props: ForumPathBarProps) => {
 export type ForumPathBarProps = {
   router: NextRouter;
   categoriesInPath: CategoryWithChildren[];
+  threadName?: string;
 };

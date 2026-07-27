@@ -17,7 +17,11 @@ import {
 import { ForumPathBar } from '~/components/ForumPathBar';
 import superjson from 'superjson';
 import { AccountDropdown } from '~/components/AccountDropdown';
-import { FolderPlusIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';
+import {
+  FolderPlusIcon,
+  DocumentPlusIcon,
+  DocumentTextIcon,
+} from '@heroicons/react/24/outline';
 import { ForumRow } from '~/components/ForumRow';
 import CreatePostBox from '~/components/CreatePostBox';
 import { ThreadMenu } from '~/components/ThreadMenu';
@@ -156,14 +160,19 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
             <p className="text-white">Ladataan...</p>
           ) : (
             <div className="mx-auto flex w-full max-w-2xl min-w-0 flex-col space-y-6">
-              <ForumPathBar router={router} categoriesInPath={propsObj} />
+              <ForumPathBar
+                router={router}
+                categoriesInPath={propsObj}
+                threadName={threadObj?.name}
+              />
               <ul className="flex min-w-0 flex-col">
                 {currentThreadId && threadObj && (
                   <div>
                     <div className="flex items-center justify-between px-2 pb-8">
                       <div className="flex items-center">
-                        <h2 className="text-xl text-white">
-                          Lanka: {threadObj.name}
+                        <h2 className="flex items-center gap-2 text-xl text-white">
+                          <DocumentTextIcon className="h-5 w-5 shrink-0" />
+                          {threadObj.name}
                         </h2>
                         {isThreadAuthor && (
                           <ThreadMenu
@@ -222,7 +231,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
             : !isInArchive && (
                 <div className="flex h-60 flex-col items-center justify-center gap-3">
                   <button
-                    className="flex items-center gap-2 rounded-md bg-gray-200 px-6 py-3"
+                    className="flex cursor-pointer items-center gap-2 rounded-md bg-gray-200 px-6 py-3 transition duration-300 ease-in-out hover:bg-gray-300"
                     type="button"
                     onClick={() => setShowCreateThreadModal(true)}
                   >
@@ -235,7 +244,7 @@ const Forum: NextPage<ForumProps> = (props: ForumProps) => {
                     parentCategory={currentCategoryId}
                   />
                   <button
-                    className="flex items-center gap-2 rounded-md bg-purple-600 px-6 py-3 text-purple-100"
+                    className="flex cursor-pointer items-center gap-2 rounded-md bg-purple-600 px-6 py-3 text-purple-100 transition duration-300 ease-in-out hover:bg-purple-700"
                     type="button"
                     onClick={() => setShowCreateCategoryModal(true)}
                   >

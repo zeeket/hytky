@@ -36,7 +36,7 @@ export const ForumRow = (props: ForumRowProps) => {
       </div>
       <button
         type="button"
-        className="group-hover:text-oldschool-orange pl-2 text-left text-white"
+        className="group-hover:text-oldschool-orange cursor-pointer pl-2 text-left text-white"
         onClick={() => {
           handleForumRowClick(props.content);
         }}

@@ -1,4 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
+import {
+  Cog6ToothIcon,
+  FolderArrowDownIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 import { type CategoryWithChildren } from '~/server/api/types';
 
 interface ThreadMenuProps {
@@ -88,7 +93,7 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
 
   return (
     <div className="relative" ref={menuRef}>
-      {/* Hamburger button */}
+      {/* Thread settings button */}
       <button
         ref={buttonRef}
         type="button"
@@ -97,19 +102,7 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
         aria-label="Thread menu"
         data-testid="thread-menu-button"
       >
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
+        <Cog6ToothIcon className="h-5 w-5" />
       </button>
 
       {/* Dropdown menu */}
@@ -122,10 +115,11 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
             <button
               type="button"
               onClick={handleMoveClick}
-              className="block w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
               role="menuitem"
               data-testid="move-thread-button"
             >
+              <FolderArrowDownIcon className="h-4 w-4 shrink-0" />
               Siirrä lanka
             </button>
             <button
@@ -135,10 +129,11 @@ export const ThreadMenu: React.FC<ThreadMenuProps> = ({
                 onDelete();
               }}
               disabled={isDeleting}
-              className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-gray-700 hover:text-red-300"
+              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-400 hover:bg-gray-700 hover:text-red-300"
               role="menuitem"
               data-testid="delete-thread-button"
             >
+              <TrashIcon className="h-4 w-4 shrink-0" />
               {isDeleting ? 'Poistetaan...' : 'Poista lanka'}
             </button>
           </div>
