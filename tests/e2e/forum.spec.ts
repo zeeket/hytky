@@ -403,9 +403,9 @@ test.describe.serial('Forum Content Creation', () => {
     await page.waitForLoadState('networkidle');
 
     // Verify we're in the thread view
-    // Thread title is displayed as "Lanka: {threadName}" in an h2 tag
+    // Thread title is displayed as {threadName} in an h2 tag
     await expect(
-      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+      page.locator(`h2:has-text("${testThreadName}")`)
     ).toBeVisible();
 
     // Verify the thread content (first post) is visible
@@ -444,7 +444,7 @@ test.describe.serial('Forum Content Creation', () => {
 
     // Verify we're in the thread view
     await expect(
-      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+      page.locator(`h2:has-text("${testThreadName}")`)
     ).toBeVisible();
 
     // Count initial posts
@@ -525,7 +525,7 @@ test.describe.serial('Forum Content Creation', () => {
 
     // Verify we're in the thread view
     await expect(
-      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+      page.locator(`h2:has-text("${testThreadName}")`)
     ).toBeVisible();
 
     // Count initial posts using a more reliable method
@@ -602,7 +602,7 @@ test.describe.serial('Forum Content Creation', () => {
 
     // Verify we're in the thread view
     await expect(
-      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+      page.locator(`h2:has-text("${testThreadName}")`)
     ).toBeVisible();
 
     // Verify hamburger menu is visible (user is the author)
@@ -646,7 +646,7 @@ test.describe.serial('Forum Content Creation', () => {
 
     // Verify we're in the thread view
     await expect(
-      page.locator(`h2:has-text("Lanka: ${testThreadName}")`)
+      page.locator(`h2:has-text("${testThreadName}")`)
     ).toBeVisible();
 
     // Set up dialog handler to accept confirmation
@@ -769,7 +769,7 @@ test.describe.serial('Thread Menu', () => {
 
     // Verify we're in the thread view
     await expect(
-      page.locator(`h2:has-text("Lanka: ${menuTestThreadName}")`)
+      page.locator(`h2:has-text("${menuTestThreadName}")`)
     ).toBeVisible();
 
     // Verify hamburger menu button is visible
@@ -954,7 +954,7 @@ test.describe.serial('Thread Menu', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(
-      page.locator(`h2:has-text("Lanka: ${deleteTestThreadName}")`)
+      page.locator(`h2:has-text("${deleteTestThreadName}")`)
     ).toBeVisible({ timeout: 10000 });
     await expect(
       page.locator('[data-testid="thread-menu-button"]')

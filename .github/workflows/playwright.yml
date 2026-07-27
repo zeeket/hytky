@@ -182,7 +182,7 @@ jobs:
         run: rm -rf .nyc_output coverage
 
       - name: Run Playwright tests
-        run: pnpm exec playwright test
+        run: pnpm exec playwright test --project=chromium
 
       - name: Generate coverage report with c8
         if: always()

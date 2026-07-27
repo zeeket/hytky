@@ -102,9 +102,7 @@ test.describe('Forum URL Navigation - Core Functionality', () => {
     expect(result.status).toBe(200);
 
     // Verify we're in thread view with correct content
-    await expect(
-      page.locator(`h2:has-text("Lanka: ${threadName}")`)
-    ).toBeVisible();
+    await expect(page.locator(`h2:has-text("${threadName}")`)).toBeVisible();
     await expect(page.locator(`text="${threadContent}"`)).toBeVisible();
   });
 

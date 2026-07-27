@@ -191,7 +191,7 @@ test.describe.serial('Search', () => {
 
     // Should be on the thread page
     await expect(
-      page.locator(`h2:has-text("Lanka: ${searchThreadName}")`)
+      page.locator(`h2:has-text("${searchThreadName}")`)
     ).toBeVisible();
   });
 
@@ -292,7 +292,7 @@ test.describe.serial('Search', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(
-      page.locator(`h2:has-text("Lanka: ${searchThreadName}")`)
+      page.locator(`h2:has-text("${searchThreadName}")`)
     ).toBeVisible();
   });
 
