@@ -12,6 +12,7 @@ jobs:
   tofu-plan:
     name: Tofu Plan
     runs-on: ubuntu-latest
+    environment: Production
     defaults:
       run:
         working-directory: 'infrastructure'
@@ -46,6 +47,7 @@ jobs:
           TF_VAR_GITHUB_REPOSITORY: ${{ github.repository }}
           TF_VAR_do_token: ${{ secrets.DO_PAT }}
           TF_VAR_pub_key: ${{ secrets.PUB_KEY }}
+          TF_VAR_deploy_key: ${{ secrets.DEPLOY_PUB_KEY }}
           TF_VAR_DATABASE_URL: ${{ secrets.DATABASE_URL }}
           TF_VAR_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           TF_VAR_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
