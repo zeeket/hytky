@@ -13,10 +13,11 @@ locals {
   })
   hytkybot_dotenv = templatefile("${path.module}/templates/.env.tftpl", {
     config = {
-      TG_BOT_TOKEN        = var.TG_BOT_TOKEN,
-      TG_ACTIVE_GROUP_IDS = var.TG_ACTIVE_GROUP_IDS
-      TG_ADMIN_GROUP_IDS  = var.TG_ADMIN_GROUP_IDS
-      PORT                = "3000"
+      TG_BOT_TOKEN              = var.TG_BOT_TOKEN,
+      TG_ACTIVE_GROUP_IDS       = var.TG_ACTIVE_GROUP_IDS
+      TG_ADMIN_GROUP_IDS        = var.TG_ADMIN_GROUP_IDS
+      TG_ANNOUNCEMENT_GROUP_IDS = var.TG_ANNOUNCEMENT_GROUP_IDS
+      PORT                      = "3000"
     }
   })
   gcalservice_dotenv = templatefile("${path.module}/templates/.env.tftpl", {

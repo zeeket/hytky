@@ -94,6 +94,12 @@ variable "TG_ADMIN_GROUP_IDS" {
   sensitive   = true
 }
 
+variable "TG_ANNOUNCEMENT_GROUP_IDS" {
+  description = "Comma separated Telegram Announcement Group IDs"
+  type        = string
+  sensitive   = true
+}
+
 variable "GOOGLEVERIFICATION" {
   description = "TXT record for Google Workspace verification"
   type        = string

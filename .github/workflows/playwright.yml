@@ -105,6 +105,7 @@ jobs:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_ACTIVE_GROUP_IDS: ${{ secrets.TG_ACTIVE_GROUP_IDS }}
           TG_ADMIN_GROUP_IDS: ${{ secrets.TG_ADMIN_GROUP_IDS }}
+          TG_ANNOUNCEMENT_GROUP_IDS: ${{ secrets.TG_ANNOUNCEMENT_GROUP_IDS }}
           PORT: 3000
         ports:
           - 3001:3000
@@ -170,6 +171,7 @@ jobs:
           echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .hytkybot.env
           echo "TG_ACTIVE_GROUP_IDS=${{ secrets.TG_ACTIVE_GROUP_IDS }}" >> .hytkybot.env
           echo "TG_ADMIN_GROUP_IDS=${{ secrets.TG_ADMIN_GROUP_IDS }}" >> .hytkybot.env
+          echo "TG_ANNOUNCEMENT_GROUP_IDS=${{ secrets.TG_ANNOUNCEMENT_GROUP_IDS }}" >> .hytkybot.env
           echo "PORT=3000" >> .hytkybot.env
 
       - name: Run Prisma migrations
