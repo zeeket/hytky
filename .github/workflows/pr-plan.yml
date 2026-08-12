@@ -12,6 +12,7 @@ jobs:
   tofu-plan:
     name: Tofu Plan
     runs-on: ubuntu-latest
+    environment: Production
     defaults:
       run:
         working-directory: 'infrastructure'
