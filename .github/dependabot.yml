@@ -1,45 +1,45 @@
 version: 2
 updates:
   # Root app (Next.js/T3 stack, pnpm)
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
     groups:
       npm-dependencies:
         patterns:
-          - "*"
+          - '*'
 
   # gcalservice (independent package, npm)
-  - package-ecosystem: "npm"
-    directory: "/gcalservice"
+  - package-ecosystem: 'npm'
+    directory: '/gcalservice'
     schedule:
-      interval: "daily"
+      interval: 'daily'
     groups:
       npm-dependencies:
         patterns:
-          - "*"
+          - '*'
 
   # Docker images used by the main app
-  - package-ecosystem: "docker"
-    directory: "/docker"
+  - package-ecosystem: 'docker'
+    directory: '/docker'
     schedule:
-      interval: "daily"
+      interval: 'daily'
 
   # Docker image used by gcalservice
-  - package-ecosystem: "docker"
-    directory: "/gcalservice"
+  - package-ecosystem: 'docker'
+    directory: '/gcalservice'
     schedule:
-      interval: "daily"
+      interval: 'daily'
 
   # Terraform providers/modules
-  - package-ecosystem: "terraform"
-    directory: "/infrastructure"
+  - package-ecosystem: 'terraform'
+    directory: '/infrastructure'
     schedule:
-      interval: "daily"
+      interval: 'daily'
 
   # GitHub Actions used in workflows
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
