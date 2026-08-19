@@ -219,7 +219,7 @@ jobs:
     steps:
       - name: Generate token for GitHub App
         id: generate-token
-        uses: actions/create-github-app-token@v3.1.1
+        uses: actions/create-github-app-token@v3.2.0
         with:
           app-id: ${{ secrets.HYTKY_COVERAGE_BOT_APP_ID }}
           private-key: ${{ secrets.HYTKY_COVERAGE_BOT_PRIVATE_KEY }}
