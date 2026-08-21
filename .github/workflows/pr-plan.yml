@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Setup Tofu
-        uses: opentofu/setup-opentofu@v2.0.0
+        uses: opentofu/setup-opentofu@v2.0.2
         with:
           tofu_version: '1.7.0'
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
