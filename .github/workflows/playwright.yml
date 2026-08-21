@@ -42,7 +42,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
 
       - uses: actions/setup-node@v7.0.0
         with:
@@ -111,7 +111,7 @@ jobs:
           - 3001:3000
 
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
 
       - uses: actions/setup-node@v7.0.0
         with:
@@ -224,7 +224,7 @@ jobs:
           app-id: ${{ secrets.HYTKY_COVERAGE_BOT_APP_ID }}
           private-key: ${{ secrets.HYTKY_COVERAGE_BOT_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
         with:
           token: ${{ steps.generate-token.outputs.token }}
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
