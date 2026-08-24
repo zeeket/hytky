@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "express": "^5.2.1",
-    "googleapis": "^175.0.0",
+    "googleapis": "^176.0.0",
     "google-auth-library": "^11.0.2",
     "node-cron": "^4.6.0",
     "superjson": "^2.2.6",
