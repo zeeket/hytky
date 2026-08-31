@@ -24,21 +24,12 @@ importers:
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@18.2.0)
-      '@next-auth/prisma-adapter':
-        specifier: ^1.0.7
-        version: 1.0.7(@prisma/client@6.19.0(prisma@6.19.0(typescript@5.5.4))(typescript@5.5.4))(next-auth@4.24.15(next@15.5.21(@babel/core@7.28.4)(@playwright/test@1.55.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       '@prisma/client':
         specifier: ^6.19.0
         version: 6.19.0(prisma@6.19.0(typescript@5.5.4))(typescript@5.5.4)
       '@tanstack/react-query':
         specifier: ^4.41.0
         version: 4.41.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@telegram-auth/react':
-        specifier: ^1.0.4
-        version: 1.0.4(react@18.2.0)
-      '@telegram-auth/server':
-        specifier: ^1.0.4
-        version: 1.0.4
       '@trpc/client':
         specifier: ^10.45.2
         version: 10.45.2(@trpc/server@10.45.3)
@@ -1418,12 +1409,6 @@ packages:
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
 
-  '@next-auth/prisma-adapter@1.0.7':
-    resolution: {integrity: sha512-Cdko4KfcmKjsyHFrWwZ//lfLUbcLqlyFqjd/nYE2m3aZ7tjMNUjpks47iw7NTCnXf+5UWz5Ypyt1dSs1EP5QJw==}
-    peerDependencies:
-      '@prisma/client': '>=2.26.0 || >=3'
-      next-auth: ^4
-
   '@next/env@15.5.21':
     resolution: {integrity: sha512-hjJI/GfrjWHgNguRIBzItjRRu0m3Nrz17GhxsjuHfjIvg9hyg3239REd2dpI+bpMTFuVrVprHzEQ19m++cDtbw==}
 
@@ -1845,16 +1830,6 @@ packages:
         optional: true
       react-native:
         optional: true
-
-  '@telegram-auth/react@1.0.4':
-    resolution: {integrity: sha512-VPCIrA6h5+w69S1QvB/k2PphmAA9E8BSqEX4WMSE1P7KxexKl/VRdoTRKSsSx1/In94S+R7FufbjLrRMnEGEKg==}
-    deprecated: 'Deprecated in favour of Telegram''s OpenID Connect login: https://core.telegram.org/bots/telegram-login — migration guide: https://github.com/manzoorwanijk/telegram-auth/blob/main/MIGRATION.md'
-    peerDependencies:
-      react: '>=18'
-
-  '@telegram-auth/server@1.0.4':
-    resolution: {integrity: sha512-A0JysRmNhGnq8JZKoWx7KwEWTnHPI6GmSp7lzKWPanP//agFF/EBkOpnKcMhsvSlikYFRZKfNo+OvFX9zDEU4w==}
-    deprecated: 'Deprecated in favour of Telegram''s OpenID Connect login: https://core.telegram.org/bots/telegram-login — note OIDC does NOT cover Mini App initData validation. Migration guide: https://github.com/manzoorwanijk/telegram-auth/blob/main/MIGRATION.md'
 
   '@testing-library/dom@10.4.1':
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
@@ -6263,11 +6238,6 @@ snapshots:
       '@tybys/wasm-util': 0.10.1
     optional: true
 
-  '@next-auth/prisma-adapter@1.0.7(@prisma/client@6.19.0(prisma@6.19.0(typescript@5.5.4))(typescript@5.5.4))(next-auth@4.24.15(next@15.5.21(@babel/core@7.28.4)(@playwright/test@1.55.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
-    dependencies:
-      '@prisma/client': 6.19.0(prisma@6.19.0(typescript@5.5.4))(typescript@5.5.4)
-      next-auth: 4.24.15(next@15.5.21(@babel/core@7.28.4)(@playwright/test@1.55.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-
   '@next/env@15.5.21': {}
 
   '@next/env@15.5.3': {}
@@ -6621,12 +6591,6 @@ snapshots:
       use-sync-external-store: 1.5.0(react@18.2.0)
     optionalDependencies:
       react-dom: 18.2.0(react@18.2.0)
-
-  '@telegram-auth/react@1.0.4(react@18.2.0)':
-    dependencies:
-      react: 18.2.0
-
-  '@telegram-auth/server@1.0.4': {}
 
   '@testing-library/dom@10.4.1':
     dependencies:

@@ -45,6 +45,44 @@ The forum login is designed to be exclusive to members of certain Telegram group
 5. **All set!** :rocket: Use `make dev` for hot reloading **or** `make prod` for a production-like environment. :tada:
    - Production environments should be seeded manually with `make seed`
 
+### Local HTTPS
+
+Logging in locally requires HTTPS on a real domain: Telegram's OIDC provider
+only redirects to URIs registered in @BotFather (Bot Settings > Web Login) and
+rejects `localhost` and bare IP addresses. `local.hytky.org` is an A record
+pointing at `127.0.0.1` (managed in `infrastructure/main.tf`), so it resolves
+to your own machine while still being a registrable public domain.
+
+`next dev` terminates TLS itself when certificates are present, so no reverse
+proxy is needed. One-time setup, run on the host:
+
+1. Install [mkcert](https://github.com/FiloSottile/mkcert) and its CA:
+   ```bash
+   mkcert -install
+   ```
+2. Issue the certificate. `dev` and `localhost` are included so the other
+   compose services can reach the app over HTTPS too:
+   ```bash
+   mkcert -cert-file certs/local.hytky.org.pem \
+          -key-file certs/local.hytky.org-key.pem \
+          local.hytky.org dev localhost 127.0.0.1
+   cp "$(mkcert -CAROOT)/rootCA.pem" certs/rootCA.pem
+   ```
+3. Set `NEXTAUTH_URL=https://local.hytky.org` in `.env`, and
+   `MAIN_APP_URL=https://dev:443` in `.gcalservice.env`.
+4. Register both URLs in @BotFather under Bot Settings > Web Login:
+   `https://local.hytky.org` and
+   `https://local.hytky.org/api/auth/callback/telegram`.
+
+`make dev` then serves <https://local.hytky.org>. Removing the `certs/*.pem`
+files reverts to plain HTTP on port 80.
+
+> [!NOTE]
+> The certificate must come from a CA your browser trusts. Production sends
+> `Strict-Transport-Security` with `includeSubDomains`, so once a browser has
+> visited `hytky.org` it enforces HTTPS on `local.hytky.org` as well and offers
+> no way to click through a self-signed certificate warning.
+
 ### Making changes to the database
 
 In a development environment, use the `make migrate` command to generate and apply migrations.

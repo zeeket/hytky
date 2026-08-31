@@ -43,6 +43,13 @@ const config = {
   reactStrictMode: true,
   output: 'standalone',
   /**
+   * Local development is served over HTTPS on https://local.hytky.org (a
+   * public A record pointing at 127.0.0.1) so that Telegram's OIDC provider
+   * accepts the redirect URI. Without this, `next dev` warns about — and in
+   * future versions blocks — requests arriving under that host.
+   */
+  allowedDevOrigins: ['local.hytky.org'],
+  /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
    * must comment the below `i18n` config out.
    *

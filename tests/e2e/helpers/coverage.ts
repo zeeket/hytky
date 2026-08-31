@@ -64,7 +64,7 @@ export class CoverageHelper {
 
       // Extract hostname from base URL for filtering
       const baseURL =
-        process.env.PLAYWRIGHT_BASE_URL || 'https://dev.docker.orb.local';
+        process.env.PLAYWRIGHT_BASE_URL || 'https://local.hytky.org';
       const baseHostname = new URL(baseURL).hostname;
 
       // Filter to keep only application code (exclude external resources)

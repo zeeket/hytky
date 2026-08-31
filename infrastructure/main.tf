@@ -142,6 +142,19 @@ resource "digitalocean_record" "www" {
   value  = digitalocean_droplet.webserver.ipv4_address
 }
 
+# Development-only record: resolves to the developer's own machine so the local
+# dev environment can be reached over HTTPS on a real domain. Telegram's OIDC
+# provider only accepts redirect URIs on registered HTTPS domains, and rejects
+# `localhost` / bare IPs, so `https://local.hytky.org/api/auth/callback/telegram`
+# is registered in @BotFather's Web Login allowed URLs and used as NEXTAUTH_URL
+# for local development. Nothing is ever served publicly from this name.
+resource "digitalocean_record" "local" {
+  domain = digitalocean_domain.hytky.name
+  type   = "A"
+  name   = "local"
+  value  = "127.0.0.1"
+}
+
 resource "digitalocean_record" "mx" {
   domain   = digitalocean_domain.hytky.name
   type     = "MX"

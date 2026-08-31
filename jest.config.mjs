@@ -50,8 +50,6 @@ export default {
     '^~/(.*)$': '<rootDir>/src/$1',
     '^next-auth$': '<rootDir>/tests/unit/__mocks__/next-auth.ts',
     '^next-auth/(.*)$': '<rootDir>/tests/unit/__mocks__/next-auth.ts',
-    '^@next-auth/prisma-adapter$':
-      '<rootDir>/tests/unit/__mocks__/@next-auth/prisma-adapter.ts',
   },
 
   // Coverage configuration
