@@ -6,9 +6,11 @@ test('navigate to rental page and back', async ({ page }) => {
   // Click the rental.
   await page.click('text="Vuokraus →"');
 
-  // Wait for the text "Laitteistoa:" to be visible
-  const laitteistoaText = await page.waitForSelector('text="Laitteistoa:"');
-  expect(laitteistoaText).not.toBeNull();
+  // Wait for a price category heading to be visible
+  const categoryHeading = await page.waitForSelector(
+    'text="DJ-soittimet ja levysoittimet"'
+  );
+  expect(categoryHeading).not.toBeNull();
 
   // Wait for the "Takaisin" text (with arrow) to be visible and click it
   const takaisinLink = await page.waitForSelector(':has-text("Takaisin")');

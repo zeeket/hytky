@@ -1,15 +1,65 @@
 {
-  "title": "Vuokraus",
-  "inquire": "Tiedustele sähköpostilla.",
-  "equipmentTitle": "Laitteistoa:",
-  "equipment": [
-    "Iso äänentoisto (4 yläpäätä, 4-10 subwooferia, vahvistimet)",
-    "Pieni äänentoisto (2 aktiiviyläpäätä, 2 aktiivisubwooferia)",
-    "Monitorikaiuttimet (2 pientä aktiiviyläpäätä)",
-    "Technics-levysoittimet, Pioneer DJM-750 DJ-mikseri",
-    "Pioneer CDJ-900 soittimet",
-    "Diskovaloja (LED, PAR)",
-    "Savukone, usvakone ym."
+  "title": "HYTKY Vuokraus",
+  "intro": "HYTKY vuokraa DJ- ja PA-laitteita.",
+  "contactPre": "Vuokratiedusteluihin ota yhteyttä osoitteeseen",
+  "contactPost": ".",
+  "logistics": "Laitteet noudetaan ja palautetaan varastollemme Merihakaan, Helsinkiin. Vuokraaja vastaa yleensä kaikesta laitteiden kuljetukseen liittyvästä logistiikasta sekä laitteiden kunnosta vuokra-ajan aikana. Vuokrasopimus allekirjoitetaan noudon yhteydessä tai sähköisesti. HYTKY on vapaaehtoisvoimin toimiva opiskelijajärjestö, joten pyydämme lähettämään tiedustelut mahdollisimman ajoissa.",
+  "priceNote": "Alla olevat hinnat ovat vuorokausihintoja (24 h). Lisävuorokaudet -50 %.",
+  "categories": [
+    {
+      "heading": "DJ-soittimet ja levysoittimet",
+      "items": [
+        { "name": "Pioneer CDJ-900", "price": "20 € / kpl" },
+        { "name": "Pioneer CDJ-3000", "price": "60 € / kpl" },
+        { "name": "Technics SL-1210MK2", "price": "35 € / kpl" }
+      ]
+    },
+    {
+      "heading": "DJ-mikserit",
+      "items": [
+        { "name": "Pioneer DJM-750", "price": "30 €" },
+        { "name": "Allen & Heath XONE:92", "price": "40 €" }
+      ]
+    },
+    {
+      "heading": "DJ-paketit",
+      "items": [
+        { "name": "2x CDJ-900 + DJM-750", "price": "60 €" },
+        { "name": "2x CDJ-3000 + mikseri", "price": "150 €" },
+        { "name": "2x Technics SL-1210MK2 + mikseri", "price": "90 €" }
+      ]
+    },
+    {
+      "heading": "Äänentoistojärjestelmät",
+      "items": [
+        {
+          "name": "Vain monitorit: 2x Alto TX310 -kaiuttimet",
+          "price": "40 €",
+          "description": "Taustamusiikkiin, puheisiin ja kevyeen äänentoistoon"
+        },
+        {
+          "name": "Sub ja monitorit: 1x sub (Electro-Voice ELX-118P) + 2x monitoria (Alto TX310)",
+          "price": "90 €",
+          "description": "Pienempiin juhliin, joissa tarvitaan hieman bassoa"
+        },
+        {
+          "name": "Aktiivi-PA ja 1 sub: 1x sub (Electro-Voice ELX-118P) + 2x yläpäätä (Electro-Voice ZLX-15P)",
+          "price": "140 €",
+          "description": "Pieniin ja keskisuuriin juhliin. Basso voi jäädä vajaaksi suuremmilla äänenvoimakkuuksilla."
+        },
+        {
+          "name": "Aktiivi-PA: 2x sub (Electro-Voice ELX-118P) + 2x yläpäätä (Electro-Voice ZLX-15P)",
+          "price": "180 €",
+          "description": "Keskisuuriin juhliin (100–200 hlöä), helppokäyttöinen, mahtuu isompaan henkilöautoon"
+        },
+        {
+          "name": "Passiivi-PA: 4x subia, 2x Void-yläpäätä (+ 6x IREX) + vahvistimet",
+          "price": "Kysy erikseen, asennus lisämaksusta",
+          "description": "Raskaampi äänentoistojärjestelmä. Mahtuu pakettiautoon."
+        }
+      ]
+    }
   ],
+  "cablesNote": "Tarvittavat kaapelit ja kaiutinjalat sisältyvät laitteisiin.",
   "backLink": "← Takaisin"
 }

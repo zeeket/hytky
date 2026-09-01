@@ -1,15 +1,65 @@
 {
-  "title": "Rental",
-  "inquire": "Enquire by email.",
-  "equipmentTitle": "Equipment:",
-  "equipment": [
-    "Large soundsystem (4 highs, 4-10 subwoofers, amplifiers)",
-    "Small soundsystem (2 active highs, 2 active subs)",
-    "Monitor speakers (2 small active highs)",
-    "Technics record players, Pioneer DJM-750 DJ-mixer",
-    "Pioneer CDJ-900 players",
-    "Disco lights (LED, PAR)",
-    "Smoke machine, fog machine, etc."
+  "title": "HYTKY Rentals",
+  "intro": "HYTKY rents out DJ and PA equipment.",
+  "contactPre": "Contact",
+  "contactPost": "for rental inquiries.",
+  "logistics": "The equipment should be picked up and returned to our storage in Merihaka, Helsinki. The renter is generally responsible for all logistics related to moving the equipment and responsible for the condition of the equipment during the rental period. A rental agreement is signed upon pickup or electronically. HYTKY is a volunteer-run student organization, so please send your inquiries as early as possible.",
+  "priceNote": "Prices below are daily rates (24h period). Additional days are 50% off.",
+  "categories": [
+    {
+      "heading": "DJ players & turntables",
+      "items": [
+        { "name": "Pioneer CDJ-900", "price": "20 € / unit" },
+        { "name": "Pioneer CDJ-3000", "price": "60 € / unit" },
+        { "name": "Technics SL-1210MK2", "price": "35 € / unit" }
+      ]
+    },
+    {
+      "heading": "DJ mixers",
+      "items": [
+        { "name": "Pioneer DJM-750", "price": "30 €" },
+        { "name": "Allen & Heath XONE:92", "price": "40 €" }
+      ]
+    },
+    {
+      "heading": "DJ packages",
+      "items": [
+        { "name": "2x CDJ-900 + DJM-750", "price": "60 €" },
+        { "name": "2x CDJ-3000 + mixer", "price": "150 €" },
+        { "name": "2x Technics SL-1210MK2 + mixer", "price": "90 €" }
+      ]
+    },
+    {
+      "heading": "Sound systems",
+      "items": [
+        {
+          "name": "Monitors only: 2x Alto TX310 speakers",
+          "price": "40 €",
+          "description": "For background music, speeches, and light amplification"
+        },
+        {
+          "name": "Sub with monitors: 1x Sub (Electro-Voice ELX-118P) + 2x Monitors (Alto TX310)",
+          "price": "90 €",
+          "description": "Small parties where some bass is needed"
+        },
+        {
+          "name": "Active PA with 1 Sub: 1x Sub (Electro-Voice ELX-118P) + 2x Top (Electro-Voice ZLX-15P)",
+          "price": "140 €",
+          "description": "Small to mid-size parties. Bass may be lacking if played at higher volumes."
+        },
+        {
+          "name": "Active PA: 2x Sub (Electro-Voice ELX-118P) + 2x Top (Electro-Voice ZLX-15P)",
+          "price": "180 €",
+          "description": "Mid-size parties (100-200 ppl), easy to use, fits in larger passenger cars"
+        },
+        {
+          "name": "Passive PA: 4x Subs, 2x Void Tops (+ 6x IREX) + amplifiers",
+          "price": "Ask separately, installation for an extra fee",
+          "description": "Heavier soundsystem. Fits in a van."
+        }
+      ]
+    }
   ],
+  "cablesNote": "The necessary cables and speaker stands are included with the equipment.",
   "backLink": "← Back"
 }
