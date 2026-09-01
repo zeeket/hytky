@@ -11,6 +11,7 @@ const targets = [
   { protocol: 'http', port: 80 },
 ];
 
+/** @param {{protocol: string, port: number}} target */
 const probe = ({ protocol, port }) =>
   new Promise((resolve) => {
     const request = require(protocol).get(
@@ -21,6 +22,7 @@ const probe = ({ protocol, port }) =>
         rejectUnauthorized: false,
         timeout: 4000,
       },
+      /** @param {import('http').IncomingMessage} response */
       (response) => {
         response.resume();
         resolve(response.statusCode === 200);

@@ -13,6 +13,7 @@ export default tseslint.config(
   {
     ignores: [
       '**/node_modules/**',
+      '**/.pnpm-store/**',
       '**/.next/**',
       '**/coverage/**',
       '**/coverage-jest/**',
