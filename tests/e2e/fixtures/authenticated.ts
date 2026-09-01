@@ -37,7 +37,7 @@ export const test = base.extend<AuthenticatedFixture>({
 
       // Extract domain and protocol from base URL
       const baseURL =
-        process.env.PLAYWRIGHT_BASE_URL || 'https://dev.docker.orb.local';
+        process.env.PLAYWRIGHT_BASE_URL || 'https://local.hytky.org';
       const url = new URL(baseURL);
       const domain = url.hostname;
       const isSecure = url.protocol === 'https:';

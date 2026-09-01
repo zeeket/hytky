@@ -12,8 +12,7 @@ loadEnvConfig(process.cwd());
  * Base URL for tests - configurable via PLAYWRIGHT_BASE_URL env var.
  * Defaults to Docker-based local dev URL, can be overridden for CI.
  */
-const baseURL =
-  process.env.PLAYWRIGHT_BASE_URL || 'https://dev.docker.orb.local';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'https://local.hytky.org';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -58,7 +57,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        ignoreHTTPSErrors: true, // OrbStack uses self-signed certs for .orb.local
+        ignoreHTTPSErrors: true, // mkcert's local CA isn't in Node's trust store
       },
     },
 
@@ -66,7 +65,7 @@ export default defineConfig({
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
-        ignoreHTTPSErrors: true, // OrbStack uses self-signed certs for .orb.local
+        ignoreHTTPSErrors: true, // mkcert's local CA isn't in Node's trust store
       },
     },
 
@@ -74,7 +73,7 @@ export default defineConfig({
       name: 'webkit',
       use: {
         ...devices['Desktop Safari'],
-        ignoreHTTPSErrors: true, // OrbStack uses self-signed certs for .orb.local
+        ignoreHTTPSErrors: true, // mkcert's local CA isn't in Node's trust store
       },
     },
 
@@ -103,8 +102,11 @@ export default defineConfig({
   webServer: {
     // In CI, run Next.js directly. Locally, use Docker via make dev
     command: process.env.CI ? 'pnpm dev' : 'make dev',
-    // Health check URL matches the command - CI uses direct localhost, local uses Docker proxy
-    url: process.env.CI ? 'http://localhost:3000' : 'http://localhost:80',
+    // Health check URL matches the command - CI uses direct localhost, local
+    // matches baseURL since the dev container only serves HTTPS on 443 once
+    // local certificates are mounted (see start.dev.sh), not plain HTTP on 80.
+    url: process.env.CI ? 'http://localhost:3000' : baseURL,
+    ignoreHTTPSErrors: true,
     timeout: 2 * 60000, // 2 minutes
     reuseExistingServer: !process.env.CI,
   },

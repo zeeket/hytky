@@ -73,8 +73,7 @@ export async function createTestSessionToken(
  * The cookie name is determined by the base URL protocol.
  */
 export function getSessionCookieName(): string {
-  const baseURL =
-    process.env.PLAYWRIGHT_BASE_URL || 'https://dev.docker.orb.local';
+  const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'https://local.hytky.org';
   const isSecure = baseURL.startsWith('https://');
   return isSecure
     ? '__Secure-next-auth.session-token'

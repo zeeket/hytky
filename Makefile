@@ -1,4 +1,4 @@
-.PHONY: dev rmi prod rmip migrate migrate-reset baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar logs backup restore help
+.PHONY: dev cert rmi prod rmip migrate migrate-reset baseline testconnect prepareprod startprod generate-internal-api-secret sync-calendar logs backup restore help
 
 SHELL := /bin/bash
 MYPATH := $(shell pwd)
@@ -8,9 +8,50 @@ PROD_HOST = dettmann@hytky.org
 PROD_COMPOSE = docker/docker-compose.prod.tls-registry.yml
 BACKUP_DIR = backups
 
+# Base URL of the local dev environment; override with PLAYWRIGHT_BASE_URL.
+DEV_URL := $(shell ./tests/scripts/dev-url.sh)
+export PLAYWRIGHT_BASE_URL := $(DEV_URL)
+
+define wait_for_dev
+	@echo "Checking dev environment status..."
+	@if docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
+		echo "Dev environment already running."; \
+	else \
+		echo "Dev environment not running. Starting it now..."; \
+		docker compose -f docker/docker-compose.dev.yml up -d; \
+		echo "Waiting for $(DEV_URL) to be ready..."; \
+		attempt=0; \
+		until curl -k -s -f "$(DEV_URL)" > /dev/null 2>&1; do \
+			attempt=$$((attempt + 1)); \
+			if [ $$attempt -ge 23 ]; then \
+				echo "$(DEV_URL) did not respond within 45 seconds."; \
+				exit 1; \
+			fi; \
+			sleep 2; \
+		done; \
+		echo "Dev environment is ready!"; \
+	fi
+endef
+
 # Start the local development environment with hot-reloading. Usage: 'make dev'.
 dev:
 	docker compose -f docker/docker-compose.dev.yml up --force-recreate
+
+# Generate locally-trusted HTTPS certificates for local.hytky.org. Usage: 'make cert'.
+cert:
+	@command -v mkcert > /dev/null 2>&1 || { echo "mkcert is not installed: https://github.com/FiloSottile/mkcert#installation"; exit 1; }
+	@mkdir -p certs
+	mkcert -install
+	mkcert -cert-file certs/local.hytky.org.pem -key-file certs/local.hytky.org-key.pem local.hytky.org dev localhost 127.0.0.1
+	cp "$$(mkcert -CAROOT)/rootCA.pem" certs/rootCA.pem
+	@echo ""
+	@echo "Certificates written to certs/. Remaining steps:"
+	@echo "  1. Set NEXTAUTH_URL=https://local.hytky.org in .env"
+	@echo "  2. Set MAIN_APP_URL=https://dev:443 in .gcalservice.env"
+	@echo "  3. Register https://local.hytky.org and"
+	@echo "     https://local.hytky.org/api/auth/callback/telegram in @BotFather"
+	@echo "     under Bot Settings > Web Login"
+	@echo "  4. Run 'make dev'"
 
 # Remove local development images, volumes, and build artifacts. Usage: 'make rmi'.
 rmi:
@@ -55,16 +96,7 @@ prettierfix:
 
 # Run all tests (unit + e2e) with coverage reports. Usage: 'make test'.
 test:
-	@echo "Checking dev environment status..."
-	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
-		echo "Dev environment not running. Starting it now..."; \
-		docker compose -f docker/docker-compose.dev.yml up -d; \
-		echo "Waiting for services to be ready..."; \
-		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
-		echo "Dev environment is ready!"; \
-	else \
-		echo "Dev environment already running."; \
-	fi
+	$(wait_for_dev)
 	@echo ""
 	@echo "Running all tests (unit + e2e)..."
 	@echo ""
@@ -96,16 +128,7 @@ test-unit:
 
 # Run the e2e tests with coverage report. Usage: 'make test-e2e'.
 test-e2e:
-	@echo "Checking dev environment status..."
-	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
-		echo "Dev environment not running. Starting it now..."; \
-		docker compose -f docker/docker-compose.dev.yml up -d; \
-		echo "Waiting for services to be ready..."; \
-		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
-		echo "Dev environment is ready!"; \
-	else \
-		echo "Dev environment already running."; \
-	fi
+	$(wait_for_dev)
 	@echo ""
 	@rm -rf .nyc_output coverage
 	@pnpm exec playwright test --project=chromium
@@ -120,16 +143,7 @@ test-e2e:
 
 # Run e2e tests with all browsers (chromium, firefox, webkit). Usage: 'make test-all'.
 test-all:
-	@echo "Checking dev environment status..."
-	@if ! docker compose -f docker/docker-compose.dev.yml ps --services --filter "status=running" | grep -q "dev"; then \
-		echo "Dev environment not running. Starting it now..."; \
-		docker compose -f docker/docker-compose.dev.yml up -d; \
-		echo "Waiting for services to be ready..."; \
-		timeout 45 bash -c 'until curl -k -s -f https://dev.docker.orb.local > /dev/null 2>&1; do sleep 2; done' || (echo "Service failed to start within 45 seconds" && exit 1); \
-		echo "Dev environment is ready!"; \
-	else \
-		echo "Dev environment already running."; \
-	fi
+	$(wait_for_dev)
 	@echo ""
 	@rm -rf .nyc_output coverage
 	@pnpm exec playwright test --project=chromium --project=firefox --project=webkit

@@ -18,32 +18,27 @@ test('has theme-color meta tag matching page background', async ({ page }) => {
 });
 
 /**
- * Telegram Login Widget Integration Test
+ * Telegram OpenID Connect Login Integration Test
  *
- * Note: This test verifies the integration of @telegram-auth/react LoginButton,
- * but cannot test the internal iframe content due to cross-origin restrictions.
- *
- * The Telegram widget loads in an iframe from oauth.telegram.org, which is a
- * different origin than our test domain. Browsers block access to cross-origin
- * iframe content for security (Same-Origin Policy).
+ * Login uses Telegram's OIDC provider through NextAuth: pressing the button
+ * posts to NextAuth, which redirects the browser to Telegram's authorization
+ * endpoint and later receives the ID token server-side. There is no
+ * third-party iframe or script on the page any more.
  *
  * What we test:
  * - Login button is visible and navigates to signin page
- * - Signin page structure is correct
- * - Telegram iframe is created and visible
- * - iframe src URL contains correct Telegram domain
- * - iframe src URL contains correct bot username
- * - iframe src URL contains origin parameter
+ * - Signin page structure is correct, with no embedded third-party frame
+ * - NextAuth exposes the `telegram` OIDC provider with our callback URL
+ * - Rejected logins surface an error message on our own signin page
  *
- * What we trust Telegram to handle:
- * - Rendering the "Log in with Telegram" button inside the iframe
- * - Opening the OAuth popup when clicked
- * - Handling the authentication flow
+ * What we trust Telegram and NextAuth to handle:
+ * - The authorization page, PKCE/state verification and the token exchange
+ * - Verifying the ID token signature against Telegram's JWKS
  *
- * This boundary testing approach is sufficient to ensure our integration is correct.
- * See TELEGRAM_LOGIN_TESTING_STRATEGY.md for detailed rationale.
+ * The redirect itself is deliberately not followed: it leaves our origin and
+ * requires real Telegram credentials, so this stays a boundary test.
  */
-test('login flow - verify Telegram widget integration', async ({ page }) => {
+test('login flow - verify Telegram OIDC integration', async ({ page }) => {
   // Verify the login button is visible on the homepage (smoke check only —
   // the actual signIn() call uses window.location and races with hydration).
   await page.goto('/');
@@ -61,37 +56,45 @@ test('login flow - verify Telegram widget integration', async ({ page }) => {
   const heading = page.locator('h1:has-text("Jäsenten sisäänkirjautuminen")');
   await expect(heading).toBeVisible();
 
-  // Wait for the Telegram widget iframe to be created by @telegram-auth/react
-  const iframe = page.locator('iframe');
-  await expect(iframe).toBeVisible({ timeout: 10000 });
+  // The login button is ours now, and nothing is embedded from Telegram.
+  const telegramButton = page.getByRole('button', {
+    name: /Kirjaudu Telegramilla/i,
+  });
+  await expect(telegramButton).toBeVisible();
+  await expect(page.locator('iframe')).toHaveCount(0);
 
-  // CRITICAL: Validate iframe src URL to ensure correct integration
-  const iframeSrc = await iframe.getAttribute('src');
-
-  if (!iframeSrc) {
-    throw new Error('Telegram iframe src attribute is missing');
-  }
-
-  // Must contain Telegram OAuth domain
-  expect(iframeSrc).toMatch(/oauth\.telegram\.org|telegram\.org\/embed/);
-
-  // Must contain the bot username from environment
-  const botName = process.env.NEXT_PUBLIC_TG_BOT_NAME;
-  // Accept both production and test bot names
-  expect(['testHYTKYbot', 'HYTKYbot']).toContain(botName);
-  expect(iframeSrc).toContain(botName);
-
-  // Should contain origin parameter (domain validation)
-  expect(iframeSrc).toMatch(/origin=/);
+  // CRITICAL: the provider the button signs in with must be wired up
+  // server-side as an OAuth/OIDC provider on our own callback URL.
+  const response = await page.request.get('/api/auth/providers');
+  expect(response.ok()).toBeTruthy();
+  const providers = (await response.json()) as Record<
+    string,
+    { id: string; type: string; callbackUrl: string } | undefined
+  >;
+  expect(providers.telegram?.type).toBe('oauth');
+  expect(providers.telegram?.callbackUrl).toMatch(
+    /\/api\/auth\/callback\/telegram$/
+  );
 
   // Take a screenshot for visual verification
   await page.screenshot({
-    path: 'test-results/telegram-widget-integration.png',
+    path: 'test-results/telegram-login-integration.png',
     fullPage: true,
   });
+});
 
-  // Note: We cannot test iframe internal content due to cross-origin restrictions.
-  // The iframe loads from telegram.org which is a different origin than our test domain.
-  // If the iframe src is correct (which we've validated above), the Telegram widget
-  // will work correctly for real users.
+test('login flow - rejected logins show an error on the signin page', async ({
+  page,
+}) => {
+  // NextAuth redirects failures back here (`pages.error`), e.g. AccessDenied
+  // for a user HYTKYbot reports as `nakki`.
+  await page.goto('/auth/signin?error=AccessDenied');
+
+  // Next.js's own route announcer also carries role="alert", so filter by
+  // text content to avoid a strict-mode match on both elements.
+  const alert = page
+    .getByRole('alert')
+    .filter({ hasText: 'Telegram-ryhmässä' });
+  await expect(alert).toBeVisible();
+  await expect(alert).toContainText('Telegram-ryhmässä');
 });

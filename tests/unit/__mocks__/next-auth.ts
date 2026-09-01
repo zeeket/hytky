@@ -16,16 +16,11 @@ export const signIn = jest.fn();
 export const signOut = jest.fn();
 export const useSession = jest.fn();
 
-// Mock CredentialsProvider (default export from next-auth/providers/credentials)
-const CredentialsProvider = jest.fn((config) => ({
-  ...config,
-  type: 'credentials',
-  id: config.id || 'credentials',
-  name: config.name || 'Credentials',
-}));
+// Stand-in for the default export of `next-auth` and of its provider modules
+// (`next-auth/providers/*`), which return their config unchanged.
+const defaultExport = jest.fn((config) => config);
 
-// This allows the mock to work both as named and default export
-export default CredentialsProvider;
+export default defaultExport;
 
 // Export types (these are just for TypeScript - no runtime impact)
 export type NextAuthOptions = unknown;

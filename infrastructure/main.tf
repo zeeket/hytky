@@ -4,9 +4,9 @@ locals {
       DATABASE_URL                = var.DATABASE_URL,
       POSTGRES_PASSWORD           = var.POSTGRES_PASSWORD,
       NEXTAUTH_SECRET             = var.NEXTAUTH_SECRET,
-      NEXT_PUBLIC_TG_BOT_NAME     = var.NEXT_PUBLIC_TG_BOT_NAME,
       NEXT_PUBLIC_TG_INFO_CHANNEL = var.NEXT_PUBLIC_TG_INFO_CHANNEL,
-      TG_BOT_TOKEN                = var.TG_BOT_TOKEN,
+      TG_OAUTH_CLIENT_ID          = var.TG_OAUTH_CLIENT_ID,
+      TG_OAUTH_CLIENT_SECRET      = var.TG_OAUTH_CLIENT_SECRET,
       FORUM_ROOT_NAME             = var.FORUM_ROOT_NAME,
       INTERNAL_API_SECRET         = var.INTERNAL_API_SECRET
     }
@@ -140,6 +140,19 @@ resource "digitalocean_record" "www" {
   type   = "A"
   name   = "www"
   value  = digitalocean_droplet.webserver.ipv4_address
+}
+
+# Development-only record: resolves to the developer's own machine so the local
+# dev environment can be reached over HTTPS on a real domain. Telegram's OIDC
+# provider only accepts redirect URIs on registered HTTPS domains, and rejects
+# `localhost` / bare IPs, so `https://local.hytky.org/api/auth/callback/telegram`
+# is registered in @BotFather's Web Login allowed URLs and used as NEXTAUTH_URL
+# for local development. Nothing is ever served publicly from this name.
+resource "digitalocean_record" "local" {
+  domain = digitalocean_domain.hytky.name
+  type   = "A"
+  name   = "local"
+  value  = "127.0.0.1"
 }
 
 resource "digitalocean_record" "mx" {

@@ -56,9 +56,9 @@ jobs:
           echo "DATABASE_URL=postgres://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/postgres" >> .env
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
           echo "NEXTAUTH_URL=http://localhost:3000" >> .env
-          echo "NEXT_PUBLIC_TG_BOT_NAME=${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}" >> .env
           echo "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}" >> .env
-          echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
+          echo "TG_OAUTH_CLIENT_ID=${{ secrets.TG_OAUTH_CLIENT_ID }}" >> .env
+          echo "TG_OAUTH_CLIENT_SECRET=${{ secrets.TG_OAUTH_CLIENT_SECRET }}" >> .env
           echo "FORUM_ROOT_NAME=${{ secrets.FORUM_ROOT_NAME }}" >> .env
           echo "HYTKYBOT_URL=http://localhost:3001" >> .env
           echo "INTERNAL_API_SECRET=${{ secrets.INTERNAL_API_SECRET }}" >> .env
@@ -158,9 +158,9 @@ jobs:
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
           echo "NEXTAUTH_URL=http://localhost:3000" >> .env
-          echo "NEXT_PUBLIC_TG_BOT_NAME=${{ secrets.NEXT_PUBLIC_TG_BOT_NAME }}" >> .env
           echo "NEXT_PUBLIC_TG_INFO_CHANNEL=${{ secrets.NEXT_PUBLIC_TG_INFO_CHANNEL }}" >> .env
-          echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
+          echo "TG_OAUTH_CLIENT_ID=${{ secrets.TG_OAUTH_CLIENT_ID }}" >> .env
+          echo "TG_OAUTH_CLIENT_SECRET=${{ secrets.TG_OAUTH_CLIENT_SECRET }}" >> .env
           echo "FORUM_ROOT_NAME=${{ secrets.FORUM_ROOT_NAME }}" >> .env
           echo "HYTKYBOT_URL=http://localhost:3001" >> .env
           echo "PLAYWRIGHT_BASE_URL=http://localhost:3000" >> .env

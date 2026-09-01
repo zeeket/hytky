@@ -1,14 +1,14 @@
 import { type UserRole } from '~/server/api/types';
 import { env } from '~/env.mjs';
 
-export const checkUserRole = async (id: number): Promise<UserRole> => {
-  const idString = id.toString();
+/** @param id Telegram user ID, as a string (the ID token's `id` claim). */
+export const checkUserRole = async (id: string): Promise<UserRole> => {
   const response = await fetch(env.HYTKYBOT_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ user: idString }),
+    body: JSON.stringify({ user: id }),
   });
 
   const json = (await response.json()) as { role: string };

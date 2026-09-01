@@ -18,8 +18,10 @@ const server = z.object({
     // VERCEL_URL doesn't include `https` so it cant be validated as a URL
     process.env.VERCEL ? z.string().min(1) : z.string().url()
   ),
-  // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
-  TG_BOT_TOKEN: z.string(),
+  // Telegram OpenID Connect credentials from @BotFather
+  // (Bot Settings > Web Login). The Client ID is the bot's ID.
+  TG_OAUTH_CLIENT_ID: z.string().min(1),
+  TG_OAUTH_CLIENT_SECRET: z.string().min(1),
   FORUM_ROOT_NAME: z.string(),
   HYTKYBOT_URL: z.string().url().default('http://hytkybot:3000'),
   GOOGLE_CALENDAR_ID: z.string().optional(),
@@ -31,7 +33,6 @@ const server = z.object({
  * built with invalid env vars. To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object({
-  NEXT_PUBLIC_TG_BOT_NAME: z.string(),
   NEXT_PUBLIC_TG_INFO_CHANNEL: z.string(),
 });
 
@@ -43,12 +44,12 @@ const client = z.object({
  */
 const processEnv = {
   NEXT_PUBLIC_TG_INFO_CHANNEL: process.env.NEXT_PUBLIC_TG_INFO_CHANNEL,
-  NEXT_PUBLIC_TG_BOT_NAME: process.env.NEXT_PUBLIC_TG_BOT_NAME,
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-  TG_BOT_TOKEN: process.env.TG_BOT_TOKEN,
+  TG_OAUTH_CLIENT_ID: process.env.TG_OAUTH_CLIENT_ID,
+  TG_OAUTH_CLIENT_SECRET: process.env.TG_OAUTH_CLIENT_SECRET,
   FORUM_ROOT_NAME: process.env.FORUM_ROOT_NAME,
   HYTKYBOT_URL: process.env.HYTKYBOT_URL,
   GOOGLE_CALENDAR_ID: process.env.GOOGLE_CALENDAR_ID,

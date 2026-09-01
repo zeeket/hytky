@@ -27,10 +27,16 @@ describe('Environment Variables', () => {
       expect(env.NEXTAUTH_URL.length).toBeGreaterThan(0);
     });
 
-    it('should have TG_BOT_TOKEN defined', () => {
-      expect(env.TG_BOT_TOKEN).toBeDefined();
-      expect(typeof env.TG_BOT_TOKEN).toBe('string');
-      expect(env.TG_BOT_TOKEN.length).toBeGreaterThan(0);
+    it('should have TG_OAUTH_CLIENT_ID defined', () => {
+      expect(env.TG_OAUTH_CLIENT_ID).toBeDefined();
+      expect(typeof env.TG_OAUTH_CLIENT_ID).toBe('string');
+      expect(env.TG_OAUTH_CLIENT_ID.length).toBeGreaterThan(0);
+    });
+
+    it('should have TG_OAUTH_CLIENT_SECRET defined', () => {
+      expect(env.TG_OAUTH_CLIENT_SECRET).toBeDefined();
+      expect(typeof env.TG_OAUTH_CLIENT_SECRET).toBe('string');
+      expect(env.TG_OAUTH_CLIENT_SECRET.length).toBeGreaterThan(0);
     });
 
     it('should have FORUM_ROOT_NAME defined', () => {
@@ -53,12 +59,6 @@ describe('Environment Variables', () => {
   });
 
   describe('Client Environment Variables', () => {
-    it('should have NEXT_PUBLIC_TG_BOT_NAME defined', () => {
-      expect(env.NEXT_PUBLIC_TG_BOT_NAME).toBeDefined();
-      expect(typeof env.NEXT_PUBLIC_TG_BOT_NAME).toBe('string');
-      expect(env.NEXT_PUBLIC_TG_BOT_NAME.length).toBeGreaterThan(0);
-    });
-
     it('should have NEXT_PUBLIC_TG_INFO_CHANNEL defined', () => {
       expect(env.NEXT_PUBLIC_TG_INFO_CHANNEL).toBeDefined();
       expect(typeof env.NEXT_PUBLIC_TG_INFO_CHANNEL).toBe('string');

@@ -6,20 +6,30 @@ services:
       dockerfile: docker/Dockerfile.dev
     ports:
       - '80:80'
+      # `start.dev.sh` serves HTTPS from `next dev` itself when certificates
+      # are present in ../certs, in which case it listens on 443 instead of 80.
+      - '443:443'
     env_file:
       - ../.env
+    environment:
+      # Makes pnpm auto-confirm the node_modules purge prompt it otherwise
+      # blocks on with no TTY (e.g. when package.json changes but the
+      # node_modules volume wasn't rebuilt) - `docker compose` never attaches
+      # a TTY to services, so without this the container crash-loops.
+      - CI=true
     volumes:
       - ../:/app
       - /app/node_modules/
+      # Locally-trusted mkcert certificates for https://local.hytky.org, used
+      # for the Telegram OIDC login flow. Empty on a default checkout.
+      - ../certs:/certs:ro
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'wget --no-verbose --tries=1 --spider http://localhost:80/api/health || exit 1',
-        ]
+      # Probes both HTTP on 80 and HTTPS on 443, since which one is live
+      # depends on whether ../certs holds a certificate.
+      test: ['CMD', 'node', '/app/docker/healthcheck.dev.cjs']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -55,6 +65,12 @@ services:
       - '3002:3002'
     env_file:
       - ../.gcalservice.env
+    environment:
+      # Lets this service trust the mkcert CA when MAIN_APP_URL points at the
+      # dev container over HTTPS. Ignored when the file isn't mounted.
+      - NODE_EXTRA_CA_CERTS=/certs/rootCA.pem
+    volumes:
+      - ../certs:/certs:ro
     depends_on:
       dev:
         condition: service_healthy
