@@ -1,5 +1,6 @@
 {
   "title": "HYTKY Rentals",
+  "titleSuffix": "Rentals",
   "intro": "HYTKY rents out DJ and PA equipment.",
   "contactPre": "Contact",
   "contactPost": "for rental inquiries.",
@@ -55,7 +56,8 @@
         {
           "name": "Passive PA: 4x Subs, 2x Void Tops (+ 6x IREX) + amplifiers",
           "price": "Ask separately, installation for an extra fee",
-          "description": "Heavier soundsystem. Fits in a van."
+          "wrapPrice": true,
+          "description": "Heavier soundsystem.\nFits in a van."
         }
       ]
     }

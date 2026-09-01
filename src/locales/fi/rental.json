@@ -1,5 +1,6 @@
 {
   "title": "HYTKY Vuokraus",
+  "titleSuffix": "Vuokraus",
   "intro": "HYTKY vuokraa DJ- ja PA-laitteita.",
   "contactPre": "Vuokratiedusteluihin ota yhteyttä osoitteeseen",
   "contactPost": ".",
@@ -55,7 +56,8 @@
         {
           "name": "Passiivi-PA: 4x subia, 2x Void-yläpäätä (+ 6x IREX) + vahvistimet",
           "price": "Kysy erikseen, asennus lisämaksusta",
-          "description": "Raskaampi äänentoistojärjestelmä. Mahtuu pakettiautoon."
+          "wrapPrice": true,
+          "description": "Raskaampi äänentoistojärjestelmä.\nMahtuu pakettiautoon."
         }
       ]
     }

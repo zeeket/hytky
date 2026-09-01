@@ -27,7 +27,24 @@ const config = {
         test: /\.svg$/i,
         issuer: /\.[jt]sx?$/,
         resourceQuery: { not: /url/ }, // exclude if *.svg?url
-        use: ['@svgr/webpack'],
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              // Some source SVGs have a viewBox matching their width/height
+              // exactly; SVGO's default preset treats that as redundant and
+              // strips it, which breaks scaling these icons via CSS.
+              svgoConfig: {
+                plugins: [
+                  {
+                    name: 'preset-default',
+                    params: { overrides: { removeViewBox: false } },
+                  },
+                ],
+              },
+            },
+          },
+        ],
       }
     );
 

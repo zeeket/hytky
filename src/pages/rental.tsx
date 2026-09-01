@@ -2,6 +2,7 @@ import { type NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import HytkyLogo from '../../public/hytkylogo.svg';
 import Miukumauku from '../../public/miukumauku2.svg';
 
 import Layout from '~/components/Layout';
@@ -14,6 +15,7 @@ interface RentalItem {
   name: string;
   price: string;
   description?: string;
+  wrapPrice?: boolean;
 }
 
 interface RentalCategory {
@@ -23,6 +25,7 @@ interface RentalCategory {
 
 interface RentalContent {
   title: string;
+  titleSuffix: string;
   intro: string;
   contactPre: string;
   contactPost: string;
@@ -43,8 +46,9 @@ const RentalInfo: NextPage = () => {
   return (
     <Layout title={content.title}>
       <LocaleSelect />
-      <h1 className="text-oldschool-orange text-center text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-        {content.title}
+      <h1 className="text-oldschool-orange flex items-center justify-center gap-3 text-center text-5xl font-extrabold tracking-tight sm:text-[5rem]">
+        <HytkyLogo className="h-10 w-auto sm:h-16" alt="HYTKY" />
+        {content.titleSuffix}
       </h1>
       <p className="p-4 text-center text-2xl text-white">{content.intro}</p>
       <p className="px-4 text-center text-xl text-white">
@@ -72,13 +76,19 @@ const RentalInfo: NextPage = () => {
               {category.items.map((item) => (
                 <li key={item.name} className="flex flex-col py-2 text-white">
                   <div className="flex items-baseline justify-between gap-4">
-                    <span>{item.name}</span>
-                    <span className="font-bold whitespace-nowrap">
+                    <span className="min-w-0 break-words">{item.name}</span>
+                    <span
+                      className={`min-w-0 text-right font-bold ${
+                        item.wrapPrice
+                          ? 'break-words whitespace-normal sm:whitespace-nowrap'
+                          : 'whitespace-nowrap'
+                      }`}
+                    >
                       {item.price}
                     </span>
                   </div>
                   {item.description && (
-                    <span className="text-sm text-white/70">
+                    <span className="text-sm whitespace-pre-line text-white/70">
                       {item.description}
                     </span>
                   )}
@@ -93,7 +103,7 @@ const RentalInfo: NextPage = () => {
       </p>
       <Link
         href="/"
-        className="hover:bg-newschool-orange mt-8 h-12 w-40 rounded-lg bg-white/10 p-3 text-center text-white transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
+        className="hover:bg-newschool-orange mt-8 mb-12 h-12 w-40 rounded-lg bg-white/10 p-3 text-center text-white transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
       >
         {content.backLink}
       </Link>
