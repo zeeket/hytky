@@ -4,9 +4,9 @@ locals {
       DATABASE_URL                = var.DATABASE_URL,
       POSTGRES_PASSWORD           = var.POSTGRES_PASSWORD,
       NEXTAUTH_SECRET             = var.NEXTAUTH_SECRET,
-      NEXT_PUBLIC_TG_BOT_NAME     = var.NEXT_PUBLIC_TG_BOT_NAME,
       NEXT_PUBLIC_TG_INFO_CHANNEL = var.NEXT_PUBLIC_TG_INFO_CHANNEL,
-      TG_BOT_TOKEN                = var.TG_BOT_TOKEN,
+      TG_OAUTH_CLIENT_ID          = var.TG_OAUTH_CLIENT_ID,
+      TG_OAUTH_CLIENT_SECRET      = var.TG_OAUTH_CLIENT_SECRET,
       FORUM_ROOT_NAME             = var.FORUM_ROOT_NAME,
       INTERNAL_API_SECRET         = var.INTERNAL_API_SECRET
     }

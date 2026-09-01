@@ -61,18 +61,25 @@ variable "NEXTAUTH_SECRET" {
   sensitive   = true
 }
 
-variable "NEXT_PUBLIC_TG_BOT_NAME" {
-  description = "Telegram Bot Name"
-  type        = string
-}
-
 variable "NEXT_PUBLIC_TG_INFO_CHANNEL" {
   description = "Telegram Info Channel link"
   type        = string
 }
 
 variable "TG_BOT_TOKEN" {
-  description = "Telegram Bot Token"
+  description = "Telegram Bot Token, used by HYTKYbot to call the Telegram Bot API"
+  type        = string
+  sensitive   = true
+}
+
+variable "TG_OAUTH_CLIENT_ID" {
+  description = "Telegram OpenID Connect Client ID (the bot's ID), from @BotFather Bot Settings > Web Login"
+  type        = string
+  sensitive   = true
+}
+
+variable "TG_OAUTH_CLIENT_SECRET" {
+  description = "Telegram OpenID Connect Client Secret, from @BotFather Bot Settings > Web Login"
   type        = string
   sensitive   = true
 }
