@@ -11,17 +11,17 @@
   },
   "dependencies": {
     "express": "^5.2.1",
-    "googleapis": "^176.0.0",
-    "google-auth-library": "^11.0.2",
+    "googleapis": "^181.0.0",
+    "google-auth-library": "^11.1.0",
     "node-cron": "^4.6.0",
     "superjson": "^2.2.6",
-    "zod": "^4.5.4"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.6.2",
     "@types/node-cron": "^3.0.11",
-    "tsx": "^4.23.13",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
   "allowScripts": {
