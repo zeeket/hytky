@@ -15,7 +15,7 @@
     "google-auth-library": "^11.0.2",
     "node-cron": "^4.6.0",
     "superjson": "^2.2.6",
-    "zod": "^4.5.4"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
