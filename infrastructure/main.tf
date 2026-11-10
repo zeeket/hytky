@@ -142,6 +142,13 @@ resource "digitalocean_record" "www" {
   value  = digitalocean_droplet.webserver.ipv4_address
 }
 
+resource "digitalocean_record" "h" {
+  domain = digitalocean_domain.hytky.name
+  type   = "A"
+  name   = "h"
+  value  = digitalocean_droplet.webserver.ipv4_address
+}
+
 # Development-only record: resolves to the developer's own machine so the local
 # dev environment can be reached over HTTPS on a real domain. Telegram's OIDC
 # provider only accepts redirect URIs on registered HTTPS domains, and rejects
