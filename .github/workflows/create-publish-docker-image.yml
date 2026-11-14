@@ -108,7 +108,7 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           source: h-space.tar.gz
           target: /tmp/
-    
+
       - name: Pull and restart updated containers
         uses: appleboy/ssh-action@v1.2.5
         env:
@@ -125,7 +125,7 @@ jobs:
             sudo mkdir -p /opt/webapp/docker/h-space &&
             sudo rsync -a --delete /tmp/h-space-staging/ /opt/webapp/docker/h-space/ &&
             rm -rf /tmp/h-space-staging /tmp/h-space.tar.gz
-            
+
             until curl -sf https://hytky.org/api/health; do sleep 10; done
             sudo git -C /opt/webapp checkout docker/nginx-conf/user_conf.d/tls.conf
             sudo git -C /opt/webapp pull
