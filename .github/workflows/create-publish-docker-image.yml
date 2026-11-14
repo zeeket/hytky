@@ -2,7 +2,7 @@ name: Create and publish a Docker image
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v*.*.*'
 
 permissions:
   contents: read
@@ -63,6 +63,52 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
     steps:
+      - name: Checkout h-space repository
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: LeeviHalme/h-space
+          ref: main
+          path: h-space-src
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+
+      - name: Install dependencies and build h-space
+        working-directory: h-space-src
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            corepack enable
+            pnpm install --frozen-lockfile
+            pnpm run build
+          elif [ -f package-lock.json ]; then
+            npm ci
+            npm run build
+          elif [ -f yarn.lock ]; then
+            corepack enable
+            yarn install --frozen-lockfile
+            yarn build
+          else
+            echo "No supported lockfile found."
+            exit 1
+          fi
+
+      - name: Verify and package static export
+        run: |
+          test -f h-space-src/out/index.html
+          tar -czf h-space.tar.gz -C h-space-src/out .
+
+      - name: Upload h-space export
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: hytky.org
+          username: dettmann
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          source: h-space.tar.gz
+          target: /tmp/
+
       - name: Pull and restart updated containers
         uses: appleboy/ssh-action@v1.2.5
         env:
@@ -73,6 +119,13 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           envs: DOMAIN
           script: |
+            # Publish h-space static export
+            mkdir -p /tmp/h-space-staging &&
+            tar -xzf /tmp/h-space.tar.gz -C /tmp/h-space-staging &&
+            sudo mkdir -p /opt/webapp/docker/h-space &&
+            sudo rsync -a --delete /tmp/h-space-staging/ /opt/webapp/docker/h-space/ &&
+            rm -rf /tmp/h-space-staging /tmp/h-space.tar.gz
+
             until curl -sf https://hytky.org/api/health; do sleep 10; done
             sudo git -C /opt/webapp checkout docker/nginx-conf/user_conf.d/tls.conf
             sudo git -C /opt/webapp pull
